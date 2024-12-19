@@ -22,7 +22,7 @@ const Header = () => {
     <header className="bg-white dark:bg-gray-800 shadow-md">
       <nav className="container mx-auto px-4 py-4">
         <div className="flex justify-between items-center">
-          <Link href="/" className="text-2xl font-bold font-press-start-2p">Your Name</Link>
+          <Link href="/" className="text-2xl font-bold font-press-start-2p">Mark.C Portfolio</Link>
           <div className="flex items-center">
             <button onClick={toggleDarkMode} className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 mr-2">
               {darkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}

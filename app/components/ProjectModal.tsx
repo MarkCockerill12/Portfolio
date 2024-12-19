@@ -8,7 +8,6 @@ interface Project {
   description: string
   image: string
   github: string
-  demo: string
   technologies: string[]
   details: string
 }
@@ -48,9 +47,6 @@ const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) => {
           <div className="flex justify-between">
             <a href={project.github} target="_blank" rel="noopener noreferrer" className="bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-4 py-2 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
               View on GitHub
-            </a>
-            <a href={project.demo} target="_blank" rel="noopener noreferrer" className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors">
-              Live Demo
             </a>
           </div>
         </div>

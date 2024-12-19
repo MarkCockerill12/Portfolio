@@ -15,7 +15,7 @@ export default function Home() {
           <Image src="/placeholder.svg" alt="Creative Icon" width={64} height={64} className="rounded-lg" />
         </div>
         <p className="text-xl mb-8 max-w-2xl mx-auto">
-          Welcome to my digital playground! I'm a computer science student with a passion for gaming, art, and creative coding.
+          Welcome to my portfolio! I'm a computer science student with a passion for gaming, art, and creative coding.
         </p>
         <Link href="/projects" className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg transition duration-300 ease-in-out transform hover:scale-105">
           Explore My Projects
