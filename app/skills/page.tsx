@@ -3,22 +3,27 @@ import { Code, Palette, Gamepad, Lightbulb } from 'lucide-react'
 const skills = [
   {
     category: "Programming Languages & Frameworks",
-    items: ["JavaScript", "TypeScript", "Python", "React", "Node.js", "Unity (C#)"],
+    items: ["JavaScript/TypeScript", "Python", "React", "Java", "C/C++/C#", "SQL", "html/css", "Tailwind"],
     icon: <Code className="w-6 h-6" />
   },
   {
-    category: "Art & Design",
-    items: ["Digital Illustration", "UI/UX Design", "3D Modeling", "Pixel Art"],
+    category: "Art, Design & Animation",
+    items: ["Digital Illustration", "UI/UX Design", "3D Modeling", "2D/3D Animation", "Drawing/Sketching"],
     icon: <Palette className="w-6 h-6" />
   },
   {
-    category: "Game Development",
-    items: ["Game Design", "Level Design", "Sprite Animation", "Game AI"],
+    category: "Applications/Tools",
+    items: ["CAD Inventor", "Blender", "Krita", "Microsoft Word, Excel, PowerPoint, Access", "Visual Studio/Visual Studio Code", "MySQL", "Docker", "Github", "Cisco Packet", "Arduino", "DaVinci Resolve", "VirtualBox"],
     icon: <Gamepad className="w-6 h-6" />
   },
   {
-    category: "Creative Coding",
-    items: ["Generative Art", "Interactive Installations", "Data Visualization", "Audio Reactive Visuals"],
+    category: "Other Computer Related Skills",
+    items: ["Understanding of Networking and Addresses", "Physical Computer Installations/Assembly", "Video Editing", "Audio Reactive Visuals",],
+    icon: <Lightbulb className="w-6 h-6" />
+  },
+  {
+    category: "Other Skills",
+    items: ["Independant Working", "Teamwork", "Problem-Solving", "Leadership", "Communication", "Working under pressure", "Motivated and Enthusiastic"],
     icon: <Lightbulb className="w-6 h-6" />
   }
 ]
