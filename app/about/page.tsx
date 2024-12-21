@@ -18,9 +18,6 @@ export default function About() {
           Hello! My name is Mark, and I am 19 years old. I am a third year Computing Science student at Dundee University seeking to gain experience working within a professional environment to allow me to develop my skillset. I am an enthusiastic and bubbly person who enjoys working with people and helping others. Due to my upbringing, religion and a supportive family who encourage my interests, I always strive to make the most out of any situation and work with determination resulting in a positive outcome.
           </p>
           <p className="mb-4">
-            🎮 <span className="font-semibold">As a gamer</span>, I've explored countless virtual worlds and solved puzzles that would make Sherlock Holmes scratch his head. My favorite genres are [your favorite game genres], and I'm always up for a good speedrun challenge.
-          </p>
-          <p className="mb-4">
           Working throughout my academic life has broadened my experiences and has given me new opportunities to learn. I have built up my communication skills to foster good relationships between lecturers and fellow students which has translated well into retail settings and enabled me to work efficiently in a group. I am very driven to complete work assigned to me and I can seek out ways to research more about any given topic using online materials. I am good at making decisions and thinking clearly under pressure, examples being effectively managing university work between group members with upcoming deadlines and navigating cooperation issues. 
           </p>
           <p className="mb-4">

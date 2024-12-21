@@ -8,8 +8,8 @@ const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
 const pressStart2P = Press_Start_2P({ weight: '400', subsets: ['latin'], variable: '--font-press-start-2p' })
 
 export const metadata = {
-  title: 'Your Name - Creative Portfolio',
-  description: 'Gamer, Artist, Coder, Creator',
+  title: "Mark's Portfolio" ,
+  description: 'Portfolio of Mark.C',
 }
 
 export default function RootLayout({
