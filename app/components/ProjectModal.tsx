@@ -1,15 +1,23 @@
+'use client'
+
+import { useState, useEffect } from 'react'
 import Image from 'next/image'
-import { X } from 'lucide-react'
-import React from 'react'
+import { X, ChevronLeft, ChevronRight } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
 
 interface Project {
-  id: number
-  title: string
-  description: string
-  image: string
-  github: string
-  technologies: string[]
-  details: string
+  id: number;
+  title: string;
+  description: string;
+  media: {
+    images?: string[];
+    video?: string;
+  };
+  github: string;
+  demo?: string;
+  technologies: string[];
+  details: string;
+  categories: string[];
 }
 
 interface ProjectModalProps {
@@ -18,17 +26,102 @@ interface ProjectModalProps {
 }
 
 const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) => {
+  const [currentImageIndex, setCurrentImageIndex] = useState(0)
+  const [showVideo, setShowVideo] = useState(false)
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowLeft') {
+        setCurrentImageIndex((prev) => (prev === 0 ? (project.media.images?.length || 1) - 1 : prev - 1))
+      } else if (e.key === 'ArrowRight') {
+        setCurrentImageIndex((prev) => (prev === (project.media.images?.length || 1) - 1 ? 0 : prev + 1))
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [project.media.images])
+
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+    >
+      <motion.div
+        initial={{ scale: 0.9, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0.9, opacity: 0 }}
+        className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto"
+      >
         <div className="p-6">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-2xl font-bold">{project.title}</h2>
-            <button onClick={onClose} className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              onClick={onClose}
+              className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+            >
               <X className="w-6 h-6" />
-            </button>
+            </motion.button>
           </div>
-          <Image src={project.image} alt={project.title} width={800} height={400} className="w-full h-64 object-cover rounded-lg mb-4" />
+          <div className="relative h-64 mb-4">
+            {project.media.images && project.media.images.length > 0 && !showVideo && (
+              <>
+                <AnimatePresence initial={false} custom={currentImageIndex}>
+                  <motion.div
+                    key={currentImageIndex}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.5 }}
+                    className="absolute inset-0"
+                  >
+                    <Image 
+                      src={project.media.images[currentImageIndex]} 
+                      alt={`${project.title} - Image ${currentImageIndex + 1}`} 
+                      layout="fill" 
+                      objectFit="cover" 
+                      className="rounded-lg" 
+                    />
+                  </motion.div>
+                </AnimatePresence>
+                <button
+                  onClick={() => setCurrentImageIndex((prev) => (prev === 0 ? project.media.images!.length - 1 : prev - 1))}
+                  className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full"
+                >
+                  <ChevronLeft className="w-6 h-6" />
+                </button>
+                <button
+                  onClick={() => setCurrentImageIndex((prev) => (prev === project.media.images!.length - 1 ? 0 : prev + 1))}
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full"
+                >
+                  <ChevronRight className="w-6 h-6" />
+                </button>
+              </>
+            )}
+            {project.media.video && (
+              <div className={`absolute inset-0 ${showVideo ? 'block' : 'hidden'}`}>
+                <video 
+                  src={project.media.video} 
+                  controls 
+                  className="w-full h-full object-cover rounded-lg"
+                >
+                  Your browser does not support the video tag.
+                </video>
+              </div>
+            )}
+            {project.media.video && project.media.images && (
+              <button
+                onClick={() => setShowVideo(!showVideo)}
+                className="absolute bottom-2 right-2 bg-black bg-opacity-50 text-white p-2 rounded-full"
+              >
+                {showVideo ? 'Show Images' : 'Show Video'}
+              </button>
+            )}
+          </div>
           <p className="text-gray-600 dark:text-gray-300 mb-4">{project.description}</p>
           <div className="mb-4">
             <h3 className="text-lg font-semibold mb-2">Technologies Used:</h3>
@@ -45,13 +138,32 @@ const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) => {
             <p className="text-gray-600 dark:text-gray-300">{project.details}</p>
           </div>
           <div className="flex justify-between">
-            <a href={project.github} target="_blank" rel="noopener noreferrer" className="bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-4 py-2 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
+            <motion.a
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              href={project.github}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-4 py-2 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+            >
               View on GitHub
-            </a>
+            </motion.a>
+            {project.demo && (
+              <motion.a
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                href={project.demo}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors"
+              >
+                Live Demo
+              </motion.a>
+            )}
           </div>
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   )
 }
 

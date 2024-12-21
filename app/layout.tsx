@@ -2,6 +2,7 @@ import './globals.css'
 import { Inter, Press_Start_2P } from 'next/font/google'
 import Header from './components/Header'
 import Footer from './components/Footer'
+import BackgroundAnimation from './components/BackgroundAnimation'
 import React from 'react'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
@@ -20,6 +21,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`scroll-smooth ${inter.variable} ${pressStart2P.variable}`}>
       <body className="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white">
+        <BackgroundAnimation />
         <div className="min-h-screen flex flex-col">
           <Header />
           <main className="flex-grow container mx-auto px-4 py-8">
