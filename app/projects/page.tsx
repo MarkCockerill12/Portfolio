@@ -14,7 +14,7 @@ interface Project {
     images?: string[];
     video?: string;
   };
-  github: string;
+  github?: string;
   demo?: string;
   technologies: string[];
   details: string;
@@ -24,10 +24,23 @@ interface Project {
 const projects: Project[] = [
   {
     id: 1,
+    title: "SQL Company Website",
+    description: "A website that interacts with a database in form of SQL",
+    media: {
+      images: ["/pics/SteelSummit/Steel1.png", "/pics/SteelSummit/Steel2.png", "/pics/SteelSummit/Steel3.png", "/pics/SteelSummit/Steel4.png", "/pics/SteelSummit/Steel5.png", "/pics/SteelSummit/Steel6.png", "/pics/SteelSummit/Steel7.png", "/pics/SteelSummit/Steel8.png"],
+    },
+    github: "https://github.com/yourusername/pixel-art-generator",
+    demo: "https://pixel-art-generator-demo.com",
+    technologies: ["RenPy", "PicsArt", "Visual Stdio Code"],
+    details: "This mock company website interacts with a database with SQL and php in order to execute queries. It has predfined functions, an SQL builder and more. It has a functional php-sql login system. This was a university assignment and was hosted on amazon web servers, however for the testing and development, docker was used to set up local servers in order for them to interact.",
+    categories: []
+  },
+  {
+    id: 2,
     title: "Visual Novel Addon",
     description: "A soft sequel(?) to Doki Doki Literature Club",
     media: {
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"],
+      images: ["/pics/placeholder.png"],
     },
     github: "https://github.com/yourusername/pixel-art-generator",
     demo: "https://pixel-art-generator-demo.com",
@@ -36,12 +49,12 @@ const projects: Project[] = [
     categories: []
   },
   {
-    id: 2,
+    id: 3,
     title: "3D Animation- Star wars",
     description: "Yep, I made a Star Wars animation",
     media: {
       video: "/sample-video.mp4",
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"],
+      images: ["/pics/placeholder.png"],
     },
     github: "https://github.com/yourusername/rpg-inventory",
     technologies: ["Blender", "DaVinci Resolve",],
@@ -49,26 +62,12 @@ const projects: Project[] = [
     categories: ["Blender", "DaVinci Resolve",]
   },
   {
-    id: 3,
+    id: 4,
     title: "3D Animation- Penthouse",
     description: "Animation",
     media: {
       video: "/sample-video.mp4",
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"],
-    },
-    github: "https://github.com/yourusername/creative-coding-sketchbook",
-    demo: "https://pixel-art-generator-demo.com",
-    technologies: ["Blender", "DaVinci Resolve",],
-    details: "This project showcases my experiments with creative coding. Each sketch is an interactive piece of art that responds to user input or generates unique patterns. It's a fusion of my programming skills and artistic vision.",
-    categories: ["Blender", "DaVinci Resolve",]
-  },
-  {
-    id: 4,
-    title: "3D Animation- IRL Springtrap",
-    description: "Animation",
-    media: {
-      video: "/sample-video.mp4",
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"],
+      images: ["/pics/placeholder.png"],
     },
     github: "https://github.com/yourusername/creative-coding-sketchbook",
     demo: "https://pixel-art-generator-demo.com",
@@ -78,15 +77,55 @@ const projects: Project[] = [
   },
   {
     id: 5,
-    title: "Shrimp",
-    description: "Shrimp",
+    title: "Scribble",
+    description: "A website that interacts with a database in form of SQL",
     media: {
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"],
+      images: ["/pics/placeholder.png"],
+    },
+    github: "https://github.com/yourusername/pixel-art-generator",
+    demo: "https://pixel-art-generator-demo.com",
+    technologies: ["RenPy", "PicsArt", "Visual Stdio Code"],
+    details: "This mock company website interacts with a database with SQL and php in order to execute queries. It has predfined functions, an SQL builder and more. It has a functional php-sql login system. This was a university assignment and was hosted on amazon web servers, however for the testing and development, docker was used to set up local servers in order for them to interact.",
+    categories: []
+  },
+  {
+    id: 6,
+    title: "Sonic Digital Drawing",
+    description: "A website that interacts with a database in form of SQL",
+    media: {
+      images: ["/pics/Sonic/Sonic.png", "/pics/Sonic/SonicShow.png"],
+    },
+    github: "https://github.com/yourusername/pixel-art-generator",
+    demo: "https://pixel-art-generator-demo.com",
+    technologies: ["RenPy", "PicsArt", "Visual Stdio Code"],
+    details: "This mock company website interacts with a database with SQL and php in order to execute queries. It has predfined functions, an SQL builder and more. It has a functional php-sql login system. This was a university assignment and was hosted on amazon web servers, however for the testing and development, docker was used to set up local servers in order for them to interact.",
+    categories: []
+  },
+  {
+    id: 7,
+    title: "3D Animation- IRL Springtrap",
+    description: "Animation",
+    media: {
+      video: "/sample-video.mp4",
+      images: ["/pics/placeholder.png"],
     },
     github: "https://github.com/yourusername/creative-coding-sketchbook",
     demo: "https://pixel-art-generator-demo.com",
-    technologies: ["C#", "Pure uncompromising genious",],
+    technologies: ["Blender", "DaVinci Resolve",],
     details: "This project showcases my experiments with creative coding. Each sketch is an interactive piece of art that responds to user input or generates unique patterns. It's a fusion of my programming skills and artistic vision.",
+    categories: ["Blender", "DaVinci Resolve",]
+  },
+  {
+    id: 8,
+    title: "Shrimp",
+    description: "Shrimp",
+    media: {
+      images: ["/pics/Shrimp/Shrimp.png", "/pics/Shrimp/ShrimpShow.png"],
+    },
+    github: "https://github.com/yourusername/creative-coding-sketchbook",
+    // demo: "https://pixel-art-generator-demo.com",
+    technologies: ["C#", "Pure uncompromising genious",],
+    details: "A simple program that asks if you are a shrimp or not.",
     categories: ["C#"]
   },
 ]
@@ -94,7 +133,7 @@ const projects: Project[] = [
 const allCategories = Array.from(new Set(projects.flatMap(project => project.categories)))
 
 export default function Projects() {
-  const [selectedProject, setSelectedProject] = useState(null)
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null)
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedCategories, setSelectedCategories] = useState<string[]>([])
   const [filteredProjects, setFilteredProjects] = useState(projects)
@@ -198,4 +237,3 @@ export default function Projects() {
     </motion.div>
   )
 }
-

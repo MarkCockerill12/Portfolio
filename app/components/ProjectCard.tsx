@@ -9,7 +9,7 @@ interface Project {
     images?: string[];
     video?: string;
   };
-  github: string;
+  github?: string;
   demo?: string;
   technologies: string[];
 }
@@ -23,11 +23,12 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onSelect }) => {
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden transition-transform duration-300 hover:scale-105 cursor-pointer" onClick={onSelect}>
       <Image 
-        src={project.media.images?.[0] || project.media.video || '/placeholder.svg'} 
+        src={project.media.images?.[0] || project.media.video || '/pics/placeholder.png'} 
         alt={project.title} 
         width={400} 
         height={200} 
         className="w-full h-48 object-cover" 
+        style={{ objectFit: 'cover' }}
       />
       <div className="p-6">
         <h3 className="text-xl font-bold mb-2">{project.title}</h3>
@@ -45,11 +46,11 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onSelect }) => {
             GitHub
           </a>
           {project.demo && (
-  <a href={project.demo} target="_blank" rel="noopener noreferrer" className="flex items-center text-green-500 hover:text-green-600" onClick={(e) => e.stopPropagation()}>
-    <ExternalLink className="w-5 h-5 mr-1" />
-    Live Demo
-  </a>
-)}
+            <a href={project.demo} target="_blank" rel="noopener noreferrer" className="flex items-center text-green-500 hover:text-green-600" onClick={(e) => e.stopPropagation()}>
+              <ExternalLink className="w-5 h-5 mr-1" />
+              Live Demo
+            </a>
+          )}
         </div>
       </div>
     </div>
@@ -57,4 +58,3 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onSelect }) => {
 }
 
 export default ProjectCard
-

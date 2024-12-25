@@ -13,7 +13,7 @@ interface Project {
     images?: string[];
     video?: string;
   };
-  github: string;
+  github?: string;
   demo?: string;
   technologies: string[];
   details: string;
@@ -28,6 +28,7 @@ interface ProjectModalProps {
 const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [showVideo, setShowVideo] = useState(false)
+  const [isLarge, setIsLarge] = useState(false)
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -67,7 +68,8 @@ const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) => {
               <X className="w-6 h-6" />
             </motion.button>
           </div>
-          <div className="relative h-64 mb-4">
+          {/* heres the image/video part of modal */}
+          <div className={`relative ${isLarge ? 'h-96' : 'h-64'} mb-4`}>
             {project.media.images && project.media.images.length > 0 && !showVideo && (
               <>
                 <AnimatePresence initial={false} custom={currentImageIndex}>
@@ -82,8 +84,8 @@ const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) => {
                     <Image 
                       src={project.media.images[currentImageIndex]} 
                       alt={`${project.title} - Image ${currentImageIndex + 1}`} 
-                      layout="fill" 
-                      objectFit="cover" 
+                      fill
+                      style={{ objectFit: 'cover' }}
                       className="rounded-lg" 
                     />
                   </motion.div>
@@ -121,6 +123,12 @@ const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) => {
                 {showVideo ? 'Show Images' : 'Show Video'}
               </button>
             )}
+            <button
+              onClick={() => setIsLarge(!isLarge)}
+              className="absolute bottom-2 left-2 bg-black bg-opacity-50 text-white p-2 rounded-full"
+            >
+              {isLarge ? 'Make Smaller' : 'Make Larger'}
+            </button>
           </div>
           <p className="text-gray-600 dark:text-gray-300 mb-4">{project.description}</p>
           <div className="mb-4">
@@ -168,4 +176,3 @@ const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) => {
 }
 
 export default ProjectModal
-
