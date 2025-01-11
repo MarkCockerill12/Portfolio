@@ -4,28 +4,25 @@
 
 :root {
   --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+  --background-start-rgb: 255, 255, 255;
+  --background-end-rgb: 214, 219, 220;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255; /* White text for dark mode */
-    --background-start-rgb: 0, 0, 139; /* Dark blue */
-    --background-end-rgb: 0, 0, 0; /* Black */
-  }
+.dark {
+  --foreground-rgb: 255, 255, 255;
+  --background-start-rgb: 0, 0, 139;
+  --background-end-rgb: 0, 0, 0;
 }
 
 body {
   color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    ),
-    rgb(var(--background-start-rgb));
 }
 
 .font-press-start-2p {
   font-family: var(--font-press-start-2p);
 }
+
+.bg-gradient-custom {
+  background: linear-gradient(to bottom, rgba(var(--background-start-rgb), 0.7), rgba(var(--background-end-rgb), 0.7));
+}
+

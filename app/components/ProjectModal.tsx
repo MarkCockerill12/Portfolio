@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
 import { X, ChevronLeft, ChevronRight } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -29,6 +29,7 @@ const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [showVideo, setShowVideo] = useState(false)
   const [isLarge, setIsLarge] = useState(false)
+  const modalRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -39,9 +40,19 @@ const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) => {
       }
     }
 
+    const handleClickOutside = (e: MouseEvent) => {
+      if (modalRef.current && !modalRef.current.contains(e.target as Node)) {
+        onClose()
+      }
+    }
+
     window.addEventListener('keydown', handleKeyDown)
-    return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [project.media.images])
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown)
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [project.media.images, onClose])
 
   return (
     <motion.div
@@ -51,6 +62,7 @@ const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) => {
       className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
     >
       <motion.div
+        ref={modalRef}
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.9, opacity: 0 }}
@@ -68,8 +80,7 @@ const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) => {
               <X className="w-6 h-6" />
             </motion.button>
           </div>
-          {/* heres the image/video part of modal */}
-          <div className={`relative ${isLarge ? 'h-96' : 'h-64'} mb-4`}>
+          <div className={`relative ${isLarge || showVideo ? 'h-96' : 'h-64'} mb-4`}>
             {project.media.images && project.media.images.length > 0 && !showVideo && (
               <>
                 <AnimatePresence initial={false} custom={currentImageIndex}>
@@ -117,18 +128,23 @@ const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) => {
             )}
             {project.media.video && project.media.images && (
               <button
-                onClick={() => setShowVideo(!showVideo)}
+                onClick={() => {
+                  setShowVideo(!showVideo)
+                  setIsLarge(showVideo)
+                }}
                 className="absolute bottom-2 right-2 bg-black bg-opacity-50 text-white p-2 rounded-full"
               >
                 {showVideo ? 'Show Images' : 'Show Video'}
               </button>
             )}
-            <button
-              onClick={() => setIsLarge(!isLarge)}
-              className="absolute bottom-2 left-2 bg-black bg-opacity-50 text-white p-2 rounded-full"
-            >
-              {isLarge ? 'Make Smaller' : 'Make Larger'}
-            </button>
+            {!showVideo && (
+              <button
+                onClick={() => setIsLarge(!isLarge)}
+                className="absolute bottom-2 left-2 bg-black bg-opacity-50 text-white p-2 rounded-full"
+              >
+                {isLarge ? 'Make Smaller' : 'Make Larger'}
+              </button>
+            )}
           </div>
           <p className="text-gray-600 dark:text-gray-300 mb-4">{project.description}</p>
           <div className="mb-4">
@@ -146,16 +162,18 @@ const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) => {
             <p className="text-gray-600 dark:text-gray-300">{project.details}</p>
           </div>
           <div className="flex justify-between">
-            <motion.a
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              href={project.github}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-4 py-2 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
-            >
-              View on GitHub
-            </motion.a>
+            {project.github && (
+              <motion.a
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                href={project.github}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-4 py-2 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+              >
+                View on GitHub
+              </motion.a>
+            )}
             {project.demo && (
               <motion.a
                 whileHover={{ scale: 1.05 }}
@@ -176,3 +194,4 @@ const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) => {
 }
 
 export default ProjectModal
+

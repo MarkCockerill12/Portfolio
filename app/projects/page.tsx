@@ -5,6 +5,9 @@ import { motion, AnimatePresence } from 'framer-motion'
 import ProjectCard from '../components/ProjectCard'
 import ProjectModal from '../components/ProjectModal'
 import { Search, Filter } from 'lucide-react'
+//import AnimatedButton from '../components/AnimatedButton'
+import HoverText from '../components/HoverText'
+import ScrollAnimation from '../components/ScrollAnimation'
 
 interface Project {
   id: number;
@@ -29,91 +32,44 @@ const projects: Project[] = [
     media: {
       images: ["/pics/SteelSummit/Steel1.png", "/pics/SteelSummit/Steel2.png", "/pics/SteelSummit/Steel3.png", "/pics/SteelSummit/Steel4.png", "/pics/SteelSummit/Steel5.png", "/pics/SteelSummit/Steel6.png", "/pics/SteelSummit/Steel7.png", "/pics/SteelSummit/Steel8.png"],
     },
-    github: "https://github.com/yourusername/pixel-art-generator",
-    demo: "https://pixel-art-generator-demo.com",
-    technologies: ["RenPy", "PicsArt", "Visual Stdio Code"],
-    details: "This mock company website interacts with a database with SQL and php in order to execute queries. It has predfined functions, an SQL builder and more. It has a functional php-sql login system. This was a university assignment and was hosted on amazon web servers, however for the testing and development, docker was used to set up local servers in order for them to interact.",
-    categories: []
+    github: "https://github.com/MarkCockerill12/DataAWS",
+    technologies: ["Visual Stdio Code", "MySQL", "PHP", "Amazon Web Services", "Docker"],
+    details: "This mock company website interacts with a database with SQL and php in order to execute queries. It has predfined functions, an SQL builder and more. It has a functional php-sql login system. This was a university assignment and was hosted on amazon web servers, however for the testing and development, docker was used to set up local servers in order for them to interact. Our next steps with this website would be to touch up some of the visual aspects of it.",
+    categories: ["SQL", "Python", "HTML"]
   },
   {
     id: 2,
     title: "Visual Novel Addon",
-    description: "A soft sequel(?) to Doki Doki Literature Club",
+    description: "A simple addon to Visual Novel 'Doki Doki Literature Club' by Team Salvato.",
     media: {
       images: ["/pics/placeholder.png"],
     },
-    github: "https://github.com/yourusername/pixel-art-generator",
-    demo: "https://pixel-art-generator-demo.com",
     technologies: ["RenPy", "PicsArt", "Visual Stdio Code"],
-    details: "This project combines my love for art and coding. Users can create pixel art, animate it, and share their creations with a community of artists. It features a custom-built drawing engine and real-time collaboration tools.",
-    categories: []
-  },
-  {
-    id: 3,
-    title: "3D Animation- Star wars",
-    description: "Yep, I made a Star Wars animation",
-    media: {
-      video: "/sample-video.mp4",
-      images: ["/pics/placeholder.png"],
-    },
-    github: "https://github.com/yourusername/rpg-inventory",
-    technologies: ["Blender", "DaVinci Resolve",],
-    details: "Inspired by my favorite RPGs, I created a robust inventory system that game developers can easily integrate into their projects. It supports item stacking, weight limits, equipment slots, and a drag-and-drop interface.",
-    categories: ["Blender", "DaVinci Resolve",]
+    details: "A simple addon to Visual Novel 'Doki Doki Literature Club' by Team Salvato. This project was made for fun and the desire to experience the RenPy coding language.",
+    categories: ["Game"]
   },
   {
     id: 4,
     title: "3D Animation- Penthouse",
-    description: "Animation",
+    description: "An animation of my room becoming a penthouse suite",
     media: {
-      video: "/sample-video.mp4",
-      images: ["/pics/placeholder.png"],
+      images: ["/pics/3D/Penthouse/Penthouse.png"],
+      video: "/pics/3D/Penthouse/penthouse.mp4",
     },
-    github: "https://github.com/yourusername/creative-coding-sketchbook",
-    demo: "https://pixel-art-generator-demo.com",
     technologies: ["Blender", "DaVinci Resolve",],
-    details: "This project showcases my experiments with creative coding. Each sketch is an interactive piece of art that responds to user input or generates unique patterns. It's a fusion of my programming skills and artistic vision.",
-    categories: ["Blender", "DaVinci Resolve",]
-  },
-  {
-    id: 5,
-    title: "Scribble",
-    description: "A website that interacts with a database in form of SQL",
-    media: {
-      images: ["/pics/placeholder.png"],
-    },
-    github: "https://github.com/yourusername/pixel-art-generator",
-    demo: "https://pixel-art-generator-demo.com",
-    technologies: ["RenPy", "PicsArt", "Visual Stdio Code"],
-    details: "This mock company website interacts with a database with SQL and php in order to execute queries. It has predfined functions, an SQL builder and more. It has a functional php-sql login system. This was a university assignment and was hosted on amazon web servers, however for the testing and development, docker was used to set up local servers in order for them to interact.",
-    categories: []
+    details: "This project was a combination of real life and blender animation, using DaVince Resole video editior to join the two together.",
+    categories: ["3D Animation", "Video Editing",]
   },
   {
     id: 6,
     title: "Sonic Digital Drawing",
-    description: "A website that interacts with a database in form of SQL",
+    description: "A drawing of Sonic, created on Krita",
     media: {
       images: ["/pics/Sonic/Sonic.png", "/pics/Sonic/SonicShow.png"],
     },
-    github: "https://github.com/yourusername/pixel-art-generator",
-    demo: "https://pixel-art-generator-demo.com",
-    technologies: ["RenPy", "PicsArt", "Visual Stdio Code"],
+    technologies: ["Krita"],
     details: "This mock company website interacts with a database with SQL and php in order to execute queries. It has predfined functions, an SQL builder and more. It has a functional php-sql login system. This was a university assignment and was hosted on amazon web servers, however for the testing and development, docker was used to set up local servers in order for them to interact.",
-    categories: []
-  },
-  {
-    id: 7,
-    title: "3D Animation- IRL Springtrap",
-    description: "Animation",
-    media: {
-      video: "/sample-video.mp4",
-      images: ["/pics/placeholder.png"],
-    },
-    github: "https://github.com/yourusername/creative-coding-sketchbook",
-    demo: "https://pixel-art-generator-demo.com",
-    technologies: ["Blender", "DaVinci Resolve",],
-    details: "This project showcases my experiments with creative coding. Each sketch is an interactive piece of art that responds to user input or generates unique patterns. It's a fusion of my programming skills and artistic vision.",
-    categories: ["Blender", "DaVinci Resolve",]
+    categories: ["Digital Art"]
   },
   {
     id: 8,
@@ -122,10 +78,8 @@ const projects: Project[] = [
     media: {
       images: ["/pics/Shrimp/Shrimp.png", "/pics/Shrimp/ShrimpShow.png"],
     },
-    github: "https://github.com/yourusername/creative-coding-sketchbook",
-    // demo: "https://pixel-art-generator-demo.com",
-    technologies: ["C#", "Pure uncompromising genious",],
-    details: "A simple program that asks if you are a shrimp or not.",
+    technologies: ["C#", "Pure uncompromising genius",],
+    details: "A shrimple program that asks if you are a shrimp or not.",
     categories: ["C#"]
   },
 ]
@@ -138,6 +92,7 @@ export default function Projects() {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([])
   const [filteredProjects, setFilteredProjects] = useState(projects)
   const [isFilterMenuOpen, setIsFilterMenuOpen] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
     const filtered = projects.filter(project => 
@@ -145,6 +100,9 @@ export default function Projects() {
       (selectedCategories.length === 0 || selectedCategories.some(cat => project.categories.includes(cat)))
     )
     setFilteredProjects(filtered)
+    
+    // Simulate loading
+    setTimeout(() => setIsLoading(false), 1500)
   }, [searchTerm, selectedCategories])
 
   const toggleCategory = (category: string) => {
@@ -161,7 +119,11 @@ export default function Projects() {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
     >
-      <h1 className="text-4xl font-bold mb-8 text-center font-press-start-2p">My Projects</h1>
+      <ScrollAnimation>
+        <h1 className="text-4xl font-bold mb-8 text-center font-press-start-2p">
+          <HoverText>My Projects</HoverText>
+        </h1>
+      </ScrollAnimation>
       <div className="mb-8 flex flex-col md:flex-row gap-4">
         <div className="relative flex-grow">
           <input
@@ -174,30 +136,27 @@ export default function Projects() {
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
         </div>
         <div className="relative">
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="p-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 flex items-center"
+          <button
             onClick={() => setIsFilterMenuOpen(!isFilterMenuOpen)}
+            className="p-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 flex items-center"
           >
             <Filter className="mr-2" /> Filter
-          </motion.button>
+          </button>
           {isFilterMenuOpen && (
             <div className="absolute top-full left-0 mt-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg p-2 z-10">
               {allCategories.map(category => (
-                <motion.button
-                  key={category}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className={`block w-full text-left p-2 rounded ${
-                    selectedCategories.includes(category)
-                      ? 'bg-blue-500 text-white'
-                      : 'hover:bg-gray-100 dark:hover:bg-gray-700'
-                  }`}
-                  onClick={() => toggleCategory(category)}
-                >
-                  {category}
-                </motion.button>
+                <HoverText key={category}>
+                  <button
+                    onClick={() => toggleCategory(category)}
+                    className={`block w-full text-left p-2 rounded ${
+                      selectedCategories.includes(category)
+                        ? 'bg-blue-500 text-white'
+                        : 'hover:bg-gray-100 dark:hover:bg-gray-700'
+                    }`}
+                  >
+                    {category}
+                  </button>
+                </HoverText>
               ))}
             </div>
           )}
@@ -219,15 +178,16 @@ export default function Projects() {
       >
         <AnimatePresence>
           {filteredProjects.map((project) => (
-            <motion.div
-              key={project.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.3 }}
-            >
-              <ProjectCard project={project} onSelect={() => setSelectedProject(project)} />
-            </motion.div>
+            <ScrollAnimation key={project.id}>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.3 }}
+              >
+                <ProjectCard project={project} onSelect={() => setSelectedProject(project)} />
+              </motion.div>
+            </ScrollAnimation>
           ))}
         </AnimatePresence>
       </motion.div>
@@ -237,3 +197,4 @@ export default function Projects() {
     </motion.div>
   )
 }
+
