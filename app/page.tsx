@@ -1,27 +1,84 @@
+'use client'
+
 import Link from 'next/link'
-import Image from 'next/image'
 import React from 'react'
+import { motion } from 'framer-motion'
+import { Code, Palette, Gamepad, Lightbulb } from 'lucide-react'
+import ScrollAnimation from '../app/components/ScrollAnimation'
+import HoverText from '../app/components/HoverText'
+import AnimatedButton from '../app/components/AnimatedButton'
 
 export default function Home() {
   return (
-    <div className="flex flex-col items-center justify-center min-h-[calc(100vh-4rem)]">
-      <div className="text-center">
-        <h1 className="text-4xl md:text-6xl font-bold mb-4 font-press-start-2p">Welcome!</h1>
-        <h2 className="text-2xl md:text-3xl mb-8 text-blue-500 dark:text-blue-400"></h2>
-        <div className="flex justify-center space-x-4 mb-8">
-          <Image src="/placeholder.svg" alt="Gaming Icon" width={64} height={64} className="rounded-lg" />
-          <Image src="/placeholder.svg" alt="Art Icon" width={64} height={64} className="rounded-lg" />
-          <Image src="/placeholder.svg" alt="Code Icon" width={64} height={64} className="rounded-lg" />
-          <Image src="/placeholder.svg" alt="Creative Icon" width={64} height={64} className="rounded-lg" />
+    <ScrollAnimation>
+      <div className="flex flex-col items-center justify-center min-h-[calc(100vh-4rem)]">
+        <div className="text-center">
+          <motion.h1 
+            className="text-4xl md:text-6xl font-bold mb-4 font-press-start-2p"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <HoverText>Welcome!</HoverText>
+          </motion.h1>
+          <motion.h2 
+            className="text-2xl md:text-3xl mb-8 text-blue-500 dark:text-blue-400"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
+          </motion.h2>
+          <Link href="/skills" passHref>
+          <motion.div 
+            className="flex justify-center space-x-4 mb-8"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+          >
+            {[
+              { Icon: Gamepad, label: "Gaming" },
+              { Icon: Palette, label: "Art" },
+              { Icon: Code, label: "Coding" },
+              { Icon: Lightbulb, label: "Creativity" }
+            ].map(({ Icon, label }, index) => (
+              <motion.div
+                key={label}
+                className="flex flex-col items-center"
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+              >
+                <Icon className="w-16 h-16 text-blue-500 dark:text-blue-400" />
+                <span className="mt-2 text-sm">
+                  <HoverText>{label}</HoverText>
+                </span>
+              </motion.div>
+            ))}
+          </motion.div></Link>
+          <motion.p 
+            className="text-xl mb-8 max-w-2xl mx-auto"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.6 }}
+          >
+            <HoverText>
+              Welcome to my portfolio! I'm a computer science student with a passion for gaming, art, and coding. 
+              More projects will be added with time as some are work in progress.
+            </HoverText>
+          </motion.p>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.8 }}
+          >
+            <Link href="/projects" passHref>
+              <AnimatedButton>
+                Explore My Projects
+              </AnimatedButton>
+            </Link>
+          </motion.div>
         </div>
-        <p className="text-xl mb-8 max-w-2xl mx-auto">
-          Welcome to my portfolio! I'm a computer science student with a passion for gaming, art, and coding.
-        </p>
-        <Link href="/projects" className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg transition duration-300 ease-in-out transform hover:scale-105">
-          Explore My Projects
-        </Link>
       </div>
-    </div>
+    </ScrollAnimation>
   )
 }
 
