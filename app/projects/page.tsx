@@ -53,7 +53,7 @@ const projects: Project[] = [
     title: "3D Animation- Penthouse",
     description: "An animation of my room becoming a penthouse suite",
     media: {
-      images: ["/pics/3D/Penthouse/Penthouse.png"],
+      images: ["/pics/3D/Penthouse/Penthouse.PNG"],
       video: "/pics/3D/Penthouse/PenthouseVid.mp4",
     },
     technologies: ["Blender", "DaVinci Resolve",],
