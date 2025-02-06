@@ -36,10 +36,11 @@ export default function Home() {
             transition={{ duration: 0.5, delay: 0.4 }}
           >
             {[
-              { Icon: Gamepad, label: "Gaming" },
-              { Icon: Palette, label: "Art" },
               { Icon: Code, label: "Coding" },
-              { Icon: Lightbulb, label: "Creativity" }
+              { Icon: Lightbulb, label: "Creativity" },
+              { Icon: Palette, label: "Art" },
+              { Icon: Gamepad, label: "Gaming" }
+
             ].map(({ Icon, label }, index) => (
               <motion.div
                 key={label}

@@ -4,11 +4,12 @@ import { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
 import { X, ChevronLeft, ChevronRight } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
+import Link from 'next/link';
+
 
 interface Project {
   id: number;
   title: string;
-  description: string;
   media: {
     images?: string[];
     video?: string;
@@ -146,7 +147,6 @@ const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) => {
               </button>
             )}
           </div>
-          <p className="text-gray-600 dark:text-gray-300 mb-4">{project.description}</p>
           <div className="mb-4">
             <h3 className="text-lg font-semibold mb-2">Technologies Used:</h3>
             <div className="flex flex-wrap gap-2">
@@ -159,7 +159,10 @@ const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) => {
           </div>
           <div className="mb-4">
             <h3 className="text-lg font-semibold mb-2">Project Details:</h3>
-            <p className="text-gray-600 dark:text-gray-300">{project.details}</p>
+            <p 
+              className="text-gray-600 dark:text-gray-300"
+              dangerouslySetInnerHTML={{ __html: project.details }}
+            />
           </div>
           <div className="flex justify-between">
             {project.github && (

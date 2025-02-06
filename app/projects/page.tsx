@@ -8,6 +8,7 @@ import { Search, Filter } from 'lucide-react'
 //import AnimatedButton from '../components/AnimatedButton'
 import HoverText from '../components/HoverText'
 import ScrollAnimation from '../components/ScrollAnimation'
+import Link from 'next/link'
 
 interface Project {
   id: number;
@@ -27,6 +28,18 @@ interface Project {
 const projects: Project[] = [
   {
     id: 1,
+    title: "NCR ATM program",
+    description: "An application that acts as a mock ATM for NCR",
+    media: {
+      images: ["/pics/Agile/Agile2.PNG", "/pics/Agile/Agile3.PNG", "/pics/Agile/Agile4.PNG", "/pics/Agile/Agile5.PNG", "/pics/Agile/Agile6.PNG", "/pics/Agile/Agile7.PNG", "/pics/Agile/Agile8.PNG", "/pics/Agile/Agile1.PNG", "/pics/Agile/Agile9.PNG"],
+    },
+    github: "https://github.com/MarkCockerill12/AC31007AgileGroup1",
+    technologies: ["Visual Stdio Code", "MySQL", "Go", "Amazon Web Services", "Docker", "React", "Electron", "Next.js", "Python", "Agile Methodologies"],
+    details: "This mock ATM program was our task issues by NCR for learning agile methodologies, it utilises electron to showcase the front end, which handles the visual aspects. The front end then communciates with a Go-coded switch by sending JSON, the switch sorts out the different card numbers and sends them to a seperate simulation which in turn interacts with information in a database. This program is capable of multi currency support, multiple langauges and has error handling. ",
+    categories: ["SQL", "Python", "HTML"]
+  },
+  {
+    id: 2,
     title: "SQL Company Website",
     description: "A website that interacts with a database in form of SQL",
     media: {
@@ -38,11 +51,11 @@ const projects: Project[] = [
     categories: ["SQL", "Python", "HTML"]
   },
   {
-    id: 2,
+    id: 3,
     title: "Visual Novel Addon",
     description: "A simple addon to Visual Novel 'Doki Doki Literature Club' by Team Salvato.",
     media: {
-      images: ["/pics/placeholder.png"],
+      images: ["/pics/Doki/DokiDev.PNG", "/pics/Doki/DokiGame.PNG"],
     },
     technologies: ["RenPy", "PicsArt", "Visual Stdio Code"],
     details: "A simple addon to Visual Novel 'Doki Doki Literature Club' by Team Salvato. This project was made for fun and the desire to experience the RenPy coding language.",
@@ -50,6 +63,17 @@ const projects: Project[] = [
   },
   {
     id: 4,
+    title: "Raspbery Pi Pico Web Texter",
+    description: "Coming soon- A program that uses Twilio and a Raspberry Pi Pico W to send text messages",
+    media: {
+      images: ["/pics/placeholder.png"],
+    },
+    technologies: ["RenPy", "PicsArt", "Visual Stdio Code"],
+    details: "The Raspbery Pi W hosts a web server which allows the user to input text, the program then uses the Twilio API to send text messages through the pico.",
+    categories: ["Game"]
+  },
+  {
+    id: 5,
     title: "3D Animation- Penthouse",
     description: "An animation of my room becoming a penthouse suite",
     media: {
@@ -57,22 +81,58 @@ const projects: Project[] = [
       video: "/pics/3D/Penthouse/PenthouseVid.mp4",
     },
     technologies: ["Blender", "DaVinci Resolve",],
-    details: "This project was a combination of real life and blender animation, using DaVince Resole video editior to join the two together.",
+    details: "This project was a combination of real life and blender animation, using DaVinci Resole video editior to join the two together.",
     categories: ["3D Animation", "Video Editing",]
   },
   {
     id: 6,
+    title: "Encrypted Login System with backdoor",
+    description: "A login system that is suposedly secure",
+    media: {
+      images: ["/pics/Wadiya/Wadiya1.PNG", "/pics/Wadiya/Wadiya2.PNG"],
+    },
+    github: "https://github.com/MarkCockerill12/VirusWadiya",
+    technologies: ["Visual Studio Code", "C++"],
+    details: `This project was a product of our University Information Security module, where we were tasked with making a login system with a backdoor that was incredibly difficult to crack if only looking at the code. <a href="/docs/backdoor_explanation.pdf" target="_blank" class="text-blue-500 hover:underline">View detailed explanation</a>`,    
+    categories: ["Security", "C++"]
+},
+  {
+    id: 7,
+    title: "This portfolio",
+    description: "This very Portfolio, made with react and tailwind",
+    media: {
+      images: ["/pics/Portfolio/Port1.PNG", "/pics/Portfolio/Port2.PNG"],
+    },
+    github: "https://github.com/MarkCockerill12/Portfolio",
+    technologies: ["Visual Studio Code", "React", "Next.js", "TypeScript", "Tailwind"],
+    details: "This project was a product of our University Information Security module, where we were taked with making a login system with a backdoor that was incredibly difficult to crack if only looking at the code.",
+    categories: ["", "",]
+  },
+  {
+    id: 8,
     title: "Sonic Digital Drawing",
     description: "A drawing of Sonic, created on Krita",
     media: {
       images: ["/pics/Sonic/Sonic.png", "/pics/Sonic/SonicShow.png"],
     },
     technologies: ["Krita"],
-    details: "This mock company website interacts with a database with SQL and php in order to execute queries. It has predfined functions, an SQL builder and more. It has a functional php-sql login system. This was a university assignment and was hosted on amazon web servers, however for the testing and development, docker was used to set up local servers in order for them to interact.",
+    details: "A digital drawing of Sonic the Hedgehog racing alongside Metal Sonic, created on Krita.",
     categories: ["Digital Art"]
   },
   {
-    id: 8,
+    id: 9,
+    title: "Chat Bot and Server",
+    description: "A chat Bot and Server that interact with HexChat",
+    media: {
+      images: ["/pics/HexChat/Hex1.PNG", "/pics/HexChat/Hex2.PNG"],
+    },
+    github: "https://github.com/MarkCockerill12/ChatBotLol",
+    technologies: ["Krita"],
+    details: "A chat Bot and Server that interact with HexChat, the chat Bot responds to commands and user messages. The server attempts to repplicate a MiniIRC server.",
+    categories: ["Digital Art"]
+  },
+  {
+    id: 10,
     title: "Shrimp",
     description: "Shrimp",
     media: {
@@ -138,7 +198,7 @@ export default function Projects() {
         <div className="relative">
           <button
             onClick={() => setIsFilterMenuOpen(!isFilterMenuOpen)}
-            className="p-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 flex items-center"
+            className="p-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 flex items-center duration-200 hover:scale-110"
           >
             <Filter className="mr-2" /> Filter
           </button>
