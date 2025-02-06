@@ -12,7 +12,7 @@ const HoverText: React.FC<HoverTextProps> = ({ children, className }) => {
   return (
     <motion.span
       className={`inline-block ${className} hover:text-blue-500`}
-      whileHover={{ scale: 1.03 }}
+      whileHover={{ scale: 1.02 }}
       transition={{ type: 'spring', stiffness: 300 }}
     >
       {children}
