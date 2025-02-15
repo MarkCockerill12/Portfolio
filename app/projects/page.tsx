@@ -8,7 +8,7 @@ import { Search, Filter } from 'lucide-react'
 //import AnimatedButton from '../components/AnimatedButton'
 import HoverText from '../components/HoverText'
 import ScrollAnimation from '../components/ScrollAnimation'
-import Link from 'next/link'
+// import Link from 'next/link'
 
 interface Project {
   id: number;
@@ -24,6 +24,7 @@ interface Project {
   details: string;
   categories: string[];
 }
+
 
 const projects: Project[] = [
   {
@@ -152,7 +153,6 @@ export default function Projects() {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([])
   const [filteredProjects, setFilteredProjects] = useState(projects)
   const [isFilterMenuOpen, setIsFilterMenuOpen] = useState(false)
-  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
     const filtered = projects.filter(project => 
@@ -160,9 +160,6 @@ export default function Projects() {
       (selectedCategories.length === 0 || selectedCategories.some(cat => project.categories.includes(cat)))
     )
     setFilteredProjects(filtered)
-    
-    // Simulate loading
-    setTimeout(() => setIsLoading(false), 1500)
   }, [searchTerm, selectedCategories])
 
   const toggleCategory = (category: string) => {
@@ -203,7 +200,7 @@ export default function Projects() {
             <Filter className="mr-2" /> Filter
           </button>
           {isFilterMenuOpen && (
-            <div className="absolute top-full left-0 mt-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg p-2 z-10">
+            <div className="absolute top-full right-0 mt-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg p-2 z-10">
               {allCategories.map(category => (
                 <HoverText key={category}>
                   <button
@@ -257,4 +254,3 @@ export default function Projects() {
     </motion.div>
   )
 }
-

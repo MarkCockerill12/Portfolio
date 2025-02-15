@@ -14,10 +14,6 @@
   --background-end-rgb: 0, 0, 0;
 }
 
-body {
-  color: rgb(var(--foreground-rgb));
-}
-
 .font-press-start-2p {
   font-family: var(--font-press-start-2p);
 }
@@ -26,3 +22,6 @@ body {
   background: linear-gradient(to bottom, rgba(var(--background-start-rgb), 0.7), rgba(var(--background-end-rgb), 0.7));
 }
 
+.bg-gradient-custom-dark {
+  background: linear-gradient(to bottom, rgba(var(--background-start-rgb), 0.7), rgba(var(--background-end-rgb), 0.7));
+}
