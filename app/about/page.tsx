@@ -98,7 +98,7 @@ const AboutSection = () => (
         transition={{ duration: 0.5 }}
       >
         <Image
-          src="/pics/placeholder.PNG"
+          src="/pics/placeholder.png"
           alt="Profile Picture"
           width={300}
           height={300}
