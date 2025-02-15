@@ -76,7 +76,7 @@ const Header = () => {
             </div>
           </div>
           <ul className={`${menuOpen ? 'block' : 'hidden'} md:flex md:space-x-4 mt-4 md:mt-0`}>
-            {['Home', 'About', 'Projects', 'Skills', 'Experience'].map((item) => (
+            {['Home', 'About', 'Projects', 'Skills', 'Experience', 'Qualifications'].map((item) => (
               <li key={item}>
                 <ClickAnimation>
                   <Link href={item === 'Home' ? '/' : `/${item.toLowerCase()}`} className="block py-2 hover:text-blue-500 relative">

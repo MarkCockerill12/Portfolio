@@ -2,23 +2,21 @@
 
 import { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
-import { X, ChevronLeft, ChevronRight } from 'lucide-react'
+import { X, ChevronLeft, ChevronRight, Maximize2, Minimize2, Film, Image as ImageIcon, Github, ExternalLink } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
-import Link from 'next/link';
-
 
 interface Project {
-  id: number;
-  title: string;
+  id: number
+  title: string
   media: {
-    images?: string[];
-    video?: string;
-  };
-  github?: string;
-  demo?: string;
-  technologies: string[];
-  details: string;
-  categories: string[];
+    images?: string[]
+    video?: string
+  }
+  github?: string
+  demo?: string
+  technologies: string[]
+  details: string
+  categories: string[]
 }
 
 interface ProjectModalProps {
@@ -34,10 +32,16 @@ const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) => {
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'ArrowLeft') {
-        setCurrentImageIndex((prev) => (prev === 0 ? (project.media.images?.length || 1) - 1 : prev - 1))
-      } else if (e.key === 'ArrowRight') {
-        setCurrentImageIndex((prev) => (prev === (project.media.images?.length || 1) - 1 ? 0 : prev + 1))
+      if (e.key === 'Escape') onClose()
+      if (e.key === 'ArrowLeft' && !showVideo) {
+        setCurrentImageIndex(prev => 
+          prev === 0 ? (project.media.images?.length || 1) - 1 : prev - 1
+        )
+      }
+      if (e.key === 'ArrowRight' && !showVideo) {
+        setCurrentImageIndex(prev => 
+          prev === (project.media.images?.length || 1) - 1 ? 0 : prev + 1
+        )
       }
     }
 
@@ -53,21 +57,21 @@ const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) => {
       window.removeEventListener('keydown', handleKeyDown)
       document.removeEventListener('mousedown', handleClickOutside)
     }
-  }, [project.media.images, onClose])
+  }, [project.media.images, onClose, showVideo])
 
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+      className="fixed inset-0 bg-black/75 flex items-center justify-center p-4 z-50 backdrop-blur-sm"
     >
       <motion.div
         ref={modalRef}
-        initial={{ scale: 0.9, opacity: 0 }}
+        initial={{ scale: 0.95, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
-        exit={{ scale: 0.9, opacity: 0 }}
-        className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto"
+        exit={{ scale: 0.95, opacity: 0 }}
+        className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-5xl w-full max-h-[90vh] overflow-y-auto"
       >
         <div className="p-6">
           <div className="flex justify-between items-center mb-4">
@@ -81,114 +85,166 @@ const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) => {
               <X className="w-6 h-6" />
             </motion.button>
           </div>
-          <div className={`relative ${isLarge || showVideo ? 'h-96' : 'h-64'} mb-4`}>
+
+          <div className={`relative ${isLarge ? 'h-[70vh]' : 'h-[50vh]'} mb-4 rounded-lg overflow-hidden bg-white dark:bg-gray-800`}>
             {project.media.images && project.media.images.length > 0 && !showVideo && (
               <>
-                <AnimatePresence initial={false} custom={currentImageIndex}>
+                <AnimatePresence initial={false} mode="wait">
                   <motion.div
                     key={currentImageIndex}
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    transition={{ duration: 0.5 }}
-                    className="absolute inset-0"
+                    transition={{ duration: 0.3 }}
+                    className="relative w-full h-full"
                   >
                     <Image 
                       src={project.media.images[currentImageIndex]} 
                       alt={`${project.title} - Image ${currentImageIndex + 1}`} 
                       fill
-                      style={{ objectFit: 'cover' }}
-                      className="rounded-lg" 
+                      className="object-contain"
+                      sizes="(max-width: 1200px) 100vw, 1200px"
+                      priority
                     />
+                    <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/50 text-white px-3 py-1 rounded-full">
+                      {currentImageIndex + 1} / {project.media.images.length}
+                    </div>
                   </motion.div>
                 </AnimatePresence>
-                <button
-                  onClick={() => setCurrentImageIndex((prev) => (prev === 0 ? project.media.images!.length - 1 : prev - 1))}
-                  className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full"
-                >
-                  <ChevronLeft className="w-6 h-6" />
-                </button>
-                <button
-                  onClick={() => setCurrentImageIndex((prev) => (prev === project.media.images!.length - 1 ? 0 : prev + 1))}
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full"
-                >
-                  <ChevronRight className="w-6 h-6" />
-                </button>
+
+                {project.media.images.length > 1 && (
+                  <>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        setCurrentImageIndex(prev => 
+                          prev === 0 ? project.media.images.length - 1 : prev - 1
+                        )
+                      }}
+                      className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black/50 text-white p-2 rounded-full hover:bg-black/75 transition-all"
+                      aria-label="Previous image"
+                    >
+                      <ChevronLeft className="w-6 h-6" />
+                    </button>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        setCurrentImageIndex(prev => 
+                          prev === project.media.images.length - 1 ? 0 : prev + 1
+                        )
+                      }}
+                      className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black/50 text-white p-2 rounded-full hover:bg-black/75 transition-all"
+                      aria-label="Next image"
+                    >
+                      <ChevronRight className="w-6 h-6" />
+                    </button>
+                  </>
+                )}
               </>
             )}
+
             {project.media.video && (
-              <div className={`absolute inset-0 ${showVideo ? 'block' : 'hidden'}`}>
+              <div className={`w-full h-full ${showVideo ? 'block' : 'hidden'}`}>
                 <video 
                   src={project.media.video} 
                   controls 
-                  className="w-full h-full object-cover rounded-lg"
+                  className="w-full h-full object-contain"
+                  playsInline
                 >
+                  <track 
+                    kind="captions" 
+                    srcLang="en" 
+                    src="/path/to/captions.vtt" 
+                    label="English"
+                    default 
+                  />
                   Your browser does not support the video tag.
                 </video>
               </div>
             )}
-            {project.media.video && project.media.images && (
-              <button
-                onClick={() => {
-                  setShowVideo(!showVideo)
-                  setIsLarge(showVideo)
-                }}
-                className="absolute bottom-2 right-2 bg-black bg-opacity-50 text-white p-2 rounded-full"
-              >
-                {showVideo ? 'Show Images' : 'Show Video'}
-              </button>
-            )}
-            {!showVideo && (
-              <button
+
+            <div className="absolute top-4 right-4 flex gap-2">
+              {project.media.video && project.media.images && (
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => {
+                    setShowVideo(!showVideo)
+                    setIsLarge(true)
+                  }}
+                  className="bg-black/50 text-white p-2 rounded-full hover:bg-black/75 transition-all flex items-center gap-2"
+                >
+                  {showVideo ? <ImageIcon className="w-5 h-5" /> : <Film className="w-5 h-5" />}
+                  {showVideo ? 'View Images' : 'Play Video'}
+                </motion.button>
+              )}
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
                 onClick={() => setIsLarge(!isLarge)}
-                className="absolute bottom-2 left-2 bg-black bg-opacity-50 text-white p-2 rounded-full"
+                className="bg-black/50 text-white p-2 rounded-full hover:bg-black/75 transition-all"
+                aria-label={isLarge ? "Make smaller" : "Make larger"}
               >
-                {isLarge ? 'Make Smaller' : 'Make Larger'}
-              </button>
-            )}
-          </div>
-          <div className="mb-4">
-            <h3 className="text-lg font-semibold mb-2">Technologies Used:</h3>
-            <div className="flex flex-wrap gap-2">
-              {project.technologies.map((tech, index) => (
-                <span key={index} className="bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-100 text-xs font-semibold px-2.5 py-0.5 rounded">
-                  {tech}
-                </span>
-              ))}
+                {isLarge ? <Minimize2 className="w-5 h-5" /> : <Maximize2 className="w-5 h-5" />}
+              </motion.button>
             </div>
           </div>
-          <div className="mb-4">
-            <h3 className="text-lg font-semibold mb-2">Project Details:</h3>
-            <p 
-              className="text-gray-600 dark:text-gray-300"
-              dangerouslySetInnerHTML={{ __html: project.details }}
-            />
-          </div>
-          <div className="flex justify-between">
-            {project.github && (
-              <motion.a
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                href={project.github}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-4 py-2 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
-              >
-                View on GitHub
-              </motion.a>
-            )}
-            {project.demo && (
-              <motion.a
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                href={project.demo}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors"
-              >
-                Live Demo
-              </motion.a>
-            )}
+
+          <div className="space-y-6">
+            <div>
+              <h3 className="text-lg font-semibold mb-2">Technologies Used:</h3>
+              <div className="flex flex-wrap gap-2">
+                {project.technologies.map((tech, index) => (
+                  <span 
+                    key={tech} 
+                    className="bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-100 
+                             text-xs font-semibold px-2.5 py-0.5 rounded"
+                  >
+                    {tech}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <h3 className="text-lg font-semibold mb-2">Project Details:</h3>
+              <div 
+                className="prose dark:prose-invert max-w-none"
+                dangerouslySetInnerHTML={{ __html: project.details }}
+              />
+            </div>
+
+            <div className="flex gap-4 justify-end">
+              {project.github && (
+                <motion.a
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  href={project.github}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 
+                           px-4 py-2 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 
+                           transition-colors"
+                >
+                  <Github className="w-5 h-5" />
+                  View on GitHub
+                </motion.a>
+              )}
+              {project.demo && (
+                <motion.a
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  href={project.demo}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 bg-blue-500 text-white px-4 py-2 rounded-lg 
+                           hover:bg-blue-600 transition-colors"
+                >
+                  <ExternalLink className="w-5 h-5" />
+                  Live Demo
+                </motion.a>
+              )}
+            </div>
           </div>
         </div>
       </motion.div>
@@ -197,4 +253,3 @@ const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) => {
 }
 
 export default ProjectModal
-

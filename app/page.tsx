@@ -6,7 +6,6 @@ import { motion } from 'framer-motion'
 import { Code, Palette, Gamepad, Lightbulb } from 'lucide-react'
 import ScrollAnimation from '../app/components/ScrollAnimation'
 import HoverText from '../app/components/HoverText'
-import AnimatedButton from '../app/components/AnimatedButton'
 
 export default function Home() {
   return (
@@ -28,7 +27,7 @@ export default function Home() {
             transition={{ duration: 0.5, delay: 0.2 }}
           >
           </motion.h2>
-          <Link href="/skills" passHref>
+          <Link href="/projects" passHref>
           <motion.div 
             className="flex justify-center space-x-4 mb-8"
             initial={{ opacity: 0, scale: 0.8 }}
@@ -71,10 +70,10 @@ export default function Home() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.8 }}
           >
-            <Link href="/projects" passHref>
-              <AnimatedButton>
+            <Link href="/projects" passHref >
+              <button className="px-4 py-2 bg-blue-500 text-white rounded-lg undefined">
                 Explore My Projects
-              </AnimatedButton>
+              </button>
             </Link>
           </motion.div>
         </div>
