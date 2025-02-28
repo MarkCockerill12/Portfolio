@@ -4,7 +4,7 @@ import { Code, Palette, Gamepad, FishSymbol } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import ScrollAnimation from '../components/ScrollAnimation'
 import HoverText from '../components/HoverText'
-import React from 'react'
+import React, { ReactElement } from 'react'
 
 type Experience = {
   id: string;
@@ -14,7 +14,7 @@ type Experience = {
     id: string;
     text: string;
   }>;
-  icon: JSX.Element;
+  icon: ReactElement;
 }
 
 const jobExperiences: Experience[] = [
