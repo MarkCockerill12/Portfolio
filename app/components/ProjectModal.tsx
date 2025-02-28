@@ -23,7 +23,7 @@ interface ProjectModalProps {
   project: Project
   onClose: () => void
 }
-
+//TODO consider reworking layout
 const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [showVideo, setShowVideo] = useState(false)

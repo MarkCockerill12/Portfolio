@@ -97,9 +97,9 @@ const AboutSection = () => (
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.5 }}
       >
-        <Image
+        <Image 
           src="/pics/placeholder.png"
-          alt="Profile Picture"
+          alt="Profile Picture" //TODO add profile picture
           width={300}
           height={300}
           className="rounded-lg shadow-lg"

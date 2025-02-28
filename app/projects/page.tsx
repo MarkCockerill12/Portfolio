@@ -25,7 +25,6 @@ interface Project {
   categories: string[];
 }
 
-
 const projects: Project[] = [
   {
     id: 1,
@@ -37,7 +36,7 @@ const projects: Project[] = [
     github: "https://github.com/MarkCockerill12/AC31007AgileGroup1",
     technologies: ["Visual Stdio Code", "MySQL", "Go", "Amazon Web Services", "Docker", "React", "Electron", "Next.js", "Python", "Agile Methodologies"],
     details: "This mock ATM program was our task issues by NCR for learning agile methodologies, it utilises electron to showcase the front end, which handles the visual aspects. The front end then communciates with a Go-coded switch by sending JSON, the switch sorts out the different card numbers and sends them to a seperate simulation which in turn interacts with information in a database. This program is capable of multi currency support, multiple langauges and has error handling. ",
-    categories: ["SQL", "Python", "HTML"]
+    categories: ["Web", "SQL"]
   },
   {
     id: 2,
@@ -49,7 +48,7 @@ const projects: Project[] = [
     github: "https://github.com/MarkCockerill12/DataAWS",
     technologies: ["Visual Stdio Code", "MySQL", "PHP", "Amazon Web Services", "Docker"],
     details: "This mock company website interacts with a database with SQL and php in order to execute queries. It has predfined functions, an SQL builder and more. It has a functional php-sql login system. This was a university assignment and was hosted on amazon web servers, however for the testing and development, docker was used to set up local servers in order for them to interact. Our next steps with this website would be to touch up some of the visual aspects of it.",
-    categories: ["SQL", "Python", "HTML"]
+    categories: ["SQL", "Web"]
   },
   {
     id: 3,
@@ -65,13 +64,13 @@ const projects: Project[] = [
   {
     id: 4,
     title: "Raspbery Pi Pico Web Texter",
-    description: "Coming soon- A program that uses Twilio and a Raspberry Pi Pico W to send text messages",
+    description: "A program that uses Twilio and a Raspberry Pi Pico W to send text messages",
     media: {
-      images: ["/pics/placeholder.png"],
+      images: ["/pics/Twilio/Twi1.PNG", "/pics/Twilio/Twi2.jpg"],
     },
     technologies: ["RenPy", "PicsArt", "Visual Stdio Code"],
     details: "The Raspbery Pi W hosts a web server which allows the user to input text, the program then uses the Twilio API to send text messages through the pico.",
-    categories: ["Game"]
+    categories: ["Python", "Raspbery Pi"]
   },
   {
     id: 5,
@@ -95,7 +94,7 @@ const projects: Project[] = [
     github: "https://github.com/MarkCockerill12/VirusWadiya",
     technologies: ["Visual Studio Code", "C++"],
     details: `This project was a product of our University Information Security module, where we were tasked with making a login system with a backdoor that was incredibly difficult to crack if only looking at the code. <a href="/docs/backdoor_explanation.pdf" target="_blank" class="text-blue-500 hover:underline">View detailed explanation</a>`,    
-    categories: ["Security", "C++"]
+    categories: ["Cyber Security", "C/C++/C#"]
 },
   {
     id: 7,
@@ -107,7 +106,7 @@ const projects: Project[] = [
     github: "https://github.com/MarkCockerill12/Portfolio",
     technologies: ["Visual Studio Code", "React", "Next.js", "TypeScript", "Tailwind"],
     details: "This project was a product of our University Information Security module, where we were taked with making a login system with a backdoor that was incredibly difficult to crack if only looking at the code.",
-    categories: ["", "",]
+    categories: ["Web",]
   },
   {
     id: 8,
@@ -128,9 +127,9 @@ const projects: Project[] = [
       images: ["/pics/HexChat/Hex1.PNG", "/pics/HexChat/Hex2.PNG"],
     },
     github: "https://github.com/MarkCockerill12/ChatBotLol",
-    technologies: ["Krita"],
+    technologies: ["HexChat", "Python", "MiniIRC", "Visual Studio Code"],
     details: "A chat Bot and Server that interact with HexChat, the chat Bot responds to commands and user messages. The server attempts to repplicate a MiniIRC server.",
-    categories: ["Digital Art"]
+    categories: ["Python"]
   },
   {
     id: 10,
@@ -139,9 +138,9 @@ const projects: Project[] = [
     media: {
       images: ["/pics/Shrimp/Shrimp.png", "/pics/Shrimp/ShrimpShow.png"],
     },
-    technologies: ["C#", "Pure uncompromising genius",],
+    technologies: ["C#", "Pure uncompromising genius", "Visual Studio"],
     details: "A shrimple program that asks if you are a shrimp or not.",
-    categories: ["C#"]
+    categories: ["C/C++/C#", "Game"]
   },
 ]
 
