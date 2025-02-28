@@ -6,14 +6,26 @@ import ScrollAnimation from '../components/ScrollAnimation'
 import HoverText from '../components/HoverText'
 import React from 'react'
 
-const jobExperiences = [
+type Experience = {
+  id: string;
+  title: string;
+  website?: string;
+  items: Array<{
+    id: string;
+    text: string;
+  }>;
+  icon: JSX.Element;
+}
+
+const jobExperiences: Experience[] = [
   {
     id: 'Outlier',
-    title: "Independant Contractor- Outlier AI: 2025-Present",
+    title: "Independent Contractor- Outlier AI: 2025-Present",
+    website: "https://www.outlier.ai",
     items: [
       {
         id: 'outlier-main',
-        text: "Outlier is a platform that connects subject matter experts to help build the world’s most advanced Generative AI."
+        text: "Outlier is a platform that connects subject matter experts to help build the world's most advanced Generative AI."
       },
       {
         id: 'outlier-details',
@@ -25,6 +37,7 @@ const jobExperiences = [
   {
     id: 'fish-works',
     title: "Retail Assistant- The Fish Works: 2023-Present",
+    website: "https://thefishworks.co.uk",
     items: [
       {
         id: 'fish-works-main',
@@ -40,6 +53,7 @@ const jobExperiences = [
   {
     id: 'dusa',
     title: "Retail Assistant- DUSA Premier: 2023-2024",
+    website: "https://www.dusa.co.uk",
     items: [
       {
         id: 'dusa-main',
@@ -54,7 +68,7 @@ const jobExperiences = [
   }
 ]
 
-const otherExperiences = [
+const otherExperiences: Experience[] = [
   {
     id: 'agile',
     title: "Agile Practices",
@@ -83,7 +97,7 @@ const otherExperiences = [
   },
   {
     id: 'holiday-club',
-    title: "Children Summer Holiday Club: 2016- Present",
+    title: "Helper- Children Summer Holiday Club: 2016-Present",
     items: [
       {
         id: 'holiday-club-main',
@@ -115,7 +129,7 @@ const ExperienceTab = ({ label, isActive, onClick }: {
   </button>
 )
 
-const ExperienceSection = ({ experiences }: { experiences: typeof jobExperiences }) => (
+const ExperienceSection = ({ experiences }: { experiences: Experience[] }) => (
   <motion.div
     initial={{ opacity: 0, y: 20 }}
     animate={{ opacity: 1, y: 0 }}
@@ -139,7 +153,18 @@ const ExperienceSection = ({ experiences }: { experiences: typeof jobExperiences
             {exp.icon}
           </motion.div>
           <h2 className="text-2xl font-bold ml-2">
-            <HoverText>{exp.title}</HoverText>
+            {exp.website ? (
+              <a 
+                href={exp.website} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="hover:text-blue-500 transition-colors"
+              >
+                <HoverText>{exp.title}</HoverText>
+              </a>
+            ) : (
+              <HoverText>{exp.title}</HoverText>
+            )}
           </h2>
         </div>
         <ul className="list-disc list-inside">

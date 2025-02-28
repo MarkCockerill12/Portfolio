@@ -18,6 +18,7 @@ const Header = () => {
 
   useEffect(() => {
     setMounted(true)
+    // setTheme('dark')
   }, [])
 
   const toggleDarkMode = () => {
