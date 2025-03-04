@@ -20,7 +20,7 @@ type Experience = {
 const jobExperiences: Experience[] = [
   {
     id: 'Outlier',
-    title: "Independent Contractor- Outlier AI: 2025-Present",
+    title: "Independent Contractor @ Outlier AI: 2025-Present",
     website: "https://www.outlier.ai",
     items: [
       {
@@ -36,7 +36,7 @@ const jobExperiences: Experience[] = [
   },
   {
     id: 'fish-works',
-    title: "Retail Assistant- The Fish Works: 2023-Present",
+    title: "Retail Assistant @ The Fish Works: 2023-Present",
     website: "https://thefishworks.co.uk",
     items: [
       {
@@ -45,14 +45,14 @@ const jobExperiences: Experience[] = [
       },
       {
         id: 'fish-works-details',
-        text: "I would serve customers at a window, handle transactions at the till, be responsible for frying and preparing food and cleaning. I utilised communication skills when dealing with customers and was alwaysable to resolve any conflicts that arose. At times, the shop would be extremely busy and stressful and working seamlessly as a team would be crucial."
+        text: "I would serve customers at a window, handle transactions at the till, be responsible for frying and preparing food and cleaning. I utilised communication skills when dealing with customers and was always able to resolve any conflicts that arose. At times, the shop would be extremely busy and stressful and working seamlessly as a team would be crucial."
       }
     ],
     icon: <FishSymbol className="w-6 h-6" />
   },
   {
     id: 'dusa',
-    title: "Retail Assistant- DUSA Premier: 2023-2024",
+    title: "Retail Assistant @ DUSA Premier: 2023-2024",
     website: "https://www.dusa.co.uk",
     items: [
       {

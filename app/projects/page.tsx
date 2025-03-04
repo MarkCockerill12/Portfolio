@@ -82,7 +82,7 @@ const projects: Project[] = [
     },
     technologies: ["Blender", "DaVinci Resolve",],
     details: "This project was a combination of real life and blender animation, using DaVinci Resole video editior to join the two together.",
-    categories: ["3D Animation", "Video Editing",]
+    categories: ["3D Animation"]
   },
   {
     id: 6,
