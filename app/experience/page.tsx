@@ -97,7 +97,7 @@ const otherExperiences: Experience[] = [
   },
   {
     id: 'holiday-club',
-    title: "Helper- Children Summer Holiday Club: 2016-Present",
+    title: "Helper @ Children Summer Holiday Club: 2016-Present",
     items: [
       {
         id: 'holiday-club-main',
