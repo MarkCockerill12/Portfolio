@@ -70,12 +70,27 @@ const jobExperiences: Experience[] = [
 
 const otherExperiences: Experience[] = [
   {
+    id: 'hackathon25',
+    title: "2025 Dundee Uni Hackathon",
+    items: [
+      {
+        id: 'hackathon25-main',
+        text: "The Dundee University Hackathon is a 24-hour event where students are tasked with creating a project set out by a company with the chance to win prizes. Multiple companies sponsored this hackathon, such as Rockstar, BlackRock, NCR Atleos and Synechron."
+      },
+      {
+        id: 'hackathon25-details',
+        text: "BlackRock tasked us with creating an enviromental events webpage, showcasing green efforts and upcoming activites and plans. NCR Atleos tasked us with creating an ATM that utilises new innovative features to bring to future of finance to the current day. Synechron tasked us with making a simple game using GameMaker. My team tackled all of these projects, as I created the ATM independantly for my group, I included it in the projects of this portfolio."
+      }
+    ],
+    icon: <Code className="w-6 h-6" />
+  },
+  {
     id: 'agile',
     title: "Agile Practices",
     items: [
       {
         id: 'agile-main',
-        text: "During the agile modul, we learned and displayed proper agile development practices through taking notes and gothub. We used Kankan boards, planning poker, MoSCoW, retrospectives, sprint reviews, scrum meetings and more."
+        text: "During our Universities agile module where we created an ATM simulation for NCR, we learned and displayed proper agile development practices through taking notes and github. We used Kankan boards, planning poker, MoSCoW, retrospectives, sprint reviews, scrum meetings and more."
       }
     ],
     icon: <Code className="w-6 h-6" />
@@ -86,7 +101,7 @@ const otherExperiences: Experience[] = [
     items: [
       {
         id: 'hackathon24-main',
-        text: "The Dundee University Hackathon is a 24-hour event where students are tasked with creating a project set out by a company with the chance to win prizes. Multiple companies sponsored this hackathon, such as BlackRock, NCR Atleos and GE Vernova."
+        text: "Multiple companies sponsored this hackathon, such as BlackRock, NCR Atleos and GE Vernova."
       },
       {
         id: 'hackathon24-details',
