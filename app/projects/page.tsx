@@ -5,10 +5,8 @@ import { motion, AnimatePresence } from 'framer-motion'
 import ProjectCard from '../components/ProjectCard'
 import ProjectModal from '../components/ProjectModal'
 import { Search, Filter } from 'lucide-react'
-//import AnimatedButton from '../components/AnimatedButton'
 import HoverText from '../components/HoverText'
 import ScrollAnimation from '../components/ScrollAnimation'
-// import Link from 'next/link'
 
 interface Project {
   id: number;
@@ -28,7 +26,7 @@ interface Project {
 const projects: Project[] = [
   {
     id: 1,
-    title: "NCR ATM program",
+    title: "NCR ATM Simulation",
     description: "An application that acts as a mock ATM for NCR",
     media: {
       images: ["/pics/Agile/Agile2.PNG", "/pics/Agile/Agile3.PNG", "/pics/Agile/Agile4.PNG", "/pics/Agile/Agile5.PNG", "/pics/Agile/Agile6.PNG", "/pics/Agile/Agile7.PNG", "/pics/Agile/Agile8.PNG", "/pics/Agile/Agile1.PNG", "/pics/Agile/Agile9.PNG"],
@@ -50,6 +48,7 @@ const projects: Project[] = [
     details: "This mock company website interacts with a database with SQL and php in order to execute queries. It has predfined functions, an SQL builder and more. It has a functional php-sql login system. This was a university assignment and was hosted on amazon web servers, however for the testing and development, docker was used to set up local servers in order for them to interact. Our next steps with this website would be to touch up some of the visual aspects of it.",
     categories: ["SQL", "Web"]
   },
+  
   {
     id: 3,
     title: "Visual Novel Addon",
@@ -60,6 +59,19 @@ const projects: Project[] = [
     technologies: ["RenPy", "PicsArt", "Visual Stdio Code"],
     details: "A simple addon to Visual Novel 'Doki Doki Literature Club' by Team Salvato. This project was made for fun and the desire to experience the RenPy coding language.",
     categories: ["Game"]
+  },
+  {
+    id: 11,
+    title: "NextGen ATM Website",
+    description: "A website that expands upon the possilities of ATMs, commisioned by NCR for 2025 Dundee Hackathon",
+    media: {
+      images: ["/pics/Hak-ATM/atm1.PNG", "/pics/Hak-ATM/atm2.PNG", "/pics/Hak-ATM/atm3.PNG", "/pics/Hak-ATM/atm4.PNG"],
+    },
+    github: "https://github.com/MarkCockerill12/Hak25--NCR",
+    technologies: ["Visual Stdio Code", "React", "Next.js", "Vercel"],
+    demo: "https://hak25-ncr.vercel.app",
+    details: "This mock ATM website was one of the projects my team took on during the 2025 Dundee Uni Hackaton. Our task was to create an ATM that would represent the future, and all the new functionalities that come with it. I decided to create an all-in-one type website, where you can manage your finances, stocks, bills and more with just a few clicks, as well as giving you a visual representation of all of these. Since the hackathon took place over 24 hours, some functionalites such as different langauges arent available. The website uses local storage to remember any additions you make to your bank account, whether it be adding money, cards or stocks. ",
+    categories: ["Web", "SQL"]
   },
   {
     id: 4,
@@ -151,12 +163,15 @@ export default function Projects() {
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedCategories, setSelectedCategories] = useState<string[]>([])
   const [filteredProjects, setFilteredProjects] = useState(projects)
-  const [isFilterMenuOpen, setIsFilterMenuOpen] = useState(false)
+  const [showFilters, setShowFilters] = useState(false)
 
   useEffect(() => {
     const filtered = projects.filter(project => 
+      // Check if title matches search term
       project.title.toLowerCase().includes(searchTerm.toLowerCase()) &&
-      (selectedCategories.length === 0 || selectedCategories.some(cat => project.categories.includes(cat)))
+      // Check if project has ALL selected categories (AND logic)
+      (selectedCategories.length === 0 || 
+        selectedCategories.every(cat => project.categories.includes(cat)))
     )
     setFilteredProjects(filtered)
   }, [searchTerm, selectedCategories])
@@ -169,55 +184,81 @@ export default function Projects() {
     )
   }
 
+  // ...rest of your code remains the same...
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
+      className="container mx-auto px-4 py-8"
     >
       <ScrollAnimation>
         <h1 className="text-4xl font-bold mb-8 text-center font-press-start-2p">
           <HoverText>My Projects</HoverText>
         </h1>
       </ScrollAnimation>
-      <div className="mb-8 flex flex-col md:flex-row gap-4">
-        <div className="relative flex-grow">
-          <input
-            type="text"
-            placeholder="Search projects..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full p-2 pl-10 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800"
-          />
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-        </div>
-        <div className="relative">
-          <button
-            onClick={() => setIsFilterMenuOpen(!isFilterMenuOpen)}
-            className="p-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 flex items-center duration-200 hover:scale-110"
-          >
-            <Filter className="mr-2" /> Filter
-          </button>
-          {isFilterMenuOpen && (
-            <div className="absolute top-full right-0 mt-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg p-2 z-10">
-              {allCategories.map(category => (
-                <HoverText key={category}>
-                  <button
-                    onClick={() => toggleCategory(category)}
-                    className={`block w-full text-left p-2 rounded ${
-                      selectedCategories.includes(category)
-                        ? 'bg-blue-500 text-white'
-                        : 'hover:bg-gray-100 dark:hover:bg-gray-700'
-                    }`}
-                  >
-                    {category}
-                  </button>
-                </HoverText>
-              ))}
+
+      <ScrollAnimation>
+        <div className="mb-8 space-y-4">   
+          <div className="flex gap-4">
+            <div className="relative flex-grow">
+              <input
+                type="text"
+                placeholder="Search projects..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full p-2 pl-10 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+              />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
             </div>
-          )}
+
+            <button
+              onClick={() => setShowFilters(!showFilters)}
+              className={`px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 flex items-center gap-2 transition-all hover:bg-gray-100 dark:hover:bg-gray-700 ${
+                showFilters ? 'ring-2 ring-blue-500' : ''
+              }`}
+            >
+              <Filter className="w-5 h-5" />
+              <span>Filters {selectedCategories.length > 0 && `(${selectedCategories.length})`}</span>
+            </button>
+          </div>
+
+          <AnimatePresence>
+            {showFilters && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.2 }}
+                className="overflow-hidden"
+              >
+                <div className="flex flex-wrap gap-2 p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-300 dark:border-gray-700">
+                  {allCategories.map(category => (
+                    <motion.button
+                      key={category}
+                      onClick={() => toggleCategory(category)}
+                      className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
+                        selectedCategories.includes(category)
+                          ? 'bg-blue-500 text-white hover:bg-blue-600'
+                          : 'bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600'
+                      }`}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      {category}
+                      {selectedCategories.includes(category) && (
+                        <span className="ml-2">×</span>
+                      )}
+                    </motion.button>
+                  ))}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
-      </div>
+      </ScrollAnimation>
+
       <motion.div
         className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
         initial="hidden"
@@ -232,24 +273,38 @@ export default function Projects() {
           }
         }}
       >
-        <AnimatePresence>
-          {filteredProjects.map((project) => (
-            <ScrollAnimation key={project.id}>
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.3 }}
-              >
-                <ProjectCard project={project} onSelect={() => setSelectedProject(project)} />
-              </motion.div>
-            </ScrollAnimation>
-          ))}
+        <AnimatePresence mode="wait">
+          {filteredProjects.length === 0 ? (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="col-span-full text-center py-8 text-gray-500 dark:text-gray-400"
+            >
+              <p className="text-xl">No projects found matching your criteria</p>
+            </motion.div>
+          ) : (
+            filteredProjects.map((project) => (
+              <ScrollAnimation key={project.id}>
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <ProjectCard project={project} onSelect={() => setSelectedProject(project)} />
+                </motion.div>
+              </ScrollAnimation>
+            ))
+          )}
         </AnimatePresence>
       </motion.div>
-      {selectedProject && (
-        <ProjectModal project={selectedProject} onClose={() => setSelectedProject(null)} />
-      )}
+
+      <AnimatePresence>
+        {selectedProject && (
+          <ProjectModal project={selectedProject} onClose={() => setSelectedProject(null)} />
+        )}
+      </AnimatePresence>
     </motion.div>
   )
 }
