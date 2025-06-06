@@ -48,7 +48,7 @@ export default function Skills() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <HoverText>Skills & Experience</HoverText>
+          <HoverText>Skills</HoverText>
         </motion.h1>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {skills.map((skillSet) => (

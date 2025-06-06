@@ -52,7 +52,7 @@ const projects: Project[] = [
   {
     id: 3,
     title: "Visual Novel Addon",
-    description: "A simple addon to Visual Novel 'Doki Doki Literature Club' by Team Salvato.",
+    description: "A simple addon to Visual Novel 'Doki Doki Literature Club' by Team Salvato",
     media: {
       images: ["/pics/Doki/DokiDev.PNG", "/pics/Doki/DokiGame.PNG"],
     },
@@ -116,6 +116,7 @@ const projects: Project[] = [
       images: ["/pics/Portfolio/Port1.PNG", "/pics/Portfolio/Port2.PNG"],
     },
     github: "https://github.com/MarkCockerill12/Portfolio",
+    demo: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
     technologies: ["Visual Studio Code", "React", "Next.js", "TypeScript", "Tailwind"],
     details: "This project was a product of our University Information Security module, where we were taked with making a login system with a backdoor that was incredibly difficult to crack if only looking at the code.",
     categories: ["Web",]
@@ -273,7 +274,7 @@ export default function Projects() {
           }
         }}
       >
-        <AnimatePresence mode="wait">
+        <AnimatePresence>
           {filteredProjects.length === 0 ? (
             <motion.div
               initial={{ opacity: 0 }}

@@ -1,15 +1,28 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import DotGrid from '../../lib/DotGrid'
+import { useEffect, useRef, useState } from 'react'
 import { useTheme } from 'next-themes'
+import SplashCursor from '../../lib/SplashCursor'
 
-type AnimationType = 'circles' | 'fireworks' | 'squares'
+type AnimationType = 'circles' | 'fireworks' | 'squares' | 'dotgrid'
+
+//TODO maake dots blue and stop them from not responding after scroll down
 
 const BackgroundAnimation = ({ animationType }: { animationType: AnimationType }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const { resolvedTheme } = useTheme()
+  const [showSplash, setShowSplash] = useState(false)
+  const [splashPos, setSplashPos] = useState<{x: number, y: number} | null>(null)
+  const [spacePressed, setSpacePressed] = useState(false)
+  const [mousePos, setMousePos] = useState<{x: number, y: number}>({x: window.innerWidth/2, y: window.innerHeight/2})
+  const [splashVisible, setSplashVisible] = useState(false)
+  const [splashFade, setSplashFade] = useState(false)
+  const splashRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
+    if (animationType === 'dotgrid') return
+
     const canvas = canvasRef.current
     if (!canvas) return
 
@@ -165,9 +178,73 @@ const BackgroundAnimation = ({ animationType }: { animationType: AnimationType }
     return () => {
       window.removeEventListener('resize', resizeCanvas)
     }
-  }, [resolvedTheme, animationType])
+  }, [animationType, resolvedTheme])
 
-  return <canvas ref={canvasRef} className="fixed inset-0 -z-20 w-full h-full" />
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.code === 'Space') {
+        e.preventDefault()
+        setSpacePressed(true)
+      }
+    }
+    const handleKeyUp = (e: KeyboardEvent) => {
+      if (e.code === 'Space') {
+        e.preventDefault()
+        setSpacePressed(false)
+      }
+    }
+    const handleMouseMove = (e: MouseEvent) => {
+      setMousePos({ x: e.clientX, y: e.clientY })
+    }
+    window.addEventListener('keydown', handleKeyDown, { passive: false })
+    window.addEventListener('keyup', handleKeyUp, { passive: false })
+    window.addEventListener('mousemove', handleMouseMove)
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown)
+      window.removeEventListener('keyup', handleKeyUp)
+      window.removeEventListener('mousemove', handleMouseMove)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (spacePressed) {
+      setSplashVisible(true)
+      setSplashFade(false)
+    } else if (splashVisible) {
+      setSplashFade(true)
+      const timeout = setTimeout(() => {
+        setSplashVisible(false)
+        setSplashFade(false)
+      }, 700) // fade duration in ms
+      return () => clearTimeout(timeout)
+    }
+  }, [spacePressed, splashVisible])
+
+  const baseColor = resolvedTheme === 'dark' ? '#60a5fa' : '#1e293b'
+
+  return (
+    <>
+      {(splashVisible || splashFade) && (
+        <div style={{
+          opacity: splashFade ? 0 : 1,
+          transition: 'opacity 0.7s',
+          pointerEvents: 'none',
+          position: 'fixed',
+          inset: 0,
+          zIndex: 50,
+        }}>
+          <SplashCursor mousePos={mousePos} TRANSPARENT={true} />
+        </div>
+      )}
+      {animationType === 'dotgrid' ? (
+        <div className="fixed inset-0 -z-20 w-full h-full">
+          <DotGrid baseColor={baseColor} activeColor={baseColor} />
+        </div>
+      ) : (
+        <canvas ref={canvasRef} className="fixed inset-0 -z-20 w-full h-full" />
+      )}
+    </>
+  )
 }
 
 export default BackgroundAnimation
