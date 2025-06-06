@@ -61,7 +61,7 @@ export default function Home() {
             transition={{ duration: 0.5, delay: 0.6 }}
           >
             <HoverText>
-              Welcome to my portfolio! I'm a computer science student with a passion for gaming, art, and coding. 
+              Welcome to my portfolio! I'm a computer science student with a passion for coding, art and gaming. 
               More projects will be added with time as some are work in progress.
             </HoverText>
           </motion.p>

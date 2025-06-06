@@ -12,7 +12,7 @@ type Experience = {
   website?: string;
   items: Array<{
     id: string;
-    text: string;
+    text: string | ReactElement;
   }>;
   icon: ReactElement;
 }
@@ -29,7 +29,16 @@ const jobExperiences: Experience[] = [
       },
       {
         id: 'outlier-details',
-        text: "My work at Outlier consists of training AI models and reviewing their responses and provided code to make sure it is up to standard and there are no errors."
+        text: (
+          <>
+            My work at Outlier consists of training AI models and reviewing their responses and provided code to make sure it is up to standard and there are no errors. I have worked on multiple projects, where I have had to:
+            <ul className="list-disc list-inside ml-6 mt-2">
+              <li>Train AI models to respond to a specific prompt and rate their outputs based on truthfulness and other factors. This could take the form of complete code generation, refactoring, and testing.</li>
+              <br></br>
+              <li>Review different GitHub pull requests and issues, where I would have to read through the code and provide problem statements, requirements, and classifications.</li>
+            </ul>
+          </>
+        )
       }
     ],
     icon: <Code className="w-6 h-6" />

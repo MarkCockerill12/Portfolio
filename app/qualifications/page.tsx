@@ -5,6 +5,8 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronDown, ChevronUp } from 'lucide-react'
 import ScrollAnimation from '../components/ScrollAnimation'
 import HoverText from '../components/HoverText'
+import Image from 'next/image'
+import CertificateModal from '../components/CertificateModal'
 
 const educationHistory = [
     {
@@ -37,14 +39,19 @@ const modules = [
         name: 'Agile Software Engineering',
         year: 3,
         semester: 2,
-        moduleGrade: 'TBC',
-        description: 'Introduction to Agile practices.',
+        moduleGrade: 'B1 / 2:1',
+        description: 'Introduction to Agile practices. We were tasked by NCR Atleos to create a full-stack application using Agile methodologies. This application was a recreation of an ATM system.',
         projects: [
             {
-                name: 'Agile Methodologies',
-                grade: 'TBC',
-                description: 'We were tasked by NCR Atleos to create a full-stack application using Agile methodologies. This application was a recreation of an ATM system.'
+                name: 'Agile Methodologies Sprint/Week 1',
+                grade: 'B2 / 2:1',
+                description: 'Week one was spent building the foundations of the Front End and Back End. This consisting of a webpage, switch and database.'
             },
+            {
+                name: 'Agile Methodologies Sprint/Week 2',
+                grade: 'B1 / 2:1',
+                description: 'Week two was spent implementing further features and confirming everything was set up and working well together.'
+            }
         ]
     },
     {
@@ -52,18 +59,18 @@ const modules = [
         name: 'Mobile Application Development',
         year: 3,
         semester: 2,
-        moduleGrade: 'TBC',
-        description: 'Introduction to mobile application development.',
+        moduleGrade: '	A4 / 1st',
+        description: 'Introduction to mobile application development. I used React Native to create a Bus App using the Google Maps API.',
         projects: [
             {
                 name: 'Design Proposal',
-                grade: 'TBC',
-                description: 'Propose a mobile application idea and design. The application must use some form of mobile phone input sensor'
+                grade: 'A2 / 1st',
+                description: 'Propose a mobile application idea and design. The application had to use some form of mobile phone input sensor.'
             },
             {
-                name: 'MobileApp',
-                grade: 'TBC',
-                description: 'Build the application with full functionality and give demo of it'
+                name: 'Mobile App Creation',
+                grade: 'A5 / 1st',
+                description: 'Build the application with full functionality and give demo of it.'
             }
         ]
     },
@@ -127,6 +134,21 @@ const modules = [
             }
         ]
     }
+]
+
+const certificates = [
+  {
+    id: 'cert1',
+    title: 'Cyber Security Vulnerability Certificate',
+    description: 'Using Hacksplain, I completed a series of lessons and tests educating on the different types of security vulnerabilites and how to prevent them from occuring.',
+    image: '/pics/Certificates/hacksplain.PNG',
+  },
+//   {
+//     id: 'cert2',
+//     title: 'Cisco CCNA',
+//     description: 'Validates ability to install, configure, operate, and troubleshoot medium-size routed and switched networks.',
+//     image: '/pics/Portfolio/Port2.PNG',
+//   },
 ]
 
 const GradeBadge = ({ grade, size = "normal", variant = "green" }: { 
@@ -247,49 +269,121 @@ const ModuleCard = ({ module }: { module: typeof modules[0] }) => {
     )
 }
 
+const TabButton = ({ id, label, activeTab, setActiveTab, className = '' }) => (
+  <motion.button
+    className={`px-8 py-3 rounded-lg font-press-start-2p text-sm md:text-base ${
+      activeTab === id 
+        ? 'bg-blue-900 text-white' 
+        : 'bg-gray-200 dark:bg-gray-700'
+    } ${className}`}
+    whileHover={{ scale: 1.05 }}
+    whileTap={{ scale: 0.95 }}
+    onClick={() => setActiveTab(id)}
+  >
+    <HoverText>{label}</HoverText>
+  </motion.button>
+)
+
+const CertificatesSection = ({ setModalImg }) => (
+  <div className="flex flex-col gap-12 max-w-4xl mx-auto py-8">
+    {certificates.map((cert, idx) => (
+      <motion.div
+        key={cert.id}
+        className={`flex flex-col md:flex-row items-center md:items-stretch gap-8 ${idx % 2 === 1 ? 'md:flex-row-reverse' : ''} bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8`}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: idx * 0.1 }}
+      >
+        <div className="flex-1 flex flex-col justify-center min-w-[250px]">
+          <h3 className="text-3xl font-bold mb-4 text-blue-700 dark:text-blue-400"><HoverText>{cert.title}</HoverText></h3>
+          <p className="text-gray-700 dark:text-gray-200 text-lg mb-2">{cert.description}</p>
+        </div>
+        <div className="flex-1 flex items-center justify-center min-w-[350px] max-w-[600px] w-full">
+          <div className="w-full aspect-[4/3] relative rounded-xl overflow-hidden shadow-lg cursor-pointer hover:scale-105 transition-transform duration-200"
+            onClick={() => setModalImg({image: cert.image, title: cert.title})}
+          >
+            <Image src={cert.image} alt={cert.title} fill className="object-contain" />
+          </div>
+        </div>
+      </motion.div>
+    ))}
+  </div>
+)
+
 export default function Qualifications() {
-    return (
-        <ScrollAnimation>
-            <div className="container mx-auto px-4 py-8">
-                <motion.h1 
-                    className="text-4xl font-bold mb-8 text-center font-press-start-2p"
-                    initial={{ opacity: 0, y: -20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5 }}
-                >
-                    <HoverText>Academic Qualifications</HoverText>
-                </motion.h1>
-
-                <div className="grid gap-6 max-w-4xl mx-auto mb-12">
-                    {educationHistory.map((edu, index) => (
-                        <EducationCard key={edu.institution} education={edu} />
-                    ))}
-                </div>
-
-                <motion.h2 
-                    className="text-2xl font-bold mb-6 text-center font-press-start-2p"
-                    initial={{ opacity: 0, y: -20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5 }}
-                >
-                    <HoverText>University Modules</HoverText>
-                </motion.h2>
-
-                <div className="grid gap-6 max-w-4xl mx-auto">
-                    {[1, 2].map((semester) => (
-                        <div key={semester}>
-                            <h3 className="text-xl font-semibold mb-4 text-gray-700 dark:text-gray-300">
-                                Semester {semester}
-                            </h3>
-                            {modules
-                                .filter(module => module.semester === semester)
-                                .map((module) => (
-                                    <ModuleCard key={module.id} module={module} />
-                                ))}
-                        </div>
-                    ))}
-                </div>
-            </div>
-        </ScrollAnimation>
-    )
+  const [activeTab, setActiveTab] = useState<'modules' | 'certificates'>('modules')
+  const [modalImg, setModalImg] = useState<{image: string, title: string} | null>(null)
+  return (
+    <ScrollAnimation>
+      <div className="container mx-auto px-4 py-8">
+        <div className="flex justify-center gap-4 mb-10 mt-2">
+          <TabButton id="modules" label="University Modules" activeTab={activeTab} setActiveTab={setActiveTab} />
+          <TabButton id="certificates" label="Certificates" activeTab={activeTab} setActiveTab={setActiveTab} />
+        </div>
+        <AnimatePresence mode="wait">
+          {activeTab === 'modules' && (
+            <motion.div
+              key="modules"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+            >
+              <motion.h1 
+                className="text-4xl font-bold mb-8 text-center font-press-start-2p"
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+              >
+                <HoverText>Academic Qualifications</HoverText>
+              </motion.h1>
+              <div className="grid gap-6 max-w-4xl mx-auto mb-12">
+                {educationHistory.map((edu, index) => (
+                  <EducationCard key={edu.institution} education={edu} />
+                ))}
+              </div>
+              <motion.h2 
+                className="text-2xl font-bold mb-6 text-center font-press-start-2p"
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+              >
+                <HoverText>University Modules</HoverText>
+              </motion.h2>
+              <div className="grid gap-6 max-w-4xl mx-auto">
+                {[1, 2].map((semester) => (
+                  <div key={semester}>
+                    <h3 className="text-xl font-semibold mb-4 text-gray-700 dark:text-gray-300">
+                      Semester {semester}
+                    </h3>
+                    {modules
+                      .filter(module => module.semester === semester)
+                      .map((module) => (
+                        <ModuleCard key={module.id} module={module} />
+                      ))}
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+          )}
+          {activeTab === 'certificates' && (
+            <motion.div
+              key="certificates"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+            >
+              <div className="flex flex-col gap-16 max-w-5xl mx-auto py-8">
+                <CertificatesSection setModalImg={setModalImg} />
+              </div>
+              {modalImg && (
+                <CertificateModal image={modalImg.image} title={modalImg.title} onClose={() => setModalImg(null)} />
+              )}
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    </ScrollAnimation>
+  )
 }
