@@ -7,8 +7,6 @@ interface ColorRGB {
   b: number;
 }
 
-//FIXME fix lag and offset 
-
 interface SplashCursorProps {
   SIM_RESOLUTION?: number;
   DYE_RESOLUTION?: number;
@@ -24,8 +22,6 @@ interface SplashCursorProps {
   COLOR_UPDATE_SPEED?: number;
   BACK_COLOR?: ColorRGB;
   TRANSPARENT?: boolean;
-  mousePos?: { x: number; y: number };
-  spacePressed?: boolean;
 }
 
 interface Pointer {
@@ -57,33 +53,29 @@ function pointerPrototype(): Pointer {
 }
 
 export default function SplashCursor({
-  SIM_RESOLUTION = 16, // Lowered for more performance
-  DYE_RESOLUTION = 128, // Lowered for more performance
-  CAPTURE_RESOLUTION = 128, // Lowered for more performance
+  SIM_RESOLUTION = 128,
+  DYE_RESOLUTION = 1440,
+  CAPTURE_RESOLUTION = 512,
   DENSITY_DISSIPATION = 3.5,
   VELOCITY_DISSIPATION = 2,
-  PRESSURE = 0.04, // Slightly less for perf
-  PRESSURE_ITERATIONS = 6, // Lowered for more performance
+  PRESSURE = 0.1,
+  PRESSURE_ITERATIONS = 20,
   CURL = 3,
-  SPLAT_RADIUS = 0.18, // Slightly smaller for perf
-  SPLAT_FORCE = 4000, // Lowered for perf
-  SHADING = false, // Disable shading for perf
-  COLOR_UPDATE_SPEED = 18, // Faster color cycling
-  BACK_COLOR = { r: 0.1, g: 0.1, b: 0.18 }, // Slightly darker background for contrast
-  TRANSPARENT = true,
-  mousePos,
-  spacePressed,
+  SPLAT_RADIUS = 0.2,
+  SPLAT_FORCE = 6000,
+  SHADING = true,
+  COLOR_UPDATE_SPEED = 10,
+  BACK_COLOR = { r: 0.5, g: 0, b: 0 },
+  TRANSPARENT = true
 }: SplashCursorProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const lastSplash = useRef<{x: number, y: number} | null>(null);
 
-  // Initialize simulation and animation frame on mount, clean up on unmount
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
-    let animationId: number;
+    if (!canvas) return; // Guard canvas early
+
+    // Pointer and config setup
     let pointers: Pointer[] = [pointerPrototype()];
-    let gl: WebGLRenderingContext | WebGL2RenderingContext | null = null;
 
     // All these are guaranteed numbers due to destructuring defaults
     // So we cast them to remove TS warnings:
@@ -106,8 +98,7 @@ export default function SplashCursor({
     };
 
     // Get WebGL context (WebGL1 or WebGL2)
-    const { gl: webgl, ext } = getWebGLContext(canvas);
-    gl = webgl;
+    const { gl, ext } = getWebGLContext(canvas);
     if (!gl || !ext) return;
 
     // If no linear filtering, reduce resolution
@@ -915,6 +906,12 @@ export default function SplashCursor({
       const filtering = ext.supportLinearFiltering ? gl.LINEAR : gl.NEAREST;
       gl.disable(gl.BLEND);
 
+      // Guard: If any format is null, skip initialization
+      if (!rgba || !rg || !r) {
+        console.warn('WebGL framebuffer format detection failed. SplashCursor will not initialize.');
+        return;
+      }
+
       if (!dye) {
         dye = createDoubleFBO(
           dyeRes.width,
@@ -1021,7 +1018,7 @@ export default function SplashCursor({
       applyInputs();
       step(dt);
       render(null);
-      animationId = requestAnimationFrame(updateFrame);
+      requestAnimationFrame(updateFrame);
     }
 
     function calcDeltaTime() {
@@ -1394,9 +1391,9 @@ export default function SplashCursor({
 
     function generateColor(): ColorRGB {
       const c = HSVtoRGB(Math.random(), 1.0, 1.0);
-      c.r *= 0.7;
-      c.g *= 0.7;
-      c.b *= 0.7;
+      c.r *= 0.15;
+      c.g *= 0.15;
+      c.b *= 0.15;
       return c;
     }
 
@@ -1530,53 +1527,44 @@ export default function SplashCursor({
       }
     });
     // ------------------------------------------------------------
+  }, [
+    SIM_RESOLUTION,
+    DYE_RESOLUTION,
+    CAPTURE_RESOLUTION,
+    DENSITY_DISSIPATION,
+    VELOCITY_DISSIPATION,
+    PRESSURE,
+    PRESSURE_ITERATIONS,
+    CURL,
+    SPLAT_RADIUS,
+    SPLAT_FORCE,
+    SHADING,
+    COLOR_UPDATE_SPEED,
+    BACK_COLOR,
+    TRANSPARENT,
+  ]);
 
-    // Only trigger splash on mousePos change
-    let lastMouse = { x: -1, y: -1 };
-    function maybeSplash() {
-      if (mousePos && (mousePos.x !== lastMouse.x || mousePos.y !== lastMouse.y)) {
-        lastMouse = { ...mousePos };
-        // Convert mousePos to canvas coordinates
-        const rect = canvas.getBoundingClientRect();
-        const x = mousePos.x - rect.left;
-        const y = mousePos.y - rect.top;
-        // Trigger splash at (x, y)
-        // (You may need to expose a method or call your simulation's splat logic here)
-      }
-    }
-
-    function animate() {
-      maybeSplash();
-      // ...existing simulation frame logic...
-      animationId = requestAnimationFrame(animate);
-    }
-    animate();
-
-    return () => {
-      cancelAnimationFrame(animationId);
-      // ...any other cleanup...
-    };
-  }, [mousePos]);
-
-  // Always render fullscreen
   return (
-    <div style={{
-      position: 'fixed',
-      top: 0,
-      left: 0,
-      width: '100vw',
-      height: '100vh',
-      pointerEvents: 'none',
-      zIndex: 50,
-    }}>
+    <div
+      style={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        zIndex: 50,
+        pointerEvents: "none",
+        width: "100%",
+        height: "100%",
+      }}
+    >
       <canvas
         ref={canvasRef}
         id="fluid"
-        width={typeof window !== 'undefined' ? window.innerWidth : 1920}
-        height={typeof window !== 'undefined' ? window.innerHeight : 1080}
-        className="block"
-        style={{ width: '100vw', height: '100vh' }}
-      ></canvas>
+        style={{
+          width: "100vw",
+          height: "100vh",
+          display: "block",
+        }}
+      />
     </div>
   );
 }

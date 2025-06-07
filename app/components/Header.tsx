@@ -11,7 +11,16 @@ import LittleGuy from './LittleGuy'
 import { Switch } from '@headlessui/react'
 import Tooltip from './Tooltip'
 
-type AnimationType = 'circles' | 'fireworks' | 'squares' | 'dotgrid';
+type AnimationType = 'circles' | 'fireworks' | 'squares';
+
+const ClickAnimation = ({ children }: { children: React.ReactNode }) => (
+  <motion.div
+    whileTap={{ scale: 0.95 }}
+    whileHover={{ scale: 1.05 }}
+  >
+    {children}
+  </motion.div>
+)
 
 const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false)
@@ -34,7 +43,7 @@ const Header = () => {
   }
 
   const toggleAnimation = () => {
-    const types: AnimationType[] = ['circles', 'fireworks', 'squares', 'dotgrid']
+    const types: AnimationType[] = ['circles', 'fireworks', 'squares']
     const currentIndex = types.indexOf(animationType)
     const nextIndex = (currentIndex + 1) % types.length
     setAnimationType(types[nextIndex])
@@ -43,15 +52,6 @@ const Header = () => {
   if (!mounted) {
     return null
   }
-
-  const ClickAnimation = ({ children }: { children: React.ReactNode }) => (
-    <motion.div
-      whileTap={{ scale: 0.95 }}
-      whileHover={{ scale: 1.05 }}
-    >
-      {children}
-    </motion.div>
-  )
 
   return (
     <>
@@ -67,8 +67,7 @@ const Header = () => {
                   <button onClick={toggleAnimation} className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 mr-2">
                     {animationType === 'circles' && <Sparkles className="w-5 h-5" />} {/* next: fireworks */}
                     {animationType === 'fireworks' && <Square className="w-5 h-5" />} {/* next: squares */}
-                    {animationType === 'squares' && <Grid className="w-5 h-5" />} {/* next: grid */}
-                    {animationType === 'dotgrid' && <Circle className="w-5 h-5" />} {/* next: circles */}
+                    {animationType === 'squares' && <Sparkles className="w-5 h-5" />} {/* next: circles */}
                   </button>
                 </Tooltip>
               </ClickAnimation>

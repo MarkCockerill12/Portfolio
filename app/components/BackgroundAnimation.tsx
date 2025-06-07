@@ -1,28 +1,20 @@
 'use client'
 
-import DotGrid from '../../lib/DotGrid'
 import { useEffect, useRef, useState } from 'react'
 import { useTheme } from 'next-themes'
 import SplashCursor from '../../lib/SplashCursor'
 
-type AnimationType = 'circles' | 'fireworks' | 'squares' | 'dotgrid'
-
-//TODO maake dots blue and stop them from not responding after scroll down
+type AnimationType = 'circles' | 'fireworks' | 'squares'
 
 const BackgroundAnimation = ({ animationType }: { animationType: AnimationType }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const { resolvedTheme } = useTheme()
-  const [showSplash, setShowSplash] = useState(false)
-  const [splashPos, setSplashPos] = useState<{x: number, y: number} | null>(null)
   const [spacePressed, setSpacePressed] = useState(false)
   const [mousePos, setMousePos] = useState<{x: number, y: number}>({x: window.innerWidth/2, y: window.innerHeight/2})
   const [splashVisible, setSplashVisible] = useState(false)
   const [splashFade, setSplashFade] = useState(false)
-  const splashRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    if (animationType === 'dotgrid') return
-
     const canvas = canvasRef.current
     if (!canvas) return
 
@@ -40,6 +32,7 @@ const BackgroundAnimation = ({ animationType }: { animationType: AnimationType }
     const particles: Particle[] = []
     const particleCount = 150
 
+    // Particle is intentionally a class for animation logic
     class Particle {
       x: number
       y: number
@@ -233,16 +226,10 @@ const BackgroundAnimation = ({ animationType }: { animationType: AnimationType }
           inset: 0,
           zIndex: 50,
         }}>
-          <SplashCursor mousePos={mousePos} TRANSPARENT={true} />
+          <SplashCursor />
         </div>
       )}
-      {animationType === 'dotgrid' ? (
-        <div className="fixed inset-0 -z-20 w-full h-full">
-          <DotGrid baseColor={baseColor} activeColor={baseColor} />
-        </div>
-      ) : (
-        <canvas ref={canvasRef} className="fixed inset-0 -z-20 w-full h-full" />
-      )}
+      <canvas ref={canvasRef} className="fixed inset-0 -z-20 w-full h-full" />
     </>
   )
 }
