@@ -94,7 +94,12 @@ const DotGrid: React.FC<DotGridProps> = ({
     buildGrid();
     const ro = new ResizeObserver(buildGrid);
     if (containerRef.current) ro.observe(containerRef.current);
-    return () => ro.disconnect();
+    // Add scroll event to recalculate dot centers
+    window.addEventListener('scroll', buildGrid, { passive: true });
+    return () => {
+      ro.disconnect();
+      window.removeEventListener('scroll', buildGrid);
+    };
   }, [buildGrid]);
 
   useEffect(() => {
