@@ -11,8 +11,10 @@ const BackgroundAnimation = ({ animationType }: { animationType: AnimationType }
   const { resolvedTheme } = useTheme()
   const [spacePressed, setSpacePressed] = useState(false)
   const [mousePos, setMousePos] = useState<{x: number, y: number}>({x: window.innerWidth/2, y: window.innerHeight/2})
-  const [splashVisible, setSplashVisible] = useState(false)
-  const [splashFade, setSplashFade] = useState(false)
+  const [showSplash, setShowSplash] = useState(false)
+  const [mouseActive, setMouseActive] = useState(false)
+  const [splashKey, setSplashKey] = useState(0) // for remounting SplashCursor
+  const mouseMoveTimeout = useRef<NodeJS.Timeout | null>(null)
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -176,18 +178,28 @@ const BackgroundAnimation = ({ animationType }: { animationType: AnimationType }
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.code === 'Space') {
-        e.preventDefault()
-        setSpacePressed(true)
+        e.preventDefault(); // Prevent page scroll
+        setShowSplash(true)
       }
     }
     const handleKeyUp = (e: KeyboardEvent) => {
       if (e.code === 'Space') {
-        e.preventDefault()
-        setSpacePressed(false)
+        e.preventDefault(); // Prevent page scroll
+        setShowSplash(false)
+        setMouseActive(false)
+        setSplashKey(k => k + 1) // force remount SplashCursor for cleanup
+        if (mouseMoveTimeout.current) {
+          clearTimeout(mouseMoveTimeout.current)
+          mouseMoveTimeout.current = null
+        }
       }
     }
-    const handleMouseMove = (e: MouseEvent) => {
-      setMousePos({ x: e.clientX, y: e.clientY })
+    const handleMouseMove = () => {
+      if (showSplash) {
+        setMouseActive(true)
+        if (mouseMoveTimeout.current) clearTimeout(mouseMoveTimeout.current)
+        mouseMoveTimeout.current = setTimeout(() => setMouseActive(false), 100)
+      }
     }
     window.addEventListener('keydown', handleKeyDown, { passive: false })
     window.addEventListener('keyup', handleKeyUp, { passive: false })
@@ -196,37 +208,26 @@ const BackgroundAnimation = ({ animationType }: { animationType: AnimationType }
       window.removeEventListener('keydown', handleKeyDown)
       window.removeEventListener('keyup', handleKeyUp)
       window.removeEventListener('mousemove', handleMouseMove)
+      if (mouseMoveTimeout.current) {
+        clearTimeout(mouseMoveTimeout.current)
+        mouseMoveTimeout.current = null
+      }
     }
-  }, [])
-
-  useEffect(() => {
-    if (spacePressed) {
-      setSplashVisible(true)
-      setSplashFade(false)
-    } else if (splashVisible) {
-      setSplashFade(true)
-      const timeout = setTimeout(() => {
-        setSplashVisible(false)
-        setSplashFade(false)
-      }, 700) // fade duration in ms
-      return () => clearTimeout(timeout)
-    }
-  }, [spacePressed, splashVisible])
+  }, [showSplash])
 
   const baseColor = resolvedTheme === 'dark' ? '#60a5fa' : '#1e293b'
 
   return (
     <>
-      {(splashVisible || splashFade) && (
+      {/* Only show SplashCursor when space is held and mouse is moving */}
+      {showSplash && mouseActive && (
         <div style={{
-          opacity: splashFade ? 0 : 1,
-          transition: 'opacity 0.7s',
           pointerEvents: 'none',
           position: 'fixed',
           inset: 0,
           zIndex: 50,
         }}>
-          <SplashCursor />
+          <SplashCursor key={splashKey} />
         </div>
       )}
       <canvas ref={canvasRef} className="fixed inset-0 -z-20 w-full h-full" />
