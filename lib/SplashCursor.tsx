@@ -54,11 +54,11 @@ function pointerPrototype(): Pointer {
 
 export default function SplashCursor({
   SIM_RESOLUTION = 128,
-  DYE_RESOLUTION = 1440,
+  DYE_RESOLUTION = 512,
   CAPTURE_RESOLUTION = 512,
   DENSITY_DISSIPATION = 3.5,
   VELOCITY_DISSIPATION = 2,
-  PRESSURE = 0.1,
+  PRESSURE = 0.5,
   PRESSURE_ITERATIONS = 20,
   CURL = 3,
   SPLAT_RADIUS = 0.2,
@@ -905,12 +905,6 @@ export default function SplashCursor({
       const r = ext.formatR;
       const filtering = ext.supportLinearFiltering ? gl.LINEAR : gl.NEAREST;
       gl.disable(gl.BLEND);
-
-      // Guard: If any format is null, skip initialization
-      if (!rgba || !rg || !r) {
-        console.warn('WebGL framebuffer format detection failed. SplashCursor will not initialize.');
-        return;
-      }
 
       if (!dye) {
         dye = createDoubleFBO(
