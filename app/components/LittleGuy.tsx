@@ -15,6 +15,51 @@ const chatBoxBg = {
   dark: 'bg-gray-900 border-gray-700',
 }
 
+// Animation scenario types
+const enum GuyScenario {
+  Fall = 'fall',
+  Flash = 'flash',
+  Hover = 'hover',
+  Idle = 'idle',
+  Talk = 'talk',
+  Run = 'run',
+}
+
+// Helper to determine which scenario is active
+function getGuyScenario({ visible, dragging, chatOpen, shootMode }: { visible: boolean, dragging: boolean, chatOpen: boolean, shootMode: boolean }) {
+  if (!visible) return GuyScenario.Flash;
+  if (dragging) return GuyScenario.Hover;
+  if (shootMode) return GuyScenario.Run;
+  if (chatOpen) return GuyScenario.Talk;
+  return GuyScenario.Idle;
+}
+
+// Helper to get image src and size for scenario
+function getGuyImageAndSize(scenario: GuyScenario) {
+  switch (scenario) {
+    case GuyScenario.Fall:
+    case GuyScenario.Flash:
+    case GuyScenario.Hover:
+      // GuyFall.png original: 25x50, scale to 32x96 (narrower, taller, preserves 1:2 aspect, matches run height)
+      return { src: '/pics/LilGuy/GuyFall.png', width: 50, height: 116 };
+    case GuyScenario.Run:
+      // GuyRun.png original: 30x50, scale to 40x96 (preserves 3:5 aspect, matches new height)
+      return { src: '/pics/LilGuy/GuyRun.png', width: 80, height: 116 };
+    case GuyScenario.Idle:
+    case GuyScenario.Talk:
+    default:
+      // GuyStand.png original: 25x50, scale to 32x96 (narrower, taller, preserves 1:2 aspect, matches run height)
+      return { src: '/pics/LilGuy/GuyStand.png', width: 50, height: 116 };
+  }
+}
+
+// Helper to determine facing direction
+function getGuyFacing(left: number) {
+  if (typeof window === 'undefined') return 1;
+  const screenW = window.innerWidth;
+  return left < screenW / 2 ? 1 : -1;
+}
+
 const LittleGuy: React.FC<LittleGuyProps> = ({ visible, onClose }) => {
   const { resolvedTheme } = useTheme()
   const [showBubble, setShowBubble] = useState(false)
@@ -32,6 +77,17 @@ const LittleGuy: React.FC<LittleGuyProps> = ({ visible, onClose }) => {
 
   // Track hi count for 'say hi' option
   const [hiCount, setHiCount] = useState(0);
+
+  // --- Animation state for entry/exit (summon/leave) ---
+  const [entryState, setEntryState] = useState<'fall' | 'idle'>('fall');
+  useEffect(() => {
+    if (visible) {
+      setEntryState('fall');
+      setTimeout(() => setEntryState('idle'), 400); // show fall for 400ms
+    } else {
+      setEntryState('fall');
+    }
+  }, [visible]);
 
   useEffect(() => {
     if (visible && typeof window !== 'undefined') {
@@ -96,32 +152,37 @@ const LittleGuy: React.FC<LittleGuyProps> = ({ visible, onClose }) => {
       }
       return;
     }
-    if (chatOpen) {
+    // Only close chat if not dragged (dragMoved.current === false)
+    if (chatOpen && !dragMoved.current) {
       setChatOpen(false);
       return;
     }
-    setChatOpen(true)
-    // Only show welcome message if there are no previous messages
-    setMessages((msgs) =>
-      msgs.length === 0
-        ? [
-            { from: 'guy', text: "Hello! I'm the little helper, if you have any questions just ask me, you can drag me around too!", key: getUniqueKey() },
-            { from: 'guy', text: 'What would you like to do?', key: getUniqueKey() }
-          ]
-        : msgs
-    )
+    if (!chatOpen) {
+      setChatOpen(true)
+      setMessages((msgs) =>
+        msgs.length === 0
+          ? [
+              { from: 'guy', text: "Hello! I'm the little helper, if you have any questions just ask me, you can drag me around too!", key: getUniqueKey() },
+              { from: 'guy', text: 'What would you like to do?', key: getUniqueKey() }
+            ]
+          : msgs
+      )
+    }
   }
 
-  // --- Drag and drop handlers (with 'woah hey' message only on drag start) ---
+  // --- Drag and drop handlers (track drag distance for click detection) ---
   const dragMoved = useRef(false);
-
+  const dragStartPos = useRef<{x: number, y: number} | null>(null);
   const handleDragStart = (e: React.MouseEvent) => {
+    // Only allow drag if target is the guy image (not chat box)
+    if (!(e.target as HTMLElement).closest('.guy-img')) return;
     setDragging(true);
     setDragOffset({
       x: e.clientX - (guyPos?.left ?? 0),
       y: e.clientY - (guyPos?.top ?? 0),
     });
-    dragMoved.current = false; // Reset for this drag
+    dragMoved.current = false;
+    dragStartPos.current = { x: e.clientX, y: e.clientY };
     e.preventDefault();
   }
   const handleDrag = (e: MouseEvent) => {
@@ -131,10 +192,11 @@ const LittleGuy: React.FC<LittleGuyProps> = ({ visible, onClose }) => {
     const guyWidth = 80, guyHeight = 120;
     const newLeft = Math.max(0, Math.min(docW - guyWidth, e.clientX - dragOffset.x));
     const newTop = Math.max(0, Math.min(docH - guyHeight, e.clientY - dragOffset.y));
-    // Only say 'woah hey where we goin' on the first actual move
-    if (!dragMoved.current && (newLeft !== (guyPos?.left ?? 0) || newTop !== (guyPos?.top ?? 0))) {
-      dragMoved.current = true;
-      if (chatOpen) {
+    if (dragStartPos.current) {
+      const dist = Math.hypot(e.clientX - dragStartPos.current.x, e.clientY - dragStartPos.current.y);
+      if (dist > 5 && !dragMoved.current) {
+        dragMoved.current = true;
+        // Always show woah message on first drag, regardless of chat state
         setMessages((msgs) => {
           if (msgs.length === 0 || msgs[msgs.length - 1].text !== 'Woah hey where we goin') {
             return [...msgs, { from: 'guy', text: 'Woah hey where we goin', key: getUniqueKey() }];
@@ -147,6 +209,7 @@ const LittleGuy: React.FC<LittleGuyProps> = ({ visible, onClose }) => {
   }
   const handleDragEnd = () => {
     setDragging(false);
+    dragStartPos.current = null;
   }
   useEffect(() => {
     if (!dragging) return;
@@ -328,6 +391,10 @@ const LittleGuy: React.FC<LittleGuyProps> = ({ visible, onClose }) => {
   }
 
   // Render
+  const scenario = !visible || entryState === 'fall' ? GuyScenario.Fall : (dragging ? GuyScenario.Hover : (shootMode ? GuyScenario.Run : (chatOpen ? GuyScenario.Talk : GuyScenario.Idle)));
+  const { src: guyImg, width: guyWidth, height: guyHeight } = getGuyImageAndSize(scenario);
+  const guyFacing = guyPos ? getGuyFacing(guyPos.left) : 1;
+
   return (
     <>
       {shootMode && (
@@ -377,21 +444,25 @@ const LittleGuy: React.FC<LittleGuyProps> = ({ visible, onClose }) => {
           >
             <div className="relative flex flex-col items-center">
               <motion.div
-                className="w-20 h-28 flex items-center justify-center cursor-pointer pointer-events-auto"
+                className="w-20 h-28 flex items-center justify-center cursor-pointer pointer-events-auto guy-img"
                 whileTap={{ scale: 0.95 }}
                 whileHover={{ scale: 1.05 }}
                 onClick={handleGuyClick}
                 style={{ zIndex: 2000 }}
               >
-                {/* Stickman SVG */}
-                <svg width="60" height="100" viewBox="0 0 60 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <circle cx="30" cy="20" r="12" stroke={resolvedTheme === 'dark' ? '#60A5FA' : '#2563EB'} strokeWidth="3" fill={resolvedTheme === 'dark' ? '#1E293B' : '#DBEAFE'} />
-                  <line x1="30" y1="32" x2="30" y2="65" stroke={resolvedTheme === 'dark' ? '#60A5FA' : '#2563EB'} strokeWidth="3" />
-                  <line x1="30" y1="40" x2="10" y2="55" stroke={resolvedTheme === 'dark' ? '#60A5FA' : '#2563EB'} strokeWidth="3" />
-                  <line x1="30" y1="40" x2="50" y2="55" stroke={resolvedTheme === 'dark' ? '#60A5FA' : '#2563EB'} strokeWidth="3" />
-                  <line x1="30" y1="65" x2="15" y2="90" stroke={resolvedTheme === 'dark' ? '#60A5FA' : '#2563EB'} strokeWidth="3" />
-                  <line x1="30" y1="65" x2="45" y2="90" stroke={resolvedTheme === 'dark' ? '#60A5FA' : '#2563EB'} strokeWidth="3" />
-                </svg>
+                {/* Render pixel character image for scenario, flip if needed */}
+                <img
+                  src={guyImg}
+                  alt="Little Guy"
+                  style={{
+                    width: guyWidth,
+                    height: guyHeight,
+                    imageRendering: 'pixelated',
+                    transform: `scaleX(${guyFacing})`,
+                    transition: 'transform 0.2s',
+                  }}
+                  draggable={false}
+                />
               </motion.div>
               <AnimatePresence>
                 {showBubble && (
