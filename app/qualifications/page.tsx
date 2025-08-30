@@ -140,15 +140,21 @@ const certificates = [
   {
     id: 'cert1',
     title: 'Cyber Security Vulnerability Certificate',
-    description: 'Using Hacksplain, I completed a series of lessons and tests educating on the different types of security vulnerabilites and how to prevent them from occuring.',
+    description: 'Using Hacksplain.com, I completed a series of lessons and tests educating on the different types of security vulnerabilites and how to prevent them from occuring.',
     image: '/pics/Certificates/hacksplain.PNG',
   },
-//   {
-//     id: 'cert2',
-//     title: 'Cisco CCNA',
-//     description: 'Validates ability to install, configure, operate, and troubleshoot medium-size routed and switched networks.',
-//     image: '/pics/Portfolio/Port2.PNG',
-//   },
+  {
+    id: 'cert2',
+    title: 'Certification of Higher Maths',
+    description: 'This certificate was awarded at graduation as a showcase of exemplary math skills during coursework and the exam.',
+    image: '/pics/Certificates/maths.png',
+  },
+  {
+      id: 'cert3',
+      title: 'Allergen Training Certificate',
+      description: 'As a result of my work in the Award winning fish and chip shop, The Fish Works, I was able to undergo training on allergen awareness and management.',
+      image: '/pics/Certificates/allergen.png',
+    },
 ]
 
 const GradeBadge = ({ grade, size = "normal", variant = "green" }: { 

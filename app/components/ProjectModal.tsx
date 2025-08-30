@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
-import { X, ChevronLeft, ChevronRight, Maximize2, Minimize2, Film, Image as ImageIcon, Github, ExternalLink } from 'lucide-react'
+import { X, ChevronLeft, ChevronRight, Film, Image as ImageIcon, Github, ExternalLink } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 
 interface Project {
@@ -23,12 +23,41 @@ interface ProjectModalProps {
   project: Project
   onClose: () => void
 }
-//TODO consider reworking layout
+
 const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [showVideo, setShowVideo] = useState(false)
   const [isLarge, setIsLarge] = useState(false)
   const modalRef = useRef<HTMLDivElement>(null)
+
+  // Sound playing functions
+  const playSound = (frequency: number, duration: number = 200) => {
+    const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)()
+    const oscillator = audioContext.createOscillator()
+    const gainNode = audioContext.createGain()
+    
+    oscillator.connect(gainNode)
+    gainNode.connect(audioContext.destination)
+    
+    oscillator.frequency.value = frequency
+    oscillator.type = 'sine'
+    
+    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime)
+    gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + duration / 1000)
+    
+    oscillator.start(audioContext.currentTime)
+    oscillator.stop(audioContext.currentTime + duration / 1000)
+  }
+
+  const handleGreenButton = () => {
+    playSound(800, 150) // Higher pitched sound for green
+    setIsLarge(!isLarge) // Maximize/minimize functionality
+  }
+
+  const handleYellowButton = () => {
+    playSound(400, 200) // Lower pitched sound for yellow
+    // You can add minimize to taskbar functionality here if desired
+  }
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -71,22 +100,60 @@ const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) => {
         initial={{ scale: 0.95, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.95, opacity: 0 }}
-        className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-5xl w-full max-h-[90vh] overflow-y-auto"
+        className={`bg-white dark:bg-gray-800 rounded-lg shadow-xl ${
+          isLarge ? 'max-w-7xl w-[95vw]' : 'max-w-5xl w-full'
+        } max-h-[90vh] overflow-hidden`}
       >
-        <div className="p-6">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-2xl font-bold">{project.title}</h2>
-            <motion.button
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-              onClick={onClose}
-              className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-            >
-              <X className="w-6 h-6" />
-            </motion.button>
+        {/* Window Controls Header */}
+        <div className="bg-gray-100 dark:bg-gray-700 px-4 py-3 rounded-t-lg border-b border-gray-200 dark:border-gray-600">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              {/* Red Button - Close */}
+              <motion.button
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                onClick={onClose}
+                className="w-3 h-3 bg-red-500 hover:bg-red-600 rounded-full flex items-center justify-center group"
+                aria-label="Close"
+              >
+                <X className="w-2 h-2 text-red-800 opacity-0 group-hover:opacity-100 transition-opacity" />
+              </motion.button>
+              
+              {/* Yellow Button - Minimize */}
+              <motion.button
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                onClick={handleYellowButton}
+                className="w-3 h-3 bg-yellow-500 hover:bg-yellow-600 rounded-full flex items-center justify-center group"
+                aria-label="Minimize"
+              >
+                <div className="w-2 h-0.5 bg-yellow-800 opacity-0 group-hover:opacity-100 transition-opacity" />
+              </motion.button>
+              
+              {/* Green Button - Maximize/Restore */}
+              <motion.button
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                onClick={handleGreenButton}
+                className="w-3 h-3 bg-green-500 hover:bg-green-600 rounded-full flex items-center justify-center group"
+                aria-label={isLarge ? "Restore" : "Maximize"}
+              >
+                <div className="w-1.5 h-1.5 border border-green-800 opacity-0 group-hover:opacity-100 transition-opacity" />
+              </motion.button>
+            </div>
+            
+            {/* Window Title */}
+            <div className="absolute left-1/2 transform -translate-x-1/2 text-sm font-medium text-gray-600 dark:text-gray-300">
+              {project.title}
+            </div>
+            
+            <div className="w-16"></div> {/* Spacer for balance */}
           </div>
+        </div>
 
-          <div className={`relative ${isLarge ? 'h-[70vh]' : 'h-[50vh]'} mb-4 rounded-lg overflow-hidden bg-white dark:bg-gray-800`}>
+        <div className="p-6 overflow-y-auto max-h-[calc(90vh-60px)]">
+
+          <div className={`relative ${isLarge ? 'h-[75vh]' : 'h-[50vh]'} mb-4 rounded-lg overflow-hidden bg-white dark:bg-gray-800`}>
             {project.media.images && project.media.images.length > 0 && !showVideo && (
               <>
                 <AnimatePresence initial={false} mode="wait">
@@ -170,7 +237,6 @@ const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) => {
                   whileTap={{ scale: 0.95 }}
                   onClick={() => {
                     setShowVideo(!showVideo)
-                    setIsLarge(true)
                   }}
                   className="bg-black/50 text-white p-2 rounded-full hover:bg-black/75 transition-all flex items-center gap-2"
                 >
@@ -178,15 +244,6 @@ const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) => {
                   {showVideo ? 'View Images' : 'Play Video'}
                 </motion.button>
               )}
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => setIsLarge(!isLarge)}
-                className="bg-black/50 text-white p-2 rounded-full hover:bg-black/75 transition-all"
-                aria-label={isLarge ? "Make smaller" : "Make larger"}
-              >
-                {isLarge ? <Minimize2 className="w-5 h-5" /> : <Maximize2 className="w-5 h-5" />}
-              </motion.button>
             </div>
           </div>
 

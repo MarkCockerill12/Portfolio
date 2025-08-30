@@ -50,11 +50,19 @@ const jobExperiences: Experience[] = [
     items: [
       {
         id: 'fish-works-main',
-        text: "The Fish Works: 2023-Present Working in multi award winning fish and chip shop, this role required me to develop an understanding of financial transactions through the till, food safety, teamwork communication and working under pressure."
+        text: "The Fish Works is a multi award winning fish and chip shop, recognized in 2023 for Best Quality Fish and Chips and ranked third in the UK. They were also ranked the second-place winner in the 2025 Takeaway of the Year category."
       },
       {
         id: 'fish-works-details',
-        text: "I would serve customers at a window, handle transactions at the till, be responsible for frying and preparing food and cleaning. I utilised communication skills when dealing with customers and was always able to resolve any conflicts that arose. At times, the shop would be extremely busy and stressful and working seamlessly as a team would be crucial."
+        text: (
+          <> "The fish works is an extremely fast paced environment, where the team each need to carry out their roles under pressure. Some of my roles have been: "
+          <ul className="list-disc list-inside ml-6 mt-2">
+              <li>Serving customers on the till and at the counter, this requires effective communication skills, financial responsibility, critical thinking and de-escalation skills.</li>
+              <br></br>
+              <li>Preparing food items and topping up supplies, this requires multitasking, communication and teamwork, and the ability to work efficiently</li>
+            </ul>
+          </>
+        )
       }
     ],
     icon: <FishSymbol className="w-6 h-6" />
@@ -70,7 +78,7 @@ const jobExperiences: Experience[] = [
       },
       {
         id: 'dusa-details',
-        text: "While this was less pressure, effective communication was still needed in order to navigate the working environment."
+        text: "Effective communication was needed in order to navigate the working environment, as well as quick learning and multitasking."
       }
     ],
     icon: <Palette className="w-6 h-6" />
