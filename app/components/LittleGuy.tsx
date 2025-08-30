@@ -40,10 +40,8 @@ function getGuyImageAndSize(scenario: GuyScenario) {
     case GuyScenario.Fall:
     case GuyScenario.Flash:
     case GuyScenario.Hover:
-      // GuyFall.png original: 25x50, scale to 32x96 (narrower, taller, preserves 1:2 aspect, matches run height)
       return { src: '/pics/LilGuy/GuyFall.png', width: 50, height: 116 };
     case GuyScenario.Run:
-      // GuyRun.png original: 30x50, scale to 40x96 (preserves 3:5 aspect, matches new height)
       return { src: '/pics/LilGuy/GuyRun.png', width: 80, height: 116 };
     case GuyScenario.Idle:
     case GuyScenario.Talk:
