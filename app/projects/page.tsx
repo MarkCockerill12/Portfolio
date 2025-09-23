@@ -63,7 +63,7 @@ const projects: Project[] = [
   {
     id: 11,
     title: "NextGen ATM Website",
-    description: "A website that expands upon the possilities of ATMs, commisioned by NCR for 2025 Dundee Hackathon",
+    description: "A website that expands upon the possilities of ATMs, sponsored by NCR for 2025 Dundee Hackathon",
     media: {
       images: ["/pics/Hak-ATM/atm1.PNG", "/pics/Hak-ATM/atm2.PNG", "/pics/Hak-ATM/atm3.PNG", "/pics/Hak-ATM/atm4.PNG"],
     },
