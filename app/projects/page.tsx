@@ -24,7 +24,7 @@ interface Project {
 }
 
 const projects: Project[] = [
-  {
+  { 
     id: 1,
     title: "NCR ATM Simulation",
     description: "An application that acts as a mock ATM for NCR",
