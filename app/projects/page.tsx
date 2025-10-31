@@ -25,8 +25,33 @@ interface Project {
 
 const projects: Project[] = [
   { 
+    id: 12,
+    title: "CrossExamination- Christian Apologetics Website",
+    description: "A website that showcases different sources, facts and arguments regarding Christianity",
+    media: {
+      images: ["/pics/Chris/ChristianWeb1.png", "/pics/Chris/ChristianWeb2.png", "/pics/Chris/ChristianWeb3.png", "/pics/Chris/ChristianWeb4.png"],
+    },
+    github: "https://github.com/MarkCockerill12/ChristianWeb",
+    technologies: ["Visual Stdio Code", "React", "TypeScript", "Next.js"],
+    demo: "https://crossexamination.vercel.app/",
+    details: "This website goes into depth regarding multiple aspects of both Christianity and other religions. It tackles numerous topics and arguments, such as the problem of Evil in the world, Historical/Archaeological reliability and Science vs Religion. It explores these meticulously, quoting sources and conveying information in an easy to understand way. The website includes a homepage, biblical timeline, topics page, personal story and resources page.",
+    categories: ["Web"]
+  },
+  { 
+    id: 13,
+    title: "Investment Platform Project- University module sponsored by BarClays",
+    description: "An all in one investment platform for both investors and pitch founders",
+    media: {
+      images: ["/pics/Invest/Invest1.png", "/pics/Invest/Invest2.png", "/pics/Invest/Invest3.png", "/pics/Invest/Invest4.png", "/pics/Invest/Invest5.png", "/pics/Invest/Invest6.png", "/pics/Invest/Invest7.png", "/pics/Invest/Invest8.png", "/pics/Invest/Invest9.png", "/pics/Invest/Invest10.png"],
+      video: "/pics/Invest/DEMO.mov",
+    },
+    technologies: ["Visual Stdio Code", "React", "TypeScript", "Next.js", "Docker", "MongoDB", "Google Cloud", ],
+    details: "This project covers different aspect of a investment platform, covering the Frontend, Backend, BankAPI as well as MongoDB database. We created an intuitive and acessible website that allows users to create, browse and invest in different pitches. It handles transactions through a seperate secure API and hsa a working notification system. The website takes fees from transactions in order to keep itself funded. The website securely holds user data and contains an online wallet, similar to how other platforms work. My team took inspirations from other apps and websites such as 212 Trading, Plus500, CrowdCube and KickStarter. Learning from their features, user feedback and design philosphies.",
+    categories: ["Web"]
+  },
+  { 
     id: 1,
-    title: "NCR ATM Simulation",
+    title: "ATM Simulation- University module sponsored by NCR",
     description: "An application that acts as a mock ATM for NCR",
     media: {
       images: ["/pics/Agile/Agile2.PNG", "/pics/Agile/Agile3.PNG", "/pics/Agile/Agile4.PNG", "/pics/Agile/Agile5.PNG", "/pics/Agile/Agile6.PNG", "/pics/Agile/Agile7.PNG", "/pics/Agile/Agile8.PNG", "/pics/Agile/Agile1.PNG", "/pics/Agile/Agile9.PNG"],
