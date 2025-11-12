@@ -133,7 +133,7 @@ const otherExperiences: Experience[] = [
     items: [
       {
         id: 'holiday-club-main',
-        text: "I annually volunteer to help assist in a week-long children's mission in the northeast of Scotland. This involves utilising my communication skills with other helpers and children. During the week I have several responsibilities such as being in a team leading a specific group of primary pupils through activities as well as being a waiter serving food to multiple families during social events"
+        text: "I annually volunteer to help assist in a week-long children's mission in the northeast of Scotland. This involves utilising my communication skills with other helpers and children. Each morning I have multiple responsibilities such as leading a specific group of primary pupils through activities, managing time and sorting conflicts. During afternoon social events I lead children with games as well as serving food to multiple families."
       }
     ],
     icon: <Gamepad className="w-6 h-6" />
