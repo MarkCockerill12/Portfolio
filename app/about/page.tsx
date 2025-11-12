@@ -98,10 +98,10 @@ const AboutSection = () => (
         transition={{ duration: 0.5 }}
       >
         <Image 
-          src="/pics/placeholder.png"
-          alt="Profile Picture" //TODO add profile picture
-          width={300}
-          height={300}
+          src="/pics/me.png"
+          alt="Profile Picture"
+          width={175}
+          height={175}
           className="rounded-lg shadow-lg"
         />
       </motion.div>

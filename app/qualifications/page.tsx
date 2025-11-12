@@ -144,17 +144,23 @@ const certificates = [
     image: '/pics/Certificates/hacksplain.PNG',
   },
   {
-    id: 'cert2',
-    title: 'Certification of Higher Maths',
-    description: 'This certificate was awarded at graduation as a showcase of exemplary math skills during coursework and the exam.',
-    image: '/pics/Certificates/maths.png',
-  },
-  {
-      id: 'cert3',
+      id: 'cert2',
       title: 'Allergen Training Certificate',
       description: 'As a result of my work in the Award winning fish and chip shop, The Fish Works, I was able to undergo training on allergen awareness and management.',
       image: '/pics/Certificates/allergen.png',
     },
+      {
+    id: 'cert3',
+    title: 'Check My Links Certification',
+    description: 'I achieved this certificate by completing a series of lessons and tests on the Check My Links platform, educating on how to use the extension in order to web crawl and analyse links, as well as different error codes.',
+    image: '/pics/Certificates/LinksCert.png',
+  },
+      {
+    id: 'cert4',
+    title: 'Certification of Higher Maths',
+    description: 'This certificate was awarded at graduation as a showcase of exemplary math skills during coursework and the exam.',
+    image: '/pics/Certificates/maths.png',
+  },
 ]
 
 const GradeBadge = ({ grade, size = "normal", variant = "green" }: { 
