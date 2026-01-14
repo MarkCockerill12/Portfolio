@@ -40,14 +40,14 @@ function getGuyImageAndSize(scenario: GuyScenario) {
     case GuyScenario.Fall:
     case GuyScenario.Flash:
     case GuyScenario.Hover:
-      return { src: '/media/LilGuy/GuyFall.png', width: 50, height: 116 };
+      return { src: '/media/LilGuy/GuyFall.webp', width: 50, height: 116 };
     case GuyScenario.Run:
-      return { src: '/media/LilGuy/GuyRun.png', width: 80, height: 116 };
+      return { src: '/media/LilGuy/GuyRun.webp', width: 80, height: 116 };
     case GuyScenario.Idle:
     case GuyScenario.Talk:
     default:
-      // GuyStand.png original: 25x50, scale to 32x96 (narrower, taller, preserves 1:2 aspect, matches run height)
-      return { src: '/media/LilGuy/GuyStand.png', width: 50, height: 116 };
+      // GuyStand.webp original: 25x50, scale to 32x96 (narrower, taller, preserves 1:2 aspect, matches run height)
+      return { src: '/media/LilGuy/GuyStand.webp', width: 50, height: 116 };
   }
 }
 

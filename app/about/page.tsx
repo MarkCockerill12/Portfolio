@@ -98,7 +98,7 @@ const AboutSection = () => (
         transition={{ duration: 0.5 }}
       >
         <Image 
-          src="/media/me.png"
+          src="/media/me.webp"
           alt="Profile Picture"
           width={175}
           height={175}
