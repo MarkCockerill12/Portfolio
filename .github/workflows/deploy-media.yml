@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - 'public/media/**'
+  workflow_dispatch:
 
 jobs:
   deploy:
