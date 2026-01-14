@@ -11,6 +11,9 @@ const pressStart2P = Press_Start_2P({ weight: '400', subsets: ['latin'], variabl
 export const metadata = {
   title: "Mark's Portfolio" ,
   description: 'Portfolio of Mark.C',
+  icons: {
+    icon: '/favicon.ico',
+  },
 }
 
 export default function RootLayout({

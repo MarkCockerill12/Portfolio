@@ -7,6 +7,7 @@ import ScrollAnimation from '../components/ScrollAnimation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Code, Gamepad, Palette, Music, BookOpen, BookHeart } from 'lucide-react'
 
+const BASE_URL = "https://pub-699441ce0cfb40449cc458823a3f1ed2.r2.dev/portfolio"
 
 const aboutParagraphs = [
   {
@@ -98,7 +99,7 @@ const AboutSection = () => (
         transition={{ duration: 0.5 }}
       >
         <Image 
-          src="/media/me.webp"
+          src={`${BASE_URL}/media/me.webp`}
           alt="Profile Picture"
           width={175}
           height={175}

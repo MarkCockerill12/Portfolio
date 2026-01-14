@@ -8,6 +8,8 @@ import HoverText from '../components/HoverText'
 import Image from 'next/image'
 import CertificateModal from '../components/CertificateModal'
 
+const BASE_URL = "https://pub-699441ce0cfb40449cc458823a3f1ed2.r2.dev/portfolio"
+
 const educationHistory = [
     {
         institution: "Dundee University",
@@ -141,25 +143,25 @@ const certificates = [
     id: 'cert1',
     title: 'Cyber Security Vulnerability Certificate',
     description: 'Using Hacksplain.com, I completed a series of lessons and tests educating on the different types of security vulnerabilites and how to prevent them from occuring.',
-    image: '/media/Certificates/hacksplain.webp',
+    image: `${BASE_URL}/media/Certificates/hacksplain.webp`,
   },
   {
       id: 'cert2',
       title: 'Allergen Training Certificate',
       description: 'As a result of my work in the Award winning fish and chip shop, The Fish Works, I was able to undergo training on allergen awareness and management.',
-      image: '/media/Certificates/allergen.webp',
+      image: `${BASE_URL}/media/Certificates/allergen.webp`,
     },
       {
     id: 'cert3',
     title: 'Check My Links Certification',
     description: 'I achieved this certificate by completing a series of lessons and tests on the Check My Links platform, educating on how to use the extension in order to web crawl and analyse links, as well as different error codes.',
-    image: '/media/Certificates/LinksCert.webp',
+    image: `${BASE_URL}/media/Certificates/LinksCert.webp`,
   },
       {
     id: 'cert4',
     title: 'Certification of Higher Maths',
     description: 'I was awarded this certificate at graduation as a showcase of exemplary math skills during coursework and exams.',
-    image: '/media/Certificates/maths.webp',
+    image: `${BASE_URL}/media/Certificates/maths.webp`,
   },
 ]
 
