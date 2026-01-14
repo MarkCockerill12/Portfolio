@@ -9,11 +9,8 @@ const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
 const pressStart2P = Press_Start_2P({ weight: '400', subsets: ['latin'], variable: '--font-press-start-2p' })
 
 export const metadata = {
-  title: "Mark's Portfolio" ,
+  title: "Mark's Portfolio",
   description: 'Portfolio of Mark.C',
-  icons: {
-    icon: '/favicon.ico',
-  },
 }
 
 export default function RootLayout({

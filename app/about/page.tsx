@@ -12,7 +12,7 @@ const BASE_URL = "https://pub-699441ce0cfb40449cc458823a3f1ed2.r2.dev/portfolio"
 const aboutParagraphs = [
   {
     id: 'intro',
-    content: "Hello! My name is Mark, and I am 20 years old. I am a third year Computing Science student at Dundee University. I am an enthusiastic and bubbly person who enjoys working with people and helping others. Due to my upbringing, religion and a supportive family who encourage my interests, I always strive to make the most out of any situation and work with determination resulting in a positive outcome."
+    content: "Hello! My name is Mark, and I am 21 years old. I am a third year Computing Science student at Dundee University. I am an enthusiastic and bubbly person who enjoys working with people and helping others. Due to my upbringing, religion and a supportive family who encourage my interests, I always strive to make the most out of any situation and work with determination resulting in a positive outcome."
   },
   {
     id: 'experience',
