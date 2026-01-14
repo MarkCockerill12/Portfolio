@@ -23,38 +23,66 @@ interface Project {
   categories: string[];
 }
 
+const BASE_URL = "https://pub-699441ce0cfb40449cc458823a3f1ed2.r2.dev/portfolio"
+
 const projects: Project[] = [
-  { 
-    id: 12,
-    title: "CrossExamination- Christian Apologetics Website",
-    description: "A website that showcases different sources, facts and arguments regarding Christianity",
+    { 
+    id: 15,
+    title: "DevOps- Conference Booking System",
+    description: "A conference booking system with full DevOps implementation",
     media: {
-      images: ["/pics/Chris/ChristianWeb1.png", "/pics/Chris/ChristianWeb2.png", "/pics/Chris/ChristianWeb3.png", "/pics/Chris/ChristianWeb4.png"],
+      images: [`${BASE_URL}/media/DevOps/DevOps.webp`, `${BASE_URL}/media/DevOps/DevOps1.webp`, `${BASE_URL}/media/DevOps/DevOps2.webp`, `${BASE_URL}/media/DevOps/DevOps3.webp`, `${BASE_URL}/media/DevOps/DevOps4.webp`, `${BASE_URL}/media/DevOps/DevOps5.webp`, `${BASE_URL}/media/DevOps/DevOps6.webp`,  `${BASE_URL}/media/DevOps/DevOps7.webp`, `${BASE_URL}/media/DevOps/DevOps8.webp`, `${BASE_URL}/media/DevOps/DevOps9.webp`, `${BASE_URL}/media/DevOps/DevOps10.webp`, `${BASE_URL}/media/DevOps/DevOps11.webp`, `${BASE_URL}/media/DevOps/DevOps12.webp`, `${BASE_URL}/media/DevOps/DevOps13.webp`],
+      video: `${BASE_URL}/media/DevOps/DevOps14.webm`,
     },
-    github: "https://github.com/MarkCockerill12/ChristianWeb",
-    technologies: ["Visual Stdio Code", "React", "TypeScript", "Next.js"],
-    demo: "https://crossexamination.vercel.app/",
-    details: "This website goes into depth regarding multiple aspects of both Christianity and other religions. It tackles numerous topics and arguments, such as the problem of Evil in the world, Historical/Archaeological reliability and Science vs Religion. It explores these meticulously, quoting sources and conveying information in an easy to understand way. The website includes a homepage, biblical timeline, topics page, personal story and resources page.",
+    github: "https://github.com/MarkCockerill12/Booking-System",
+    technologies: ["Visual Stdio Code", "React", "TypeScript", "Next.js", "AWS", "Vercel"],
+    details: "This project was created to showcase different DevOps practices, such as CI/CD, Infrastructure as Code and Automated Testing. The conference booking system allows users to create accounts, book and manage their bookings for different conferences. The frontend is hosted on Vercel and the backend is hosted on AWS. It makes use of multiple different AWS services such as Lambda, API Gateway, DynamoDB and S3. ",
+    categories: ["Web"]
+  },
+  { 
+    id: 14,
+    title: "LoFi Web",
+    description: "A website that plays LoFi music with visuals to help with focus, studying and relaxation",
+    media: {
+      images: [`${BASE_URL}/media/Lofi/Lofi1.webp`, `${BASE_URL}/media/Lofi/Lofi2.webp`, `${BASE_URL}/media/Lofi/Lofi3.webp`, `${BASE_URL}/media/ChrisLofi/Lofi4.webp`, `${BASE_URL}/media/ChrisLofi/Lofi5.webp`],
+    },
+    github: "https://github.com/MarkCockerill12/LofiWeb",
+    technologies: ["Visual Stdio Code", "React", "TypeScript", "Next.js", "Cloudflare R2", "Vercel"],
+    demo: "https://lofiweb.vercel.app/",
+    details: "This website was designed to help with studying and calming down. It displays a looping background with music, users can choose between different visuals, sound overlays, colours and songs to best fit their needs. The songs and videos are hosted on Cloudflare's R2 and the frontend is hosted on Vercel.",
     categories: ["Web"]
   },
   { 
     id: 13,
+    title: "CrossExamination- Christian Apologetics Website",
+    description: "A website that showcases different sources, facts and arguments regarding Christianity",
+    media: {
+      images: [`${BASE_URL}/media/Chris/ChristianWeb1.webp`, `${BASE_URL}/media/Chris/ChristianWeb2.webp`, `${BASE_URL}/media/Chris/ChristianWeb3.webp`, `${BASE_URL}/media/Chris/ChristianWeb4.webp`],
+    },
+    github: "https://github.com/MarkCockerill12/ChristianWeb",
+    technologies: ["Visual Stdio Code", "React", "TypeScript", "Next.js", "Vercel"],
+    demo: "https://crossexamination.vercel.app/",
+    details: "This website goes into depth regarding multiple aspects of both Christianity and other religions. It tackles numerous topics and arguments, such as the problem of Evil in the world, Historical/Archaeological reliability and Science vs Religion. It explores these meticulously, quoting sources and conveying information in an easy to understand way. The website includes a homepage, biblical timeline, topics page, personal story and resources page. The frontend is hosted on Vercel.",
+    categories: ["Web"]
+  },
+  { 
+    id: 12,
     title: "Investment Platform Project- University module sponsored by BarClays",
     description: "An all in one investment platform for both investors and pitch founders",
     media: {
-      images: ["/pics/Invest/Invest1.png", "/pics/Invest/Invest2.png", "/pics/Invest/Invest3.png", "/pics/Invest/Invest4.png", "/pics/Invest/Invest5.png", "/pics/Invest/Invest6.png", "/pics/Invest/Invest7.png", "/pics/Invest/Invest8.png", "/pics/Invest/Invest9.png", "/pics/Invest/Invest10.png"],
-      video: "/pics/Invest/DEMO.mov",
+      images: [`${BASE_URL}/media/Invest/Invest1.webp`, `${BASE_URL}/media/Invest/Invest2.webp`, `${BASE_URL}/media/Invest/Invest3.webp`, `${BASE_URL}/media/Invest/Invest4.webp`, `${BASE_URL}/media/Invest/Invest5.webp`, `${BASE_URL}/media/Invest/Invest6.webp`, `${BASE_URL}/media/Invest/Invest7.webp`, `${BASE_URL}/media/Invest/Invest8.webp`, `${BASE_URL}/media/Invest/Invest9.webp`, `${BASE_URL}/media/Invest/Invest10.webp`],
+      video: `${BASE_URL}/media/Invest/DEMO.webm`,
     },
     technologies: ["Visual Stdio Code", "React", "TypeScript", "Next.js", "Docker", "MongoDB", "Google Cloud", ],
     details: "This project covers different aspect of a investment platform, covering the Frontend, Backend, BankAPI as well as MongoDB database. We created an intuitive and acessible website that allows users to create, browse and invest in different pitches. It handles transactions through a seperate secure API and hsa a working notification system. The website takes fees from transactions in order to keep itself funded. The website securely holds user data and contains an online wallet, similar to how other platforms work. My team took inspirations from other apps and websites such as 212 Trading, Plus500, CrowdCube and KickStarter. Learning from their features, user feedback and design philosphies.",
     categories: ["Web"]
   },
   { 
-    id: 1,
+    id: 11,
     title: "ATM Simulation- University module sponsored by NCR",
     description: "An application that acts as a mock ATM for NCR",
     media: {
-      images: ["/pics/Agile/Agile2.PNG", "/pics/Agile/Agile3.PNG", "/pics/Agile/Agile4.PNG", "/pics/Agile/Agile5.PNG", "/pics/Agile/Agile6.PNG", "/pics/Agile/Agile7.PNG", "/pics/Agile/Agile8.PNG", "/pics/Agile/Agile1.PNG", "/pics/Agile/Agile9.PNG"],
+      images: [`${BASE_URL}/media/Agile/Agile2.webp`, `${BASE_URL}/media/Agile/Agile3.webp`, `${BASE_URL}/media/Agile/Agile4.webp`, `${BASE_URL}/media/Agile/Agile5.webp`, `${BASE_URL}/media/Agile/Agile6.webp`, `${BASE_URL}/media/Agile/Agile7.webp`, `${BASE_URL}/media/Agile/Agile8.webp`, `${BASE_URL}/media/Agile/Agile1.webp`, `${BASE_URL}/media/Agile/Agile9.webp`],
     },
     github: "https://github.com/MarkCockerill12/AC31007AgileGroup1",
     technologies: ["Visual Stdio Code", "MySQL", "Go", "Amazon Web Services", "Docker", "React", "Electron", "Next.js", "Python", "Agile Methodologies"],
@@ -62,11 +90,11 @@ const projects: Project[] = [
     categories: ["Web", "SQL"]
   },
   {
-    id: 2,
+    id: 10,
     title: "SQL Company Website",
     description: "A website that interacts with a database in form of SQL",
     media: {
-      images: ["/pics/SteelSummit/Steel1.png", "/pics/SteelSummit/Steel2.png", "/pics/SteelSummit/Steel3.png", "/pics/SteelSummit/Steel4.png", "/pics/SteelSummit/Steel5.png", "/pics/SteelSummit/Steel6.png", "/pics/SteelSummit/Steel7.png", "/pics/SteelSummit/Steel8.png"],
+      images: [`${BASE_URL}/media/SteelSummit/Steel1.webp`, `${BASE_URL}/media/SteelSummit/Steel2.webp`, `${BASE_URL}/media/SteelSummit/Steel3.webp`, `${BASE_URL}/media/SteelSummit/Steel4.webp`, `${BASE_URL}/media/SteelSummit/Steel5.webp`, `${BASE_URL}/media/SteelSummit/Steel6.webp`, `${BASE_URL}/media/SteelSummit/Steel7.webp`, `${BASE_URL}/media/SteelSummit/Steel8.webp`],
     },
     github: "https://github.com/MarkCockerill12/DataAWS",
     technologies: ["Visual Stdio Code", "MySQL", "PHP", "Amazon Web Services", "Docker"],
@@ -75,58 +103,58 @@ const projects: Project[] = [
   },
   
   {
-    id: 3,
+    id: 9,
     title: "Visual Novel Addon",
     description: "A simple addon to Visual Novel 'Doki Doki Literature Club' by Team Salvato",
     media: {
-      images: ["/pics/Doki/DokiDev.PNG", "/pics/Doki/DokiGame.PNG"],
+      images: [`${BASE_URL}/media/Doki/DokiDev.webp`, `${BASE_URL}/media/Doki/DokiGame.webp`],
     },
     technologies: ["RenPy", "PicsArt", "Visual Stdio Code"],
     details: "A simple addon to Visual Novel 'Doki Doki Literature Club' by Team Salvato. This project was made for fun and the desire to experience the RenPy coding language.",
     categories: ["Game"]
   },
   {
-    id: 11,
+    id: 8,
     title: "NextGen ATM Website",
     description: "A website that expands upon the possilities of ATMs, sponsored by NCR for 2025 Dundee Hackathon",
     media: {
-      images: ["/pics/Hak-ATM/atm1.PNG", "/pics/Hak-ATM/atm2.PNG", "/pics/Hak-ATM/atm3.PNG", "/pics/Hak-ATM/atm4.PNG"],
+      images: [`${BASE_URL}/media/Hak-ATM/atm1.webp`, `${BASE_URL}/media/Hak-ATM/atm2.webp`, `${BASE_URL}/media/Hak-ATM/atm3.webp`, `${BASE_URL}/media/Hak-ATM/atm4.webp`],
     },
     github: "https://github.com/MarkCockerill12/Hak25--NCR",
     technologies: ["Visual Stdio Code", "React", "Next.js", "Vercel"],
     demo: "https://hak25-ncr.vercel.app",
-    details: "This mock ATM website was one of the projects my team took on during the 2025 Dundee Uni Hackaton. Our task was to create an ATM that would represent the future, and all the new functionalities that come with it. I decided to create an all-in-one type website, where you can manage your finances, stocks, bills and more with just a few clicks, as well as giving you a visual representation of all of these. Since the hackathon took place over 24 hours, some functionalites such as different langauges arent available. The website uses local storage to remember any additions you make to your bank account, whether it be adding money, cards or stocks. ",
+    details: "This mock ATM website was one of the projects my team took on during the 2025 Dundee Uni Hackaton. Our task was to create an ATM that would represent the future, and all the new functionalities that come with it. I decided to create an all-in-one type website, where you can manage your finances, stocks, bills and more with just a few clicks, as well as giving you a visual representation of all of these. Since the hackathon took place over 24 hours, some functionalites such as different langauges arent available. The website uses local storage to remember any additions you make to your bank account, whether it be adding money, cards or stocks. The frontend is hosted on Vercel.",
     categories: ["Web", "SQL"]
   },
   {
-    id: 4,
+    id: 7,
     title: "Raspbery Pi Pico Web Texter",
     description: "A program that uses Twilio and a Raspberry Pi Pico W to send text messages",
     media: {
-      images: ["/pics/Twilio/Twi1.PNG", "/pics/Twilio/Twi2.jpg"],
+      images: [`${BASE_URL}/media/Twilio/Twi1.webp`, `${BASE_URL}/media/Twilio/Twi2.webp`],
     },
     technologies: ["RenPy", "PicsArt", "Visual Stdio Code"],
     details: "The Raspbery Pi W hosts a web server which allows the user to input text, the program then uses the Twilio API to send text messages through the pico.",
     categories: ["Python", "Raspbery Pi"]
   },
   {
-    id: 5,
+    id: 6,
     title: "3D Animation- Penthouse",
     description: "An animation of my room becoming a penthouse suite",
     media: {
-      images: ["/pics/3D/Penthouse/Penthouse.PNG"],
-      video: "/pics/3D/Penthouse/PenthouseVid.mp4",
+      images: [`${BASE_URL}/media/3D/Penthouse/Penthouse.webp`],
+      video: `${BASE_URL}/media/3D/Penthouse/PenthouseVid.webm`,
     },
     technologies: ["Blender", "DaVinci Resolve",],
     details: "This project was a combination of real life and blender animation, using DaVinci Resole video editior to join the two together.",
     categories: ["3D Animation"]
   },
   {
-    id: 6,
+    id: 5,
     title: "Encrypted Login System with backdoor",
     description: "A login system that is suposedly secure",
     media: {
-      images: ["/pics/Wadiya/Wadiya1.PNG", "/pics/Wadiya/Wadiya2.PNG"],
+      images: [`${BASE_URL}/media/Wadiya/Wadiya1.webp`, `${BASE_URL}/media/Wadiya/Wadiya2.webp`],
     },
     github: "https://github.com/MarkCockerill12/VirusWadiya",
     technologies: ["Visual Studio Code", "C++"],
@@ -134,35 +162,35 @@ const projects: Project[] = [
     categories: ["Cyber Security", "C/C++/C#"]
 },
   {
-    id: 7,
+    id: 4,
     title: "This portfolio",
     description: "This very Portfolio, made with react and tailwind",
     media: {
-      images: ["/pics/Portfolio/Port1.PNG", "/pics/Portfolio/Port2.PNG"],
+      images: [`${BASE_URL}/media/Portfolio/Port1.webp`, `${BASE_URL}/media/Portfolio/Port2.webp`],
     },
     github: "https://github.com/MarkCockerill12/Portfolio",
     demo: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-    technologies: ["Visual Studio Code", "React", "Next.js", "TypeScript", "Tailwind"],
-    details: "This project was a product of our University Information Security module, where we were taked with making a login system with a backdoor that was incredibly difficult to crack if only looking at the code.",
+    technologies: ["Visual Studio Code", "React", "Next.js", "TypeScript", "Tailwind", "Vercel", "Cloudflare R2"],
+    details: "This project was a product of our University Information Security module, where we were taked with making a login system with a backdoor that was incredibly difficult to crack if only looking at the code. The medie is hosted on Cloudflare's R2 and the frontend is hosted on Vercel.",
     categories: ["Web",]
   },
   {
-    id: 8,
+    id: 3,
     title: "Sonic Digital Drawing",
     description: "A drawing of Sonic, created on Krita",
     media: {
-      images: ["/pics/Sonic/Sonic.png", "/pics/Sonic/SonicShow.png"],
+      images: [`${BASE_URL}/media/Sonic/Sonic.webp`, `${BASE_URL}/media/Sonic/SonicShow.webp`],
     },
     technologies: ["Krita"],
     details: "A digital drawing of Sonic the Hedgehog racing alongside Metal Sonic, created on Krita.",
     categories: ["Digital Art"]
   },
   {
-    id: 9,
+    id: 2,
     title: "Chat Bot and Server",
     description: "A chat Bot and Server that interact with HexChat",
     media: {
-      images: ["/pics/HexChat/Hex1.PNG", "/pics/HexChat/Hex2.PNG"],
+      images: [`${BASE_URL}/media/HexChat/Hex1.webp`, `${BASE_URL}/media/HexChat/Hex2.webp`],
     },
     github: "https://github.com/MarkCockerill12/ChatBotLol",
     technologies: ["HexChat", "Python", "MiniIRC", "Visual Studio Code"],
@@ -170,11 +198,11 @@ const projects: Project[] = [
     categories: ["Python"]
   },
   {
-    id: 10,
+    id: 1,
     title: "Shrimp",
     description: "Shrimp",
     media: {
-      images: ["/pics/Shrimp/Shrimp.png", "/pics/Shrimp/ShrimpShow.png"],
+      images: [`${BASE_URL}/media/Shrimp/Shrimp.webp`, `${BASE_URL}/media/Shrimp/ShrimpShow.webp`],
     },
     technologies: ["C#", "Pure uncompromising genius", "Visual Studio"],
     details: "A shrimple program that asks if you are a shrimp or not.",
