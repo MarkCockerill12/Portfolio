@@ -411,16 +411,29 @@ export default function Qualifications() {
                 <HoverText>University Modules</HoverText>
               </motion.h2>
               <div className="grid gap-6 max-w-4xl mx-auto">
-                {[1, 2].map((semester) => (
-                  <div key={semester}>
-                    <h3 className="text-xl font-semibold mb-4 text-gray-700 dark:text-gray-300">
-                      Semester {semester}
+                {Array.from(new Set(modules.map(m => m.year))).sort((a, b) => b - a).map((year) => (
+                  <div key={year} className="mb-4">
+                    <h3 className="text-2xl font-bold mb-6 text-blue-700 dark:text-blue-400 border-b-2 border-blue-100 dark:border-blue-900 pb-2">
+                      Year {year}
                     </h3>
-                    {modules
-                      .filter(module => module.semester === semester)
-                      .map((module) => (
-                        <ModuleCard key={module.id} module={module} />
-                      ))}
+                    {[1, 2].map((semester) => {
+                      const yearSemesterModules = modules.filter(module => module.year === year && module.semester === semester);
+                      if (yearSemesterModules.length === 0) return null;
+                      
+                      return (
+                        <div key={semester} className="mb-8 last:mb-0">
+                          <h4 className="text-xl font-semibold mb-4 text-gray-700 dark:text-gray-300 flex items-center gap-2">
+                            <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
+                            Semester {semester}
+                          </h4>
+                          <div className="space-y-4">
+                            {yearSemesterModules.map((module) => (
+                              <ModuleCard key={module.id} module={module} />
+                            ))}
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
                 ))}
               </div>
