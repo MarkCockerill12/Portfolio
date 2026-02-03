@@ -17,7 +17,7 @@ const educationHistory = [
         qualification: "Bachelor of Science with Honours - Computing Science (BSc)",
         status: "Expected",
         grade: {
-            prediction: "2:1",
+            prediction: "1st",
             label: "Predicted Grade"
         }
     },
@@ -36,6 +36,52 @@ const educationHistory = [
 ]
 
 const modules = [ 
+    {
+        id: 'AC31007',
+        name: 'Industrial Project',
+        year: 4,
+        semester: 1,
+        moduleGrade: 'A1 / 1st',
+        description: 'This project covers different aspect of a investment platform, covering the Frontend, Backend, BankAPI as well as MongoDB database. We created an intuitive and acessible website that allows users to create, browse and invest in different pitches. It handles transactions through a seperate secure API and hsa a working notification system. The website takes fees from transactions in order to keep itself funded. The website securely holds user data and contains an online wallet, similar to how other platforms work. My team took inspirations from other apps and websites such as 212 Trading, Plus500, CrowdCube and KickStarter. Learning from their features, user feedback and design philosphies.',
+    },
+    {
+        id: 'AC51041',
+        name: 'Devops and MicroServices',
+        year: 4,
+        semester: 1,
+        moduleGrade: 'Provisional: A4 / 1st',
+        description: 'This project is about developing a Booking system for conference rooms for my Developer Operations University Module. The system is able to search through different conference rooms, take in booking times and also gain insight into the temperature for that day and calculate if a temperature change is needed to keep the environment comfortable, it will then take that into consideration when displaying the cost. It integrates a simulated Weather Forecast system, AWS Lambda, S3, DynamoDB, Cognito, Cloudwatch as well as Stripe for the financial system and Vercel to host the front end. I employed a microservices architecture within a GitHub Monorepo, using GitHub actions and Jest to do unit tests and deploy each microservice independently.',
+        projects: [
+            {
+                name: 'Preliminary Report',
+                grade: 'A4 / 1st',
+                description: 'I was tasked with creating a preliminary report outlining the architecture, design decisions and technologies to be used within the project. This included diagrams and explanations on how each microservice would interact with each other as well as third party services.'
+            },
+            {
+                name: 'Full Dev Ops Service and CI/CD Pipeline',
+                grade: 'A4 / 1st',
+                description: 'The full service was created using a microservices architecture within a monorepo. Each microservice was containerised using Docker and deployed to AWS using GitHub Actions as the CI/CD pipeline. '
+            }
+        ]
+    },
+    {
+        id: 'CS51009',
+        name: 'Machine Learning',
+        year: 4,
+        semester: 1,
+        moduleGrade: 'Provisional: B3 / 2:1',
+        description: 'The point of this module was to gain an understanding of machine learning concepts and algorithms. ',
+        projects: [
+            {
+                name: 'Hurricane Dataset Assignment',
+                grade: 'A1 / 1st',
+                description: 'This project entailed training a machine learning model to predict the category of a hurricane based on various meteorological features. I preprocessed the data, selected relevant features, and experimented with different algorithms to achieve high accuracy.'
+            }
+        ]
+    },
+
+
+
     {
         id: 'AC31007',
         name: 'Agile Software Engineering',
