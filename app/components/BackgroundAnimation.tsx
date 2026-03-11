@@ -1,6 +1,5 @@
-'use client'
-
 import { useEffect, useRef, useState } from 'react'
+import { usePathname } from 'next/navigation'
 import { useTheme } from 'next-themes'
 import SplashCursor from '../../lib/SplashCursor'
 
@@ -8,6 +7,7 @@ type AnimationType = 'circles' | 'fireworks' | 'squares'
 
 const BackgroundAnimation = ({ animationType }: { animationType: AnimationType }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  const pathname = usePathname()
   const { resolvedTheme } = useTheme()
   const [showSplash, setShowSplash] = useState(false)
   const [mouseActive, setMouseActive] = useState(false)
@@ -184,7 +184,7 @@ const BackgroundAnimation = ({ animationType }: { animationType: AnimationType }
     return () => {
       window.removeEventListener('resize', resizeCanvas)
     }
-  }, [animationType, resolvedTheme])
+  }, [animationType, resolvedTheme, pathname])
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {

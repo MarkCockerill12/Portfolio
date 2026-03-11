@@ -37,13 +37,13 @@ const educationHistory = [
 
 const modules = [ 
     {
-        id: 'AC31007',
-        name: 'Industrial Project',
-        year: 4,
-        semester: 1,
-        moduleGrade: 'A1 / 1st',
-        description: 'This project covers different aspect of a investment platform, covering the Frontend, Backend, BankAPI as well as MongoDB database. We created an intuitive and acessible website that allows users to create, browse and invest in different pitches. It handles transactions through a seperate secure API and hsa a working notification system. The website takes fees from transactions in order to keep itself funded. The website securely holds user data and contains an online wallet, similar to how other platforms work. My team took inspirations from other apps and websites such as 212 Trading, Plus500, CrowdCube and KickStarter. Learning from their features, user feedback and design philosphies.',
-    },
+    id: 'AC31007',
+    name: 'Industrial Project',
+    year: 4,
+    semester: 1,
+    moduleGrade: 'A1 / 1st',
+    description: 'This project covers different aspects of a investment platform, covering the Frontend, Backend, BankAPI as well as MongoDB database. We created an intuitive and accessible website that allows users to create, browse and invest in different pitches. It handles transactions through a separate secure API and has a working notification system. The website takes fees from transactions in order to keep itself funded. The website securely holds user data and contains an online wallet, similar to how other platforms work. My team took inspirations from other apps and websites such as 212 Trading, Plus500, CrowdCube and KickStarter. Learning from their features, user feedback and design philosophies.',
+  },
     {
         id: 'AC51041',
         name: 'Devops and MicroServices',
@@ -178,7 +178,7 @@ const modules = [
             {
                 name: 'Database Implementation',
                 grade: 'B2 / 2:1',
-                description: 'Built a full-stack application with database integration utiling HTML, SQL and PHP.'
+                description: 'Built a full-stack application with database integration utilizing HTML, SQL and PHP.'
             }
         ]
     }
@@ -188,7 +188,7 @@ const certificates = [
   {
     id: 'cert1',
     title: 'Cyber Security Vulnerability Certificate',
-    description: 'Using Hacksplain.com, I completed a series of lessons and tests educating on the different types of security vulnerabilites and how to prevent them from occuring.',
+    description: 'Using Hacksplain.com, I completed a series of lessons and tests educating on the different types of security vulnerabilities and how to prevent them from occurring.',
     image: `${BASE_URL}/media/Certificates/hacksplain.webp`,
   },
   {
@@ -306,7 +306,7 @@ const ModuleCard = ({ module }: { module: typeof modules[0] }) => {
                         <p className="text-gray-600 dark:text-gray-300 mb-4">
                             <HoverText>{module.description}</HoverText>
                         </p>
-                        {module.projects && module.projects.map((project, index) => (
+                        {module.projects?.map((project, index) => (
                             <div key={`${module.id}-${index}`} className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 mb-2">
                                 <div className="flex justify-between items-center mb-2">
                                     <h4 className="font-semibold">

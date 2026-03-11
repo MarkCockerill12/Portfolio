@@ -35,7 +35,7 @@ const projects: Project[] = [
       video: `${BASE_URL}/media/DevOps/DevOps14.webm`,
     },
     github: "https://github.com/MarkCockerill12/Booking-System",
-    technologies: ["Visual Stdio Code", "React", "TypeScript", "Next.js", "AWS", "Vercel"],
+    technologies: ["Visual Studio Code", "React", "TypeScript", "Next.js", "AWS", "Vercel"],
     details: "This project was created to showcase different DevOps practices, such as CI/CD, Infrastructure as Code and Automated Testing. The conference booking system allows users to create accounts, book and manage their bookings for different conferences. The frontend is hosted on Vercel and the backend is hosted on AWS. It makes use of multiple different AWS services such as Lambda, API Gateway, DynamoDB and S3. ",
     categories: ["Web"]
   },
@@ -47,7 +47,7 @@ const projects: Project[] = [
       images: [`${BASE_URL}/media/Lofi/Lofi1.webp`, `${BASE_URL}/media/Lofi/Lofi2.webp`, `${BASE_URL}/media/Lofi/Lofi3.webp`, `${BASE_URL}/media/ChrisLofi/Lofi4.webp`, `${BASE_URL}/media/ChrisLofi/Lofi5.webp`],
     },
     github: "https://github.com/MarkCockerill12/LofiWeb",
-    technologies: ["Visual Stdio Code", "React", "TypeScript", "Next.js", "Cloudflare R2", "Vercel"],
+    technologies: ["Visual Studio Code", "React", "TypeScript", "Next.js", "Cloudflare R2", "Vercel"],
     demo: "https://lofiweb.vercel.app/",
     details: "This website was designed to help with studying and calming down. It displays a looping background with music, users can choose between different visuals, sound overlays, colours and songs to best fit their needs. The songs and videos are hosted on Cloudflare's R2 and the frontend is hosted on Vercel.",
     categories: ["Web"]
@@ -60,7 +60,7 @@ const projects: Project[] = [
       images: [`${BASE_URL}/media/Chris/ChristianWeb1.webp`, `${BASE_URL}/media/Chris/ChristianWeb2.webp`, `${BASE_URL}/media/Chris/ChristianWeb3.webp`, `${BASE_URL}/media/Chris/ChristianWeb4.webp`],
     },
     github: "https://github.com/MarkCockerill12/ChristianWeb",
-    technologies: ["Visual Stdio Code", "React", "TypeScript", "Next.js", "Vercel"],
+    technologies: ["Visual Studio Code", "React", "TypeScript", "Next.js", "Vercel"],
     demo: "https://crossexamination.vercel.app/",
     details: "This website goes into depth regarding multiple aspects of both Christianity and other religions. It tackles numerous topics and arguments, such as the problem of Evil in the world, Historical/Archaeological reliability and Science vs Religion. It explores these meticulously, quoting sources and conveying information in an easy to understand way. The website includes a homepage, biblical timeline, topics page, personal story and resources page. The frontend is hosted on Vercel.",
     categories: ["Web"]
@@ -73,8 +73,8 @@ const projects: Project[] = [
       images: [`${BASE_URL}/media/Invest/Invest1.webp`, `${BASE_URL}/media/Invest/Invest2.webp`, `${BASE_URL}/media/Invest/Invest3.webp`, `${BASE_URL}/media/Invest/Invest4.webp`, `${BASE_URL}/media/Invest/Invest5.webp`, `${BASE_URL}/media/Invest/Invest6.webp`, `${BASE_URL}/media/Invest/Invest7.webp`, `${BASE_URL}/media/Invest/Invest8.webp`, `${BASE_URL}/media/Invest/Invest9.webp`, `${BASE_URL}/media/Invest/Invest10.webp`],
       video: `${BASE_URL}/media/Invest/DEMO.webm`,
     },
-    technologies: ["Visual Stdio Code", "React", "TypeScript", "Next.js", "Docker", "MongoDB", "Google Cloud", ],
-    details: "This project covers different aspects of a investment platform, covering the Frontend, Backend, BankAPI as well as MongoDB database. We created an intuitive and acessible website that allows users to create, browse and invest in different pitches. It handles transactions through a seperate secure API and hsa a working notification system. The website takes fees from transactions in order to keep itself funded. The website securely holds user data and contains an online wallet, similar to how other platforms work. My team took inspirations from other apps and websites such as 212 Trading, Plus500, CrowdCube and KickStarter. Learning from their features, user feedback and design philosphies.",
+    technologies: ["Visual Studio Code", "React", "TypeScript", "Next.js", "Docker", "MongoDB", "Google Cloud", ],
+    details: "This project covers different aspects of a investment platform, covering the Frontend, Backend, BankAPI as well as MongoDB database. We created an intuitive and accessible website that allows users to create, browse and invest in different pitches. It handles transactions through a separate secure API and has a working notification system. The website takes fees from transactions in order to keep itself funded. The website securely holds user data and contains an online wallet, similar to how other platforms work. My team took inspirations from other apps and websites such as 212 Trading, Plus500, CrowdCube and KickStarter. Learning from their features, user feedback and design philosophies.",
     categories: ["Web"]
   },
   { 
@@ -85,8 +85,8 @@ const projects: Project[] = [
       images: [`${BASE_URL}/media/Agile/Agile2.webp`, `${BASE_URL}/media/Agile/Agile3.webp`, `${BASE_URL}/media/Agile/Agile4.webp`, `${BASE_URL}/media/Agile/Agile5.webp`, `${BASE_URL}/media/Agile/Agile6.webp`, `${BASE_URL}/media/Agile/Agile7.webp`, `${BASE_URL}/media/Agile/Agile8.webp`, `${BASE_URL}/media/Agile/Agile1.webp`, `${BASE_URL}/media/Agile/Agile9.webp`],
     },
     github: "https://github.com/MarkCockerill12/AC31007AgileGroup1",
-    technologies: ["Visual Stdio Code", "MySQL", "Go", "Amazon Web Services", "Docker", "React", "Electron", "Next.js", "Python", "Agile Methodologies"],
-    details: "This mock ATM program was our task issues by NCR for learning agile methodologies, it utilises electron to showcase the front end, which handles the visual aspects. The front end then communciates with a Go-coded switch by sending JSON, the switch sorts out the different card numbers and sends them to a seperate simulation which in turn interacts with information in a database. This program is capable of multi currency support, multiple langauges and has error handling. ",
+    technologies: ["Visual Studio Code", "MySQL", "Go", "Amazon Web Services", "Docker", "React", "Electron", "Next.js", "Python", "Agile Methodologies"],
+    details: "This mock ATM program was our task issued by NCR for learning agile methodologies, it utilises electron to showcase the front end, which handles the visual aspects. The front end then communicates with a Go-coded switch by sending JSON, the switch sorts out the different card numbers and sends them to a separate simulation which in turn interacts with information in a database. This program is capable of multi currency support, multiple languages and has error handling. ",
     categories: ["Web", "SQL"]
   },
   {
@@ -97,8 +97,8 @@ const projects: Project[] = [
       images: [`${BASE_URL}/media/SteelSummit/Steel1.webp`, `${BASE_URL}/media/SteelSummit/Steel2.webp`, `${BASE_URL}/media/SteelSummit/Steel3.webp`, `${BASE_URL}/media/SteelSummit/Steel4.webp`, `${BASE_URL}/media/SteelSummit/Steel5.webp`, `${BASE_URL}/media/SteelSummit/Steel6.webp`, `${BASE_URL}/media/SteelSummit/Steel7.webp`, `${BASE_URL}/media/SteelSummit/Steel8.webp`],
     },
     github: "https://github.com/MarkCockerill12/DataAWS",
-    technologies: ["Visual Stdio Code", "MySQL", "PHP", "Amazon Web Services", "Docker"],
-    details: "This mock company website interacts with a database with SQL and php in order to execute queries. It has predfined functions, an SQL builder and more. It has a functional php-sql login system. This was a university assignment and was hosted on amazon web servers, however for the testing and development, docker was used to set up local servers in order for them to interact. Our next steps with this website would be to touch up some of the visual aspects of it.",
+    technologies: ["Visual Studio Code", "MySQL", "PHP", "Amazon Web Services", "Docker"],
+    details: "This mock company website interacts with a database with SQL and php in order to execute queries. It has predefined functions, an SQL builder and more. It has a functional php-sql login system. This was a university assignment and was hosted on amazon web servers, however for the testing and development, docker was used to set up local servers in order for them to interact. Our next steps with this website would be to touch up some of the visual aspects of it.",
     categories: ["SQL", "Web"]
   },
   
@@ -109,7 +109,7 @@ const projects: Project[] = [
     media: {
       images: [`${BASE_URL}/media/Doki/DokiDev.webp`, `${BASE_URL}/media/Doki/DokiGame.webp`],
     },
-    technologies: ["RenPy", "PicsArt", "Visual Stdio Code"],
+    technologies: ["RenPy", "PicsArt", "Visual Studio Code"],
     details: "A simple addon to Visual Novel 'Doki Doki Literature Club' by Team Salvato. This project was made for fun and the desire to experience the RenPy coding language.",
     categories: ["Game"]
   },
@@ -121,21 +121,21 @@ const projects: Project[] = [
       images: [`${BASE_URL}/media/Hak-ATM/atm1.webp`, `${BASE_URL}/media/Hak-ATM/atm2.webp`, `${BASE_URL}/media/Hak-ATM/atm3.webp`, `${BASE_URL}/media/Hak-ATM/atm4.webp`],
     },
     github: "https://github.com/MarkCockerill12/Hak25--NCR",
-    technologies: ["Visual Stdio Code", "React", "Next.js", "Vercel"],
+    technologies: ["Visual Studio Code", "React", "Next.js", "Vercel"],
     demo: "https://hak25-ncr.vercel.app",
-    details: "This mock ATM website was one of the projects my team took on during the 2025 Dundee Uni Hackaton. Our task was to create an ATM that would represent the future, and all the new functionalities that come with it. I decided to create an all-in-one type website, where you can manage your finances, stocks, bills and more with just a few clicks, as well as giving you a visual representation of all of these. Since the hackathon took place over 24 hours, some functionalites such as different langauges arent available. The website uses local storage to remember any additions you make to your bank account, whether it be adding money, cards or stocks. The frontend is hosted on Vercel.",
+    details: "This mock ATM website was one of the projects my team took on during the 2025 Dundee Uni Hackaton. Our task was to create an ATM that would represent the future, and all the new functionalities that come with it. I decided to create an all-in-one type website, where you can manage your finances, stocks, bills and more with just a few clicks, as well as giving you a visual representation of all of these. Since the hackathon took place over 24 hours, some functionalities such as different languages arent available. The website uses local storage to remember any additions you make to your bank account, whether it be adding money, cards or stocks. The frontend is hosted on Vercel.",
     categories: ["Web", "SQL"]
   },
   {
     id: 7,
-    title: "Raspbery Pi Pico Web Texter",
+    title: "Raspberry Pi Pico Web Texter",
     description: "A program that uses Twilio and a Raspberry Pi Pico W to send text messages",
     media: {
       images: [`${BASE_URL}/media/Twilio/Twi1.webp`, `${BASE_URL}/media/Twilio/Twi2.webp`],
     },
-    technologies: ["RenPy", "PicsArt", "Visual Stdio Code"],
-    details: "The Raspbery Pi W hosts a web server which allows the user to input text, the program then uses the Twilio API to send text messages through the pico.",
-    categories: ["Python", "Raspbery Pi"]
+    technologies: ["RenPy", "PicsArt", "Visual Studio Code"],
+    details: "The Raspberry Pi W hosts a web server which allows the user to input text, the program then uses the Twilio API to send text messages through the pico.",
+    categories: ["Python", "Raspberry Pi"]
   },
   {
     id: 6,
@@ -146,13 +146,13 @@ const projects: Project[] = [
       video: `${BASE_URL}/media/3D/Penthouse/PenthouseVid.webm`,
     },
     technologies: ["Blender", "DaVinci Resolve",],
-    details: "This project was a combination of real life and blender animation, using DaVinci Resole video editior to join the two together.",
+    details: "This project was a combination of real life and blender animation, using DaVinci Resolve video editor to join the two together.",
     categories: ["3D Animation"]
   },
   {
     id: 5,
     title: "Encrypted Login System with backdoor",
-    description: "A login system that is suposedly secure",
+    description: "A login system that is supposedly secure",
     media: {
       images: [`${BASE_URL}/media/Wadiya/Wadiya1.webp`, `${BASE_URL}/media/Wadiya/Wadiya2.webp`],
     },
@@ -171,7 +171,7 @@ const projects: Project[] = [
     github: "https://github.com/MarkCockerill12/Portfolio",
     demo: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
     technologies: ["Visual Studio Code", "React", "Next.js", "TypeScript", "Tailwind", "Vercel", "Cloudflare R2"],
-    details: "This project was a product of our University Information Security module, where we were taked with making a login system with a backdoor that was incredibly difficult to crack if only looking at the code. The medie is hosted on Cloudflare's R2 and the frontend is hosted on Vercel.",
+    details: "This project was a product of our University Information Security module, where we were tasked with making a login system with a backdoor that was incredibly difficult to crack if only looking at the code. The media is hosted on Cloudflare's R2 and the frontend is hosted on Vercel.",
     categories: ["Web",]
   },
   {
@@ -194,7 +194,7 @@ const projects: Project[] = [
     },
     github: "https://github.com/MarkCockerill12/ChatBotLol",
     technologies: ["HexChat", "Python", "MiniIRC", "Visual Studio Code"],
-    details: "A chat Bot and Server that interact with HexChat, the chat Bot responds to commands and user messages. The server attempts to repplicate a MiniIRC server.",
+    details: "A chat Bot and Server that interact with HexChat, the chat Bot responds to commands and user messages. The server attempts to replicate a MiniIRC server.",
     categories: ["Python"]
   },
   {
@@ -224,8 +224,7 @@ export default function Projects() {
       // Check if title matches search term
       project.title.toLowerCase().includes(searchTerm.toLowerCase()) &&
       // Check if project has ALL selected categories (AND logic)
-      (selectedCategories.length === 0 || 
-        selectedCategories.every(cat => project.categories.includes(cat)))
+      selectedCategories.every(cat => project.categories.includes(cat))
     )
     setFilteredProjects(filtered)
   }, [searchTerm, selectedCategories])
