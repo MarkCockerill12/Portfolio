@@ -124,17 +124,13 @@ const LittleGuy: React.FC<LittleGuyProps> = ({ visible, onClose }) => {
     setMessages([])
   }, [pathname])
 
-  const getUniqueKey = () => {
-    const key = `${Date.now()}-${Math.random()}`
-    return key
-  }
+  const getUniqueKey = () => `${Date.now()}-${Math.random()}`
 
   const handleGuyClick = (e?: React.MouseEvent) => {
     if (shootMode) {
       setShootMode(false);
       setChatOpen(true);
       setMessages((msgs) => [...msgs, { from: 'guy', text: 'You got me!', key: getUniqueKey() }]);
-      // Fire confetti stars from the guy's position
       if (guyRef.current) {
         const rect = guyRef.current.getBoundingClientRect();
         const x = (rect.left + rect.width / 2) / window.innerWidth;
@@ -150,7 +146,6 @@ const LittleGuy: React.FC<LittleGuyProps> = ({ visible, onClose }) => {
       }
       return;
     }
-    // Only close chat if not dragged (dragMoved.current === false)
     if (chatOpen && !dragMoved.current) {
       setChatOpen(false);
       return;

@@ -306,7 +306,7 @@ const ModuleCard = ({ module }: { module: typeof modules[0] }) => {
                         <p className="text-gray-600 dark:text-gray-300 mb-4">
                             <HoverText>{module.description}</HoverText>
                         </p>
-                        {module.projects.map((project, index) => (
+                        {module.projects && module.projects.map((project, index) => (
                             <div key={`${module.id}-${index}`} className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 mb-2">
                                 <div className="flex justify-between items-center mb-2">
                                     <h4 className="font-semibold">

@@ -9,8 +9,6 @@ type AnimationType = 'circles' | 'fireworks' | 'squares'
 const BackgroundAnimation = ({ animationType }: { animationType: AnimationType }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const { resolvedTheme } = useTheme()
-  const [spacePressed, setSpacePressed] = useState(false)
-  const [mousePos, setMousePos] = useState<{x: number, y: number}>({x: window.innerWidth/2, y: window.innerHeight/2})
   const [showSplash, setShowSplash] = useState(false)
   const [mouseActive, setMouseActive] = useState(false)
   const [splashKey, setSplashKey] = useState(0) // for remounting SplashCursor
@@ -23,16 +21,31 @@ const BackgroundAnimation = ({ animationType }: { animationType: AnimationType }
     const ctx = canvas.getContext('2d')
     if (!ctx) return
 
+    const particles: Particle[] = []
+    const particleCount = 150
+    let textElementCenters: { x: number, y: number }[] = []
+
+    const updateTextElementCenters = () => {
+      const textElements = document.querySelectorAll('p, a')
+      const centers: { x: number, y: number }[] = []
+      textElements.forEach((element) => {
+        const rect = element.getBoundingClientRect()
+        centers.push({
+          x: rect.left + rect.width / 2,
+          y: rect.top + rect.height / 2
+        })
+      })
+      textElementCenters = centers
+    }
+
     const resizeCanvas = () => {
       canvas.width = window.innerWidth
       canvas.height = window.innerHeight
+      updateTextElementCenters()
     }
 
     resizeCanvas()
     window.addEventListener('resize', resizeCanvas)
-
-    const particles: Particle[] = []
-    const particleCount = 150
 
     // Particle is intentionally a class for animation logic
     class Particle {
@@ -100,16 +113,14 @@ const BackgroundAnimation = ({ animationType }: { animationType: AnimationType }
       }
 
       getTextProximityFactor() {
-        const textElements = document.querySelectorAll('p, a');
+        if (textElementCenters.length === 0) return 1;
         let closestDistance = Infinity;
 
-        textElements.forEach((element) => {
-          const rect = element.getBoundingClientRect();
-          const centerX = rect.left + rect.width / 2;
-          const centerY = rect.top + rect.height / 2;
-          const distance = Math.sqrt((this.x - centerX) ** 2 + (this.y - centerY) ** 2);
-          closestDistance = Math.min(closestDistance, distance);
-        });
+        for (let i = 0; i < textElementCenters.length; i++) {
+          const center = textElementCenters[i];
+          const distance = Math.sqrt((this.x - center.x) ** 2 + (this.y - center.y) ** 2);
+          if (distance < closestDistance) closestDistance = distance;
+        }
 
         const proximityThreshold = 800; // Adjust this value to change the fade effect range
         return Math.min(closestDistance / proximityThreshold, 1);

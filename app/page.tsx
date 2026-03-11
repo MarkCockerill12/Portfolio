@@ -71,7 +71,7 @@ export default function Home() {
             transition={{ duration: 0.5, delay: 0.8 }}
           >
             <Link href="/projects" passHref >
-              <button className="px-4 py-2 bg-blue-500 text-white rounded-lg undefined">
+              <button className="px-4 py-2 bg-blue-500 text-white rounded-lg">
                 Explore My Projects
               </button>
             </Link>
