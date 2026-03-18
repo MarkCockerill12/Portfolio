@@ -26,6 +26,19 @@ interface Project {
 const BASE_URL = "https://pub-699441ce0cfb40449cc458823a3f1ed2.r2.dev/portfolio"
 
 const projects: Project[] = [
+  { 
+    id: 16,
+    title: "Agentic RAG System",
+    description: "A high-performance Retrieval-Augmented Generation (RAG) web application engineered with Rust, HTMX, and Groq",
+    media: {
+      images: [`${BASE_URL}/media/RAG/rag1.webp`],
+    },
+    github: "https://github.com/MarkCockerill12/Honours",
+    demo: "https://agentic-rag-n4wm.onrender.com/",
+    technologies: ["Rust", "Axum", "SQLite", "HTMX", "Groq API", "HuggingFace Candle", "Tailwind CSS", "Docker"],
+    details: "This system transforms local documents into an interactive knowledge base with autonomous agentic capabilities. It features dual-model resilience between Llama 3.3 and 3.1, private local embeddings using BERT, and an autonomous reasoning loop for precise document retrieval and synthesis. Optimized for performance with SQLite WAL mode and containerized for deployment on Render.",
+    categories: ["Web", "AI", "Rust"]
+  },
     { 
     id: 15,
     title: "DevOps- Conference Booking System",
