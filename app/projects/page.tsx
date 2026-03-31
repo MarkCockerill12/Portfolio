@@ -17,6 +17,7 @@ interface Project {
     video?: string;
   };
   github?: string;
+  huggingface?: string;
   demo?: string;
   technologies: string[];
   details: string;
@@ -26,6 +27,19 @@ interface Project {
 const BASE_URL = "https://pub-699441ce0cfb40449cc458823a3f1ed2.r2.dev/portfolio"
 
 const projects: Project[] = [
+  { 
+    id: 17,
+    title: "Handwronging - Neural Handwriting OCR",
+    description: "A specialized Optical Character Recognition engine featuring a custom Vision Transformer, honed through 13 iterations to decode complex cursive.",
+    media: {
+      images: [`${BASE_URL}/media/Handwronging/handwronging1.webp`, `${BASE_URL}/media/Handwronging/handwronging2.webp`],
+    },
+    huggingface: "https://huggingface.co/spaces/Hypernova823/Handwronging/tree/main/",
+    demo: "https://hypernova823-handwronging.hf.space/",
+    technologies: ["Python", "PyTorch", "Transformers", "Streamlit", "EasyOCR"],
+    details: "This application utilizes a two-stage 'forensic' neural architecture. First, an EasyOCR computer vision engine performs mathematical line fusion to isolate horizontal text rows. Second, a TrOCR model (DeiT Vision Encoder + RoBERTa Language Decoder) translates the visual features into text. The engine features the 'V13 Specialist' model, the culmination of 13 rigorous training iterations fine-tuning a base TrOCR architecture on the IAM Handwriting Database (>65,000 instances) alongside a heavily augmented synthetic data pipeline. The application allows users to directly compare this custom specialist against Microsoft's massive 1.3B parameter generalist model. While the Microsoft model excels at broad, generalized text, the V13 Specialist is explicitly engineered to outperform it in specific edge cases, mastering complex cursive loops and messy manual pen-strokes. The frontend is built in Streamlit, utilizing deep programmatic CSS overrides to achieve a flawless dark-mode UI, complete with real-time neural matrix loading bars, confidence score tracking, and Text-to-Speech (gTTS) audio playback. The entire pipeline is deployed on Hugging Face Spaces.",
+    categories: ["AI", "Web", "Python"]
+  },
   { 
     id: 16,
     title: "Agentic RAG System",
