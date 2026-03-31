@@ -93,7 +93,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onSelect }) => {
               onClick={(e) => e.stopPropagation()}
             >
               <Image src="https://pub-699441ce0cfb40449cc458823a3f1ed2.r2.dev/portfolio/media/hf-logo.webp" alt="Hugging Face" width={20} height={20} className="mr-1" />
-              HF
+              HuggingFace
             </a>
           )}
           {project.demo && (

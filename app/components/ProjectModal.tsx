@@ -309,7 +309,7 @@ const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) => {
                   className="inline-flex items-center gap-2 bg-orange-500 text-white px-4 py-2 rounded-lg 
                            hover:bg-orange-600 transition-colors"
                 >
-                  <Image src="/media/hf-logo.webp" alt="Hugging Face" width={20} height={20} />
+                  <Image src="https://pub-699441ce0cfb40449cc458823a3f1ed2.r2.dev/portfolio/media/hf-logo.webp" alt="Hugging Face" width={20} height={20} />
                   View on Hugging Face
                 </motion.a>
               )}
