@@ -27,8 +27,21 @@ interface Project {
 const BASE_URL = "https://pub-699441ce0cfb40449cc458823a3f1ed2.r2.dev/portfolio"
 
 const projects: Project[] = [
+   { 
+    id: 19,
+    title: "WikiRithim",
+    description: "A website that showcases many algorithims",
+    media: {
+      images: [`${BASE_URL}/media/WikiRithim/WikiRithim.webp`],
+    },
+    github: "https://github.com/MarkCockerill12/WikiRithim",
+    demo: "https://wiki-rithim.vercel.app/",
+    technologies: ["Trunk", "Rust", "WASM"],
+    details: "This website displays different types of algorithims and how they work. It includes Sorting, Searching, Linear, Trees, Graphs, Strings, Geometric and Maths algorithims.",
+    categories: ["Web"]
+  },
   { 
-    id: 17,
+    id: 18,
     title: "Handwronging - Neural Handwriting OCR",
     description: "A specialized Optical Character Recognition engine featuring a custom Vision Transformer, honed through 13 iterations to decode complex cursive.",
     media: {
@@ -41,7 +54,7 @@ const projects: Project[] = [
     categories: ["AI", "Web", "Python"]
   },
   { 
-    id: 16,
+    id: 17,
     title: "Agentic RAG System",
     description: "A high-performance Retrieval-Augmented Generation (RAG) web application engineered with Rust, HTMX, and Groq",
     media: {
@@ -54,7 +67,7 @@ const projects: Project[] = [
     categories: ["Web", "AI", "Rust"]
   },
     { 
-    id: 15,
+    id: 16,
     title: "DevOps- Conference Booking System",
     description: "A conference booking system with full DevOps implementation",
     media: {
@@ -64,6 +77,19 @@ const projects: Project[] = [
     github: "https://github.com/MarkCockerill12/Booking-System",
     technologies: ["Visual Studio Code", "React", "TypeScript", "Next.js", "AWS", "Vercel"],
     details: "This project was created to showcase different DevOps practices, such as CI/CD, Infrastructure as Code and Automated Testing. The conference booking system allows users to create accounts, book and manage their bookings for different conferences. The frontend is hosted on Vercel and the backend is hosted on AWS. It makes use of multiple different AWS services such as Lambda, API Gateway, DynamoDB and S3. ",
+    categories: ["Web"]
+  },
+  { 
+    id: 15,
+    title: "Minecraft Book",
+    description: "A simple website that acts like a book from minecraft",
+    media: {
+      images: [`${BASE_URL}/media/MCbook/MCbook.webp`],
+    },
+    github: "https://github.com/MarkCockerill12/MinecraftBook",
+    demo: "https://minecraft-book.vercel.app/",
+    technologies: ["React", "Typescript", "Vercel", "Next.js"],
+    details: "This website acts like a book from minecraft, It allows you to edit and export text as pictures",
     categories: ["Web"]
   },
   { 
