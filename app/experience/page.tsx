@@ -19,6 +19,18 @@ type Experience = {
 
 const jobExperiences: Experience[] = [
   {
+    id: 'Insights',
+    title: "Enterprise Technology Intern @ Insights: 2026-Present",
+    website: "https://www.insights.com",
+    items: [
+      {
+        id: 'insights-main',
+        text: "Insights is a global leader in workplace experience and learning, providing solutions that help organizations and their people improve their products and services through data, research and technology."
+      }
+    ],
+    icon: <Code className="w-6 h-6" />
+  },
+  {
     id: 'Outlier',
     title: "Independent Contractor @ Outlier AI: 2025-Present",
     website: "https://www.outlier.ai",
