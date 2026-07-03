@@ -15,10 +15,10 @@ const educationHistory = [
         institution: "Dundee University",
         years: "2022 - Present",
         qualification: "Bachelor of Science with Honours - Computing Science (BSc)",
-        status: "Expected",
+        status: "Achieved",
         grade: {
-            prediction: "1st",
-            label: "Predicted Grade"
+            achieved: "1st",
+            label: "Achieved Grade"
         }
     },
     {
@@ -36,6 +36,14 @@ const educationHistory = [
 ]
 
 const modules = [ 
+    {
+        id: 'CS41001',
+        name: 'Honours Project - Privacy Sentinel',
+        year: 4,
+        semester: 2,
+        moduleGrade: 'A3 / 1st',
+        description: 'Privacy Sentinel is a high-performance, multi-platform digital defence suite designed to restore digital sovereignty. Spanning Desktop, Mobile, and Browser environments, the system implements a unified security framework containing: a low-latency Direct-to-Spoke WireGuard VPN across 5 global regions; an AI Guardian powered by Groq LPUs for real-time website summarisation, translation, and trigger warning detection; an Intelligent Content Filter with DOM-level adblocking, blurring, redaction, and a custom "Kitten Mode" for mental well-being; and a heuristic CyberScanner to analyze phishing links and malicious domains. Deployed on cost-optimised AWS Graviton (ARM64) infrastructure via Terraform with automated auto-shutdown mechanisms, it was built using pnpm, Turborepo, Bun, Electron, Next.js, and Expo.',
+    },
     {
     id: 'AC31007',
     name: 'Industrial Project',
@@ -244,7 +252,7 @@ const EducationCard = ({ education }: { education: typeof educationHistory[0] })
         {education.grade && (
             <div className="flex items-center gap-2 mb-4">
                 <span className="text-sm text-gray-500 dark:text-gray-400">{education.grade.label}:</span>
-                <GradeBadge grade={education.grade.prediction} />
+                <GradeBadge grade={education.grade.achieved} />
             </div>
         )}
         {education.qualifications && (
