@@ -32,7 +32,7 @@ const projects: Project[] = [
     title: "Omni-Convert",
     description: "A secure, high-performance client-side file conversion and media downloading toolkit.",
     media: {
-      images: [`${BASE_URL}/media/OmniConvert/omni1.WEBP`, `${BASE_URL}/media/OmniConvert/OmniConvert2.WEBP`, `${BASE_URL}/media/OmniConvert/omni3.webp`],
+      images: [`${BASE_URL}/media/Omni/OmniConvert1.WEBP`, `${BASE_URL}/media/Omni/OmniConvert2.WEBP`],
     },
     github: "https://github.com/MarkCockerill12/OmniConverter",
     demo: "https://omniconverter.vercel.app/",
