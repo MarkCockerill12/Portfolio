@@ -27,7 +27,20 @@ interface Project {
 const BASE_URL = "https://pub-699441ce0cfb40449cc458823a3f1ed2.r2.dev/portfolio"
 
 const projects: Project[] = [
-   { 
+  { 
+    id: 20,
+    title: "Omni-Convert",
+    description: "A secure, high-performance client-side file conversion and media downloading toolkit.",
+    media: {
+      images: [`${BASE_URL}/media/OmniConvert/omni1.WEBP`, `${BASE_URL}/media/OmniConvert/OmniConvert2.WEBP`, `${BASE_URL}/media/OmniConvert/omni3.webp`],
+    },
+    github: "https://github.com/MarkCockerill12/OmniConverter",
+    demo: "https://omniconverter.vercel.app/",
+    technologies: ["Next.js", "React", "TypeScript", "Tailwind CSS", "FFmpeg.wasm", "Three.js", "Web Workers", "OPFS"],
+    details: "A comprehensive, privacy-first conversion suite running entirely in the browser. It features multithreaded FFmpeg.wasm for media transcoding, an interactive audio editor with trimming and bitrate controls, headless 3D loaders and exporters (supporting GLB, GLTF, OBJ, STL), a binary parser for Wii/Nintendo models, and a secure media downloader using client-side salt-and-pepper SHA-256 password validation.",
+    categories: ["Web"]
+  },
+  { 
     id: 19,
     title: "WikiRithim",
     description: "A website that showcases many algorithims",
