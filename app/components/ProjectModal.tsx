@@ -52,6 +52,7 @@ const ProjectModal: React.FC<ProjectModalProps> = ({
   const [editImages, setEditImages] = useState<string[]>(project.media.images || [])
   const [editVideo, setEditVideo] = useState(project.media.video || "")
   const [uploading, setUploading] = useState(false)
+  const [uploadingVideo, setUploadingVideo] = useState(false)
 
   useEffect(() => {
     // Reset edit fields when project changes
@@ -130,6 +131,34 @@ const ProjectModal: React.FC<ProjectModalProps> = ({
       alert("Error uploading file to Cloudflare R2.")
     } finally {
       setUploading(false)
+    }
+  }
+
+  const handleVideoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    setUploadingVideo(true)
+    const formData = new FormData()
+    formData.append("file", file)
+    formData.append("folder", "portfolio/media/projects")
+
+    try {
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      })
+      if (res.ok) {
+        const data = await res.json()
+        setEditVideo(data.url)
+      } else {
+        alert("Failed to upload video file.")
+      }
+    } catch (err) {
+      console.error(err)
+      alert("Error uploading file to Cloudflare R2.")
+    } finally {
+      setUploadingVideo(false)
     }
   }
 
@@ -361,13 +390,25 @@ const ProjectModal: React.FC<ProjectModalProps> = ({
             <div className="grid grid-cols-4 gap-4">
               <div className="col-span-2 space-y-1">
                 <label className="text-xs font-semibold text-gray-500 dark:text-gray-400">Project Video URL (Optional)</label>
-                <input
-                  type="text"
-                  value={editVideo}
-                  onChange={(e) => setEditVideo(e.target.value)}
-                  className="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-blue-500"
-                  placeholder="https://example.com/video.mp4"
-                />
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={editVideo}
+                    onChange={(e) => setEditVideo(e.target.value)}
+                    className="flex-grow bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-blue-500 font-sans"
+                    placeholder="https://example.com/video.mp4"
+                  />
+                  <label className="bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 px-3 py-2 rounded-lg text-xs font-semibold text-gray-700 dark:text-gray-200 cursor-pointer flex items-center justify-center shrink-0 transition-colors">
+                    {uploadingVideo ? "Uploading..." : "Upload File"}
+                    <input
+                      type="file"
+                      accept="video/*"
+                      onChange={handleVideoUpload}
+                      className="hidden"
+                      disabled={uploadingVideo}
+                    />
+                  </label>
+                </div>
               </div>
               <div className="space-y-1">
                 <label className="text-xs font-semibold text-gray-500 dark:text-gray-400">GitHub Link</label>

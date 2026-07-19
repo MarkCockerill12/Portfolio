@@ -1,6 +1,7 @@
 import { cookies } from "next/headers"
 import { NextResponse } from "next/server"
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3"
+import sharp from "sharp"
 
 const R2_ACCESS_KEY_ID = process.env.R2_ACCESS_KEY_ID
 const R2_SECRET_ACCESS_KEY = process.env.R2_SECRET_ACCESS_KEY
@@ -38,15 +39,39 @@ export async function POST(request: Request) {
 
     // Sanitize filename
     const sanitizedName = file.name.replace(/[^a-zA-Z0-9.-]/g, "_")
-    const key = `${folder.replace(/\/$/, "")}/${Date.now()}-${sanitizedName}`
+    let key = `${folder.replace(/\/$/, "")}/${Date.now()}-${sanitizedName}`
 
-    console.log(`Uploading file ${file.name} to R2 with key: ${key}...`)
+    let finalBuffer = buffer
+    let finalContentType = file.type
+
+    // If it's an image (excluding gifs and vector graphics), convert to high-quality WebP
+    if (file.type.startsWith("image/") && !file.type.includes("gif") && !file.type.includes("svg+xml")) {
+      try {
+        console.log(`Converting image ${file.name} to WebP...`)
+        finalBuffer = await sharp(buffer)
+          .webp({ quality: 85 })
+          .toBuffer()
+        finalContentType = "image/webp"
+        
+        // Rewrite extension in R2 Key to .webp
+        const dotIdx = key.lastIndexOf(".")
+        if (dotIdx !== -1) {
+          key = key.substring(0, dotIdx) + ".webp"
+        } else {
+          key = key + ".webp"
+        }
+      } catch (sharpError) {
+        console.warn("Sharp image conversion failed; uploading original format.", sharpError)
+      }
+    }
+
+    console.log(`Uploading file to R2 with key: ${key}...`)
 
     const command = new PutObjectCommand({
       Bucket: R2_BUCKET_NAME,
       Key: key,
-      Body: buffer,
-      ContentType: file.type || "application/octet-stream",
+      Body: finalBuffer,
+      ContentType: finalContentType || "application/octet-stream",
       CacheControl: "public, max-age=31536000",
     })
 
