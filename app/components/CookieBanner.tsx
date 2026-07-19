@@ -39,7 +39,7 @@ export default function CookieBanner() {
                   Cookie Notice
                 </h4>
                 <p className="text-xs md:text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
-                  We use cookies to enhance your experience and keep you authenticated as an administrator. By browsing, you consent to our use of essential cookies.
+                  We use cookies and local storage.
                 </p>
               </div>
             </div>
