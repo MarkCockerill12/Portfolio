@@ -47,6 +47,11 @@ const ProjectModal: React.FC<ProjectModalProps> = ({
   const [editGithub, setEditGithub] = useState(project.github || "")
   const [editHuggingface, setEditHuggingface] = useState(project.huggingface || "")
   const [editDemo, setEditDemo] = useState(project.demo || "")
+  
+  // Media edit states
+  const [editImages, setEditImages] = useState<string[]>(project.media.images || [])
+  const [editVideo, setEditVideo] = useState(project.media.video || "")
+  const [uploading, setUploading] = useState(false)
 
   useEffect(() => {
     // Reset edit fields when project changes
@@ -58,6 +63,8 @@ const ProjectModal: React.FC<ProjectModalProps> = ({
     setEditGithub(project.github || "")
     setEditHuggingface(project.huggingface || "")
     setEditDemo(project.demo || "")
+    setEditImages(project.media.images || [])
+    setEditVideo(project.media.video || "")
     
     // Auto-enter edit mode for brand new projects
     if (project.title === "New Project Title") {
@@ -98,6 +105,38 @@ const ProjectModal: React.FC<ProjectModalProps> = ({
     playSound(400, 200)
   }
 
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    setUploading(true)
+    const formData = new FormData()
+    formData.append("file", file)
+    formData.append("folder", "portfolio/media/projects")
+
+    try {
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      })
+      if (res.ok) {
+        const data = await res.json()
+        setEditImages((prev) => [...prev, data.url])
+      } else {
+        alert("Failed to upload image file.")
+      }
+    } catch (err) {
+      console.error(err)
+      alert("Error uploading file to Cloudflare R2.")
+    } finally {
+      setUploading(false)
+    }
+  }
+
+  const handleRemoveImage = (index: number) => {
+    setEditImages((prev) => prev.filter((_, i) => i !== index))
+  }
+
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault()
     const updated: Project = {
@@ -107,6 +146,10 @@ const ProjectModal: React.FC<ProjectModalProps> = ({
       details: editDetails,
       technologies: editTech.split(",").map(t => t.trim()).filter(Boolean),
       categories: editCats.split(",").map(c => c.trim()).filter(Boolean),
+      media: {
+        images: editImages,
+        video: editVideo || undefined
+      },
       github: editGithub || undefined,
       huggingface: editHuggingface || undefined,
       demo: editDemo || undefined
@@ -283,22 +326,55 @@ const ProjectModal: React.FC<ProjectModalProps> = ({
               </div>
             </div>
 
-            <div className="grid grid-cols-3 gap-4">
+            <div className="space-y-2">
+              <label className="text-xs font-semibold text-gray-500 dark:text-gray-400">Project Images</label>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {editImages.map((img, idx) => (
+                  <div key={idx} className="relative aspect-video border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden group bg-gray-50 dark:bg-gray-900">
+                    <Image src={img} alt="Preview" fill className="object-contain" />
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveImage(idx)}
+                      className="absolute top-1 right-1 bg-black/60 hover:bg-red-650 text-white p-1 rounded transition-colors cursor-pointer"
+                      title="Remove image"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                ))}
+                
+                <label className="border border-dashed border-gray-300 dark:border-gray-650 hover:border-blue-500 dark:hover:border-blue-400 rounded-lg aspect-video flex flex-col items-center justify-center cursor-pointer transition-colors bg-gray-50 dark:bg-gray-900/50">
+                  <span className="text-xs font-semibold text-gray-550 dark:text-gray-400">
+                    {uploading ? "Uploading..." : "+ Upload Image"}
+                  </span>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFileUpload}
+                    className="hidden"
+                    disabled={uploading}
+                  />
+                </label>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-4 gap-4">
+              <div className="col-span-2 space-y-1">
+                <label className="text-xs font-semibold text-gray-500 dark:text-gray-400">Project Video URL (Optional)</label>
+                <input
+                  type="text"
+                  value={editVideo}
+                  onChange={(e) => setEditVideo(e.target.value)}
+                  className="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  placeholder="https://example.com/video.mp4"
+                />
+              </div>
               <div className="space-y-1">
                 <label className="text-xs font-semibold text-gray-500 dark:text-gray-400">GitHub Link</label>
                 <input
                   type="text"
                   value={editGithub}
                   onChange={(e) => setEditGithub(e.target.value)}
-                  className="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-blue-500"
-                />
-              </div>
-              <div className="space-y-1">
-                <label className="text-xs font-semibold text-gray-500 dark:text-gray-400">Hugging Face Link</label>
-                <input
-                  type="text"
-                  value={editHuggingface}
-                  onChange={(e) => setEditHuggingface(e.target.value)}
                   className="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-blue-500"
                 />
               </div>

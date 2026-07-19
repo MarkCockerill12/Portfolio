@@ -26,6 +26,8 @@ const CertificateModal: React.FC<CertificateModalProps> = ({
   const [isEditing, setIsEditing] = useState(false);
   const [editTitle, setEditTitle] = useState(certificate.title);
   const [editDesc, setEditDesc] = useState(certificate.description);
+  const [editImage, setEditImage] = useState(certificate.image);
+  const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
     // Only fire confetti if it is not a default placeholder/new template cert
@@ -58,6 +60,7 @@ const CertificateModal: React.FC<CertificateModalProps> = ({
   useEffect(() => {
     setEditTitle(certificate.title);
     setEditDesc(certificate.description);
+    setEditImage(certificate.image);
     
     if (certificate.title === "New Certificate") {
       setIsEditing(true);
@@ -83,12 +86,41 @@ const CertificateModal: React.FC<CertificateModalProps> = ({
     };
   }, [onClose]);
 
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploading(true);
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("folder", "portfolio/media/Certificates");
+
+    try {
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setEditImage(data.url);
+      } else {
+        alert("Failed to upload image file.");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Error uploading file to Cloudflare R2.");
+    } finally {
+      setUploading(false);
+    }
+  };
+
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
     onCertificateUpdated?.({
       ...certificate,
       title: editTitle,
       description: editDesc,
+      image: editImage,
     });
     setIsEditing(false);
   };
@@ -119,7 +151,7 @@ const CertificateModal: React.FC<CertificateModalProps> = ({
             {isAdmin && !isEditing && (
               <button
                 onClick={() => setIsEditing(true)}
-                className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full text-gray-500 hover:text-gray-850 dark:hover:text-gray-100 transition-all cursor-pointer"
+                className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full text-gray-500 hover:text-gray-855 dark:hover:text-gray-100 transition-all cursor-pointer"
                 title="Edit Certificate Details"
               >
                 <Pencil className="w-5 h-5" />
@@ -158,6 +190,25 @@ const CertificateModal: React.FC<CertificateModalProps> = ({
                   className="w-full bg-gray-50 dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-blue-500 resize-none leading-relaxed"
                   required
                 />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-xs font-semibold text-gray-500">Certificate Image</label>
+                <div className="flex items-center gap-4">
+                  <div className="relative w-32 h-24 border border-gray-250 dark:border-gray-800 rounded-lg overflow-hidden bg-gray-50 dark:bg-gray-950 shrink-0">
+                    <Image src={editImage} alt="Certificate" fill className="object-contain" />
+                  </div>
+                  <label className="border border-dashed border-gray-300 dark:border-gray-700 hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/10 px-4 py-3 rounded-lg text-xs font-semibold text-gray-600 dark:text-gray-300 cursor-pointer transition-all inline-flex items-center justify-center gap-2">
+                    {uploading ? "Uploading..." : "Upload Image"}
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleFileUpload}
+                      className="hidden"
+                      disabled={uploading}
+                    />
+                  </label>
+                </div>
               </div>
 
               <div className="flex justify-between pt-2">
