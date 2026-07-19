@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import ProjectCard from '../components/ProjectCard'
 import ProjectModal from '../components/ProjectModal'
-import { Search, Filter } from 'lucide-react'
+import { Search, Filter, Plus } from 'lucide-react'
 import HoverText from '../components/HoverText'
 import ScrollAnimation from '../components/ScrollAnimation'
 import { defaultPortfolioData } from '@/lib/default-portfolio'
@@ -68,9 +68,14 @@ export default function Projects() {
       if (!res.ok) return
       const data = await res.json()
       
-      data.projects = data.projects.map((proj: Project) => 
-        proj.id === updatedProject.id ? updatedProject : proj
-      )
+      const exists = data.projects.some((proj: Project) => proj.id === updatedProject.id)
+      if (exists) {
+        data.projects = data.projects.map((proj: Project) => 
+          proj.id === updatedProject.id ? updatedProject : proj
+        )
+      } else {
+        data.projects.push(updatedProject)
+      }
 
       const saveRes = await fetch("/api/portfolio", {
         method: "PUT",
@@ -90,6 +95,44 @@ export default function Projects() {
     }
   }
 
+  const handleProjectDeleted = async (id: number) => {
+    try {
+      const res = await fetch("/api/portfolio")
+      if (!res.ok) return
+      const data = await res.json()
+
+      data.projects = data.projects.filter((proj: Project) => proj.id !== id)
+
+      const saveRes = await fetch("/api/portfolio", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ updatedData: data })
+      })
+
+      if (saveRes.ok) {
+        setProjectsList(data.projects)
+        setSelectedProject(null)
+      }
+    } catch (err) {
+      console.error("Failed to delete project:", err)
+    }
+  }
+
+  const handleAddNewProject = () => {
+    const newProj: Project = {
+      id: Date.now(),
+      title: "New Project Title",
+      description: "Short description of the new project.",
+      media: { images: ["https://pub-699441ce0cfb40449cc458823a3f1ed2.r2.dev/portfolio/media/placeholder.webp"] },
+      github: "",
+      demo: "",
+      technologies: ["Tech"],
+      details: "<p>Detailed description goes here...</p>",
+      categories: ["Web"]
+    }
+    setSelectedProject(newProj)
+  }
+
   const allCategories = Array.from(new Set(projectsList.flatMap(project => project.categories)))
 
   return (
@@ -104,6 +147,17 @@ export default function Projects() {
           <HoverText>My Projects</HoverText>
         </h1>
       </ScrollAnimation>
+
+      {isAdmin && (
+        <div className="flex justify-end mb-6 max-w-7xl mx-auto">
+          <button
+            onClick={handleAddNewProject}
+            className="bg-green-500 hover:bg-green-600 active:scale-95 transition-all text-white font-semibold px-4 py-2 rounded-lg cursor-pointer flex items-center gap-2 text-sm shadow-md"
+          >
+            <Plus className="w-4 h-4" /> Add Project
+          </button>
+        </div>
+      )}
 
       <ScrollAnimation>
         <div className="mb-8 space-y-4">   
@@ -213,6 +267,7 @@ export default function Projects() {
             onClose={() => setSelectedProject(null)} 
             isAdmin={isAdmin}
             onProjectUpdated={handleProjectUpdated}
+            onProjectDeleted={handleProjectDeleted}
           />
         )}
       </AnimatePresence>

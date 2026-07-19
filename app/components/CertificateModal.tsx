@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Pencil } from "lucide-react";
+import { X, Pencil, Trash2 } from "lucide-react";
 import confetti from "canvas-confetti";
 import { Certificate } from "@/lib/types";
 
@@ -12,6 +12,7 @@ interface CertificateModalProps {
   onClose: () => void;
   isAdmin?: boolean;
   onCertificateUpdated?: (updated: Certificate) => void;
+  onCertificateDeleted?: (id: string) => void;
 }
 
 const CertificateModal: React.FC<CertificateModalProps> = ({
@@ -19,6 +20,7 @@ const CertificateModal: React.FC<CertificateModalProps> = ({
   onClose,
   isAdmin = false,
   onCertificateUpdated,
+  onCertificateDeleted,
 }) => {
   const modalRef = useRef<HTMLDivElement>(null);
   const [isEditing, setIsEditing] = useState(false);
@@ -26,35 +28,42 @@ const CertificateModal: React.FC<CertificateModalProps> = ({
   const [editDesc, setEditDesc] = useState(certificate.description);
 
   useEffect(() => {
-    // Fire confetti on modal open using default canvas (document body)
-    confetti({
-      particleCount: 120,
-      spread: 90,
-      origin: { y: 0.8 },
-      startVelocity: 45,
-      gravity: 0.9,
-      scalar: 1.2,
-      ticks: 200,
-      zIndex: 10000,
-      disableForReducedMotion: true,
-      shapes: ["square", "circle"],
-      colors: [
-        "#FFD700",
-        "#FF69B4",
-        "#00CFFF",
-        "#FF6347",
-        "#7CFC00",
-        "#FFB347",
-        "#8A2BE2",
-        "#FF4500",
-      ],
-    });
-  }, [certificate.image]);
+    // Only fire confetti if it is not a default placeholder/new template cert
+    if (certificate.title !== "New Certificate") {
+      confetti({
+        particleCount: 120,
+        spread: 90,
+        origin: { y: 0.8 },
+        startVelocity: 45,
+        gravity: 0.9,
+        scalar: 1.2,
+        ticks: 200,
+        zIndex: 10000,
+        disableForReducedMotion: true,
+        shapes: ["square", "circle"],
+        colors: [
+          "#FFD700",
+          "#FF69B4",
+          "#00CFFF",
+          "#FF6347",
+          "#7CFC00",
+          "#FFB347",
+          "#8A2BE2",
+          "#FF4500",
+        ],
+      });
+    }
+  }, [certificate.image, certificate.title]);
 
   useEffect(() => {
     setEditTitle(certificate.title);
     setEditDesc(certificate.description);
-    setIsEditing(false);
+    
+    if (certificate.title === "New Certificate") {
+      setIsEditing(true);
+    } else {
+      setIsEditing(false);
+    }
   }, [certificate]);
 
   useEffect(() => {
@@ -82,6 +91,13 @@ const CertificateModal: React.FC<CertificateModalProps> = ({
       description: editDesc,
     });
     setIsEditing(false);
+  };
+
+  const handleDelete = () => {
+    if (confirm(`Are you sure you want to delete "${certificate.title}"?`)) {
+      onCertificateDeleted?.(certificate.id);
+      onClose();
+    }
   };
 
   return (
@@ -144,20 +160,31 @@ const CertificateModal: React.FC<CertificateModalProps> = ({
                 />
               </div>
 
-              <div className="flex gap-2 justify-end pt-2">
-                <button
-                  type="button"
-                  onClick={() => setIsEditing(false)}
-                  className="px-3.5 py-1.5 border border-gray-300 dark:border-gray-700 rounded-lg text-xs font-semibold cursor-pointer"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-3.5 py-1.5 bg-blue-500 text-white hover:bg-blue-600 rounded-lg text-xs font-semibold cursor-pointer"
-                >
-                  Save Changes
-                </button>
+              <div className="flex justify-between pt-2">
+                {isAdmin && certificate.title !== "New Certificate" && (
+                  <button
+                    type="button"
+                    onClick={handleDelete}
+                    className="px-3.5 py-1.5 border border-red-500 text-red-500 hover:bg-red-500 hover:text-white rounded-lg text-xs font-semibold cursor-pointer"
+                  >
+                    Delete Certificate
+                  </button>
+                )}
+                <div className="flex gap-2 ml-auto">
+                  <button
+                    type="button"
+                    onClick={() => setIsEditing(false)}
+                    className="px-3.5 py-1.5 border border-gray-300 dark:border-gray-700 rounded-lg text-xs font-semibold cursor-pointer"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-3.5 py-1.5 bg-blue-500 text-white hover:bg-blue-600 rounded-lg text-xs font-semibold cursor-pointer"
+                  >
+                    Save Changes
+                  </button>
+                </div>
               </div>
             </form>
           ) : (

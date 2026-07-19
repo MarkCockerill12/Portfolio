@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronDown, ChevronUp, Pencil, Trash2, Plus } from 'lucide-react'
 import ScrollAnimation from '../components/ScrollAnimation'
@@ -28,9 +28,10 @@ interface EducationCardProps {
   education: Education
   isAdmin: boolean
   onUpdate: (updated: Education) => void
+  onDelete?: (inst: string) => void
 }
 
-const EducationCard = ({ education, isAdmin, onUpdate }: EducationCardProps) => {
+const EducationCard = ({ education, isAdmin, onUpdate, onDelete }: EducationCardProps) => {
   const [isEditing, setIsEditing] = useState(false)
   const [inst, setInst] = useState(education.institution)
   const [yrs, setYrs] = useState(education.years)
@@ -46,7 +47,12 @@ const EducationCard = ({ education, isAdmin, onUpdate }: EducationCardProps) => 
     setStat(education.status || "")
     setGradeAch(education.grade?.achieved || "")
     setGradeLbl(education.grade?.label || "")
-    setIsEditing(false)
+    
+    if (education.institution === "New Institution") {
+      setIsEditing(true)
+    } else {
+      setIsEditing(false)
+    }
   }, [education])
 
   const handleSave = (e: React.FormEvent) => {
@@ -139,36 +145,56 @@ const EducationCard = ({ education, isAdmin, onUpdate }: EducationCardProps) => 
               </div>
             </div>
 
-            <div className="flex justify-end gap-2 pt-2">
-              <button
-                type="button"
-                onClick={() => setIsEditing(false)}
-                className="px-3.5 py-1.5 border border-gray-300 dark:border-gray-700 rounded-lg text-xs font-semibold cursor-pointer"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                className="px-3.5 py-1.5 bg-blue-500 text-white hover:bg-blue-600 rounded-lg text-xs font-semibold cursor-pointer"
-              >
-                Save
-              </button>
+            <div className="flex justify-between pt-2">
+              {isAdmin && education.institution !== "New Institution" && (
+                <button
+                  type="button"
+                  onClick={() => onDelete?.(education.institution)}
+                  className="px-3.5 py-1.5 border border-red-500 text-red-500 hover:bg-red-500 hover:text-white rounded-lg text-xs font-semibold cursor-pointer"
+                >
+                  Delete Card
+                </button>
+              )}
+              <div className="flex gap-2 ml-auto">
+                <button
+                  type="button"
+                  onClick={() => setIsEditing(false)}
+                  className="px-3.5 py-1.5 border border-gray-300 dark:border-gray-700 rounded-lg text-xs font-semibold cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-3.5 py-1.5 bg-blue-500 text-white hover:bg-blue-600 rounded-lg text-xs font-semibold cursor-pointer"
+                >
+                  Save
+                </button>
+              </div>
             </div>
           </form>
         ) : (
           <>
-            <div className="absolute top-4 right-4 flex items-center gap-2">
+            <div className="absolute top-4 right-4 flex items-center gap-1.5">
               {isAdmin && (
-                <button
-                  onClick={() => setIsEditing(true)}
-                  className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full text-gray-500 hover:text-gray-800 dark:hover:text-gray-100 transition-all cursor-pointer"
-                  title="Edit Education Card"
-                >
-                  <Pencil className="w-4 h-4" />
-                </button>
+                <>
+                  <button
+                    onClick={() => setIsEditing(true)}
+                    className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full text-gray-500 hover:text-gray-800 dark:hover:text-gray-100 transition-all cursor-pointer"
+                    title="Edit Education Card"
+                  >
+                    <Pencil className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={() => onDelete?.(education.institution)}
+                    className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full text-gray-450 hover:text-red-500 transition-all cursor-pointer"
+                    title="Delete Education Card"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </>
               )}
             </div>
-            <h3 className="text-xl font-bold mb-2">
+            <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-gray-100">
                 <HoverText>{education.institution}</HoverText>
             </h3>
             <p className="text-gray-600 dark:text-gray-400 mb-2">{education.years}</p>
@@ -205,9 +231,10 @@ interface ModuleCardProps {
   module: Module
   isAdmin: boolean
   onUpdate: (updated: Module) => void
+  onDelete?: (id: string) => void
 }
 
-const ModuleCard = ({ module, isAdmin, onUpdate }: ModuleCardProps) => {
+const ModuleCard = ({ module, isAdmin, onUpdate, onDelete }: ModuleCardProps) => {
   const [isExpanded, setIsExpanded] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
   
@@ -223,7 +250,12 @@ const ModuleCard = ({ module, isAdmin, onUpdate }: ModuleCardProps) => {
     setDesc(module.description)
     setYr(module.year)
     setSem(module.semester)
-    setIsEditing(false)
+    
+    if (module.name === "New Module") {
+      setIsEditing(true)
+    } else {
+      setIsEditing(false)
+    }
   }, [module])
 
   const handleSave = (e: React.FormEvent) => {
@@ -307,20 +339,31 @@ const ModuleCard = ({ module, isAdmin, onUpdate }: ModuleCardProps) => {
                 />
               </div>
 
-              <div className="flex justify-end gap-2 pt-2">
-                <button
-                  type="button"
-                  onClick={() => setIsEditing(false)}
-                  className="px-3.5 py-1.5 border border-gray-300 dark:border-gray-700 rounded-lg text-xs font-semibold cursor-pointer"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-3.5 py-1.5 bg-blue-500 text-white hover:bg-blue-600 rounded-lg text-xs font-semibold cursor-pointer"
-                >
-                  Save
-                </button>
+              <div className="flex justify-between pt-2">
+                {isAdmin && module.name !== "New Module" && (
+                  <button
+                    type="button"
+                    onClick={() => onDelete?.(module.id)}
+                    className="px-3.5 py-1.5 border border-red-500 text-red-500 hover:bg-red-500 hover:text-white rounded-lg text-xs font-semibold cursor-pointer"
+                  >
+                    Delete Card
+                  </button>
+                )}
+                <div className="flex gap-2 ml-auto">
+                  <button
+                    type="button"
+                    onClick={() => setIsEditing(false)}
+                    className="px-3.5 py-1.5 border border-gray-300 dark:border-gray-700 rounded-lg text-xs font-semibold cursor-pointer"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-3.5 py-1.5 bg-blue-500 text-white hover:bg-blue-600 rounded-lg text-xs font-semibold cursor-pointer"
+                  >
+                    Save
+                  </button>
+                </div>
               </div>
             </form>
           ) : (
@@ -343,13 +386,22 @@ const ModuleCard = ({ module, isAdmin, onUpdate }: ModuleCardProps) => {
                           <GradeBadge grade={module.moduleGrade} />
                       </div>
                       {isAdmin && (
-                        <button
-                          onClick={() => setIsEditing(true)}
-                          className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full text-gray-500 hover:text-gray-800 dark:hover:text-gray-100 transition-all cursor-pointer"
-                          title="Edit Module Details"
-                        >
-                          <Pencil className="w-4 h-4" />
-                        </button>
+                        <div className="flex items-center gap-1">
+                          <button
+                            onClick={() => setIsEditing(true)}
+                            className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full text-gray-500 hover:text-gray-800 dark:hover:text-gray-100 transition-all cursor-pointer"
+                            title="Edit Module Details"
+                          >
+                            <Pencil className="w-4 h-4" />
+                          </button>
+                          <button
+                            onClick={() => onDelete?.(module.id)}
+                            className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full text-gray-450 hover:text-red-500 transition-all cursor-pointer"
+                            title="Delete Module Card"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
                       )}
                       <button 
                         className="cursor-pointer"
@@ -497,15 +549,21 @@ export default function Qualifications() {
       .catch(() => setIsAdmin(false))
   }, [])
 
+  // CRUD for Education History
   const handleUpdateEducation = async (updated: Education) => {
     try {
       const res = await fetch("/api/portfolio")
       if (!res.ok) return
       const data = await res.json()
 
-      data.educationHistory = data.educationHistory.map((edu: Education) =>
-        edu.institution === updated.institution ? updated : edu
-      )
+      const exists = data.educationHistory.some((edu: Education) => edu.institution === updated.institution)
+      if (exists) {
+        data.educationHistory = data.educationHistory.map((edu: Education) =>
+          edu.institution === updated.institution ? updated : edu
+        )
+      } else {
+        data.educationHistory.push(updated)
+      }
 
       const saveRes = await fetch("/api/portfolio", {
         method: "PUT",
@@ -523,15 +581,55 @@ export default function Qualifications() {
     }
   }
 
+  const handleDeleteEducation = async (institution: string) => {
+    if (!confirm(`Are you sure you want to delete "${institution}"?`)) return
+    try {
+      const res = await fetch("/api/portfolio")
+      if (!res.ok) return
+      const data = await res.json()
+
+      data.educationHistory = data.educationHistory.filter((edu: Education) => edu.institution !== institution)
+
+      const saveRes = await fetch("/api/portfolio", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ updatedData: data })
+      })
+
+      if (saveRes.ok) {
+        setEducationHistory(data.educationHistory)
+      }
+    } catch (err) {
+      console.error("Failed to delete education history card:", err)
+    }
+  }
+
+  const handleAddNewEducation = () => {
+    const newEdu: Education = {
+      institution: "New Institution",
+      years: "Year - Year",
+      qualification: "Degree / Course",
+      status: "Achieved",
+      grade: { label: "Grade Achieved", achieved: "1st" }
+    }
+    setEducationHistory(prev => [...prev, newEdu])
+  }
+
+  // CRUD for University Modules
   const handleUpdateModule = async (updated: Module) => {
     try {
       const res = await fetch("/api/portfolio")
       if (!res.ok) return
       const data = await res.json()
 
-      data.modules = data.modules.map((m: Module) =>
-        m.id === updated.id ? updated : m
-      )
+      const exists = data.modules.some((m: Module) => m.id === updated.id)
+      if (exists) {
+        data.modules = data.modules.map((m: Module) =>
+          m.id === updated.id ? updated : m
+        )
+      } else {
+        data.modules.push(updated)
+      }
 
       const saveRes = await fetch("/api/portfolio", {
         method: "PUT",
@@ -549,15 +647,56 @@ export default function Qualifications() {
     }
   }
 
+  const handleDeleteModule = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this module card?")) return
+    try {
+      const res = await fetch("/api/portfolio")
+      if (!res.ok) return
+      const data = await res.json()
+
+      data.modules = data.modules.filter((m: Module) => m.id !== id)
+
+      const saveRes = await fetch("/api/portfolio", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ updatedData: data })
+      })
+
+      if (saveRes.ok) {
+        setModules(data.modules)
+      }
+    } catch (err) {
+      console.error("Failed to delete module:", err)
+    }
+  }
+
+  const handleAddNewModule = () => {
+    const newMod: Module = {
+      id: `mod-${Date.now()}`,
+      name: "New Module",
+      year: 4,
+      semester: 1,
+      moduleGrade: "Grade",
+      description: "Enter module details description."
+    }
+    setModules(prev => [...prev, newMod])
+  }
+
+  // CRUD for Certificates
   const handleCertificateUpdated = async (updated: Certificate) => {
     try {
       const res = await fetch("/api/portfolio")
       if (!res.ok) return
       const data = await res.json()
 
-      data.certificates = data.certificates.map((cert: Certificate) =>
-        cert.id === updated.id ? updated : cert
-      )
+      const exists = data.certificates.some((c: Certificate) => c.id === updated.id)
+      if (exists) {
+        data.certificates = data.certificates.map((cert: Certificate) =>
+          cert.id === updated.id ? updated : cert
+        )
+      } else {
+        data.certificates.push(updated)
+      }
 
       const saveRes = await fetch("/api/portfolio", {
         method: "PUT",
@@ -576,12 +715,55 @@ export default function Qualifications() {
     }
   }
 
+  const handleCertificateDeleted = async (id: string) => {
+    try {
+      const res = await fetch("/api/portfolio")
+      if (!res.ok) return
+      const data = await res.json()
+
+      data.certificates = data.certificates.filter((cert: Certificate) => cert.id !== id)
+
+      const saveRes = await fetch("/api/portfolio", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ updatedData: data })
+      })
+
+      if (saveRes.ok) {
+        setCertificates(data.certificates)
+        setSelectedCert(null)
+      }
+    } catch (err) {
+      console.error("Failed to delete certificate:", err)
+    }
+  }
+
+  const handleAddNewCertificate = () => {
+    const newCert: Certificate = {
+      id: `cert-${Date.now()}`,
+      title: "New Certificate",
+      description: "Description of your new certificate.",
+      image: "https://pub-699441ce0cfb40449cc458823a3f1ed2.r2.dev/portfolio/media/placeholder.webp"
+    }
+    setSelectedCert(newCert)
+  }
+
   return (
     <ScrollAnimation>
       <div className="container mx-auto px-4 py-8">
-        <div className="flex justify-center gap-4 mb-10 mt-2">
-          <TabButton id="modules" label="University Modules" activeTab={activeTab} setActiveTab={setActiveTab} />
-          <TabButton id="certificates" label="Certificates" activeTab={activeTab} setActiveTab={setActiveTab} />
+        <div className="flex justify-between items-center mb-10 mt-2 border-b border-gray-200 dark:border-gray-700/50 pb-4 max-w-5xl mx-auto">
+          <div className="flex gap-4">
+            <TabButton id="modules" label="University Modules" activeTab={activeTab} setActiveTab={setActiveTab} />
+            <TabButton id="certificates" label="Certificates" activeTab={activeTab} setActiveTab={setActiveTab} />
+          </div>
+          {isAdmin && activeTab === 'certificates' && (
+            <button
+              onClick={handleAddNewCertificate}
+              className="bg-green-500 hover:bg-green-600 active:scale-95 transition-all text-white font-semibold px-4 py-2 rounded-lg cursor-pointer flex items-center gap-2 text-sm shadow-md"
+            >
+              <Plus className="w-4 h-4" /> Add Certificate
+            </button>
+          )}
         </div>
         <AnimatePresence mode="wait">
           {activeTab === 'modules' && (
@@ -592,27 +774,54 @@ export default function Qualifications() {
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.3 }}
             >
-              <motion.h1 
-                className="text-4xl font-bold mb-8 text-center font-press-start-2p"
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-              >
-                <HoverText>Academic Qualifications</HoverText>
-              </motion.h1>
+              <div className="flex justify-between items-center mb-8 max-w-4xl mx-auto border-b border-gray-200 dark:border-gray-750 pb-3">
+                <motion.h1 
+                  className="text-3xl font-bold font-press-start-2p"
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  <HoverText>Academic Qualifications</HoverText>
+                </motion.h1>
+                {isAdmin && (
+                  <button
+                    onClick={handleAddNewEducation}
+                    className="bg-green-500 hover:bg-green-600 active:scale-95 transition-all text-white font-semibold px-3 py-1.5 rounded-lg cursor-pointer flex items-center gap-1.5 text-xs shadow"
+                  >
+                    <Plus className="w-3.5 h-3.5" /> Add Education
+                  </button>
+                )}
+              </div>
               <div className="grid gap-6 max-w-4xl mx-auto mb-12">
                 {educationHistory.map((edu) => (
-                  <EducationCard key={edu.institution} education={edu} isAdmin={isAdmin} onUpdate={handleUpdateEducation} />
+                  <EducationCard 
+                    key={edu.institution} 
+                    education={edu} 
+                    isAdmin={isAdmin} 
+                    onUpdate={handleUpdateEducation} 
+                    onDelete={handleDeleteEducation}
+                  />
                 ))}
               </div>
-              <motion.h2 
-                className="text-2xl font-bold mb-6 text-center font-press-start-2p"
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-              >
-                <HoverText>University Modules</HoverText>
-              </motion.h2>
+              
+              <div className="flex justify-between items-center mb-6 max-w-4xl mx-auto border-b border-gray-200 dark:border-gray-750 pb-3">
+                <motion.h2 
+                  className="text-2xl font-bold font-press-start-2p"
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  <HoverText>University Modules</HoverText>
+                </motion.h2>
+                {isAdmin && (
+                  <button
+                    onClick={handleAddNewModule}
+                    className="bg-green-500 hover:bg-green-600 active:scale-95 transition-all text-white font-semibold px-3 py-1.5 rounded-lg cursor-pointer flex items-center gap-1.5 text-xs shadow"
+                  >
+                    <Plus className="w-3.5 h-3.5" /> Add Module
+                  </button>
+                )}
+              </div>
               <div className="grid gap-6 max-w-4xl mx-auto">
                 {Array.from(new Set(modules.map(m => m.year))).sort((a, b) => b - a).map((year) => (
                   <div key={year} className="mb-4">
@@ -631,7 +840,13 @@ export default function Qualifications() {
                           </h4>
                           <div className="space-y-4">
                             {yearSemesterModules.map((module) => (
-                              <ModuleCard key={module.id} module={module} isAdmin={isAdmin} onUpdate={handleUpdateModule} />
+                              <ModuleCard 
+                                key={module.id} 
+                                module={module} 
+                                isAdmin={isAdmin} 
+                                onUpdate={handleUpdateModule} 
+                                onDelete={handleDeleteModule}
+                              />
                             ))}
                           </div>
                         </div>
@@ -658,6 +873,7 @@ export default function Qualifications() {
                   certificate={selectedCert} 
                   isAdmin={isAdmin} 
                   onCertificateUpdated={handleCertificateUpdated} 
+                  onCertificateDeleted={handleCertificateDeleted}
                   onClose={() => setSelectedCert(null)} 
                 />
               )}

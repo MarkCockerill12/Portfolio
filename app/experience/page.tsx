@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect } from 'react'
 import { Code, Palette, Gamepad, FishSymbol, Pencil, Plus, Trash2, Globe } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import ScrollAnimation from '../components/ScrollAnimation'
@@ -41,9 +41,10 @@ interface ExperienceCardProps {
   experience: Experience
   isAdmin: boolean
   onUpdate: (updated: Experience) => void
+  onDelete?: (id: string) => void
 }
 
-const ExperienceCard = ({ experience, isAdmin, onUpdate }: ExperienceCardProps) => {
+const ExperienceCard = ({ experience, isAdmin, onUpdate, onDelete }: ExperienceCardProps) => {
   const [isEditing, setIsEditing] = useState(false)
   const [editTitle, setEditTitle] = useState(experience.title)
   const [editWebsite, setEditWebsite] = useState(experience.website || "")
@@ -55,7 +56,13 @@ const ExperienceCard = ({ experience, isAdmin, onUpdate }: ExperienceCardProps) 
     setEditWebsite(experience.website || "")
     setEditIcon(experience.icon)
     setEditItems(experience.items)
-    setIsEditing(false)
+    
+    // Auto edit mode for template cards
+    if (experience.title === "New Position @ Company: Year-Present") {
+      setIsEditing(true)
+    } else {
+      setIsEditing(false)
+    }
   }, [experience])
 
   const handleAddItem = () => {
@@ -159,20 +166,31 @@ const ExperienceCard = ({ experience, isAdmin, onUpdate }: ExperienceCardProps) 
             ))}
           </div>
 
-          <div className="flex justify-end gap-2 pt-2">
-            <button
-              type="button"
-              onClick={() => setIsEditing(false)}
-              className="px-3.5 py-1.5 border border-gray-300 dark:border-gray-700 rounded-lg text-xs font-semibold cursor-pointer"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="px-3.5 py-1.5 bg-blue-500 text-white hover:bg-blue-600 rounded-lg text-xs font-semibold cursor-pointer"
-            >
-              Save Card
-            </button>
+          <div className="flex justify-between pt-2">
+            {isAdmin && experience.title !== "New Position @ Company: Year-Present" && (
+              <button
+                type="button"
+                onClick={() => onDelete?.(experience.id)}
+                className="px-3.5 py-1.5 border border-red-500 text-red-500 hover:bg-red-500 hover:text-white rounded-lg text-xs font-semibold cursor-pointer"
+              >
+                Delete Card
+              </button>
+            )}
+            <div className="flex gap-2 ml-auto">
+              <button
+                type="button"
+                onClick={() => setIsEditing(false)}
+                className="px-3.5 py-1.5 border border-gray-300 dark:border-gray-700 rounded-lg text-xs font-semibold cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="px-3.5 py-1.5 bg-blue-500 text-white hover:bg-blue-600 rounded-lg text-xs font-semibold cursor-pointer"
+              >
+                Save Card
+              </button>
+            </div>
           </div>
         </form>
       ) : (
@@ -203,13 +221,22 @@ const ExperienceCard = ({ experience, isAdmin, onUpdate }: ExperienceCardProps) 
               </h2>
             </div>
             {isAdmin && (
-              <button
-                onClick={() => setIsEditing(true)}
-                className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full text-gray-500 hover:text-gray-800 dark:hover:text-gray-100 transition-all cursor-pointer shrink-0"
-                title="Edit Experience"
-              >
-                <Pencil className="w-4 h-4" />
-              </button>
+              <div className="flex items-center gap-1 shrink-0">
+                <button
+                  onClick={() => setIsEditing(true)}
+                  className="p-1.5 hover:bg-gray-105 dark:hover:bg-gray-700 rounded-full text-gray-500 hover:text-gray-800 dark:hover:text-gray-100 transition-all cursor-pointer"
+                  title="Edit Experience"
+                >
+                  <Pencil className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={() => onDelete?.(experience.id)}
+                  className="p-1.5 hover:bg-gray-105 dark:hover:bg-gray-700 rounded-full text-gray-450 hover:text-red-500 transition-all cursor-pointer"
+                  title="Delete Card"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              </div>
             )}
           </div>
           <div className="space-y-4">
@@ -266,14 +293,27 @@ export default function ExperiencePage() {
       if (!res.ok) return
       const data = await res.json()
 
+      let isNew = true
       if (activeTab === 'job') {
-        data.jobExperiences = data.jobExperiences.map((exp: Experience) => 
-          exp.id === updated.id ? updated : exp
-        )
+        const exists = data.jobExperiences.some((exp: Experience) => exp.id === updated.id)
+        if (exists) {
+          isNew = false
+          data.jobExperiences = data.jobExperiences.map((exp: Experience) => 
+            exp.id === updated.id ? updated : exp
+          )
+        } else {
+          data.jobExperiences.push(updated)
+        }
       } else {
-        data.otherExperiences = data.otherExperiences.map((exp: Experience) => 
-          exp.id === updated.id ? updated : exp
-        )
+        const exists = data.otherExperiences.some((exp: Experience) => exp.id === updated.id)
+        if (exists) {
+          isNew = false
+          data.otherExperiences = data.otherExperiences.map((exp: Experience) => 
+            exp.id === updated.id ? updated : exp
+          )
+        } else {
+          data.otherExperiences.push(updated)
+        }
       }
 
       const saveRes = await fetch("/api/portfolio", {
@@ -297,22 +337,79 @@ export default function ExperiencePage() {
     }
   }
 
+  const handleDeleteExperience = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this experience card?")) return
+    try {
+      const res = await fetch("/api/portfolio")
+      if (!res.ok) return
+      const data = await res.json()
+
+      if (activeTab === 'job') {
+        data.jobExperiences = data.jobExperiences.filter((exp: Experience) => exp.id !== id)
+      } else {
+        data.otherExperiences = data.otherExperiences.filter((exp: Experience) => exp.id !== id)
+      }
+
+      const saveRes = await fetch("/api/portfolio", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ updatedData: data })
+      })
+
+      if (saveRes.ok) {
+        if (activeTab === 'job') {
+          setJobList(data.jobExperiences)
+        } else {
+          setOtherList(data.otherExperiences)
+        }
+      }
+    } catch (err) {
+      console.error("Failed to delete experience:", err)
+    }
+  }
+
+  const handleAddNewExperience = () => {
+    const newExp: Experience = {
+      id: `exp-${Date.now()}`,
+      title: "New Position @ Company: Year-Present",
+      website: "",
+      icon: "Code",
+      items: [{ id: `item-${Date.now()}`, text: "Insert description block here." }]
+    }
+    // Set view list state immediately so edit opens, then save updates R2 on save
+    if (activeTab === 'job') {
+      setJobList(prev => [...prev, newExp])
+    } else {
+      setOtherList(prev => [...prev, newExp])
+    }
+  }
+
   const currentList = activeTab === 'job' ? jobList : otherList
 
   return (
     <ScrollAnimation>
       <div className="container mx-auto px-4 py-8 max-w-4xl">
-        <div className="flex justify-center space-x-8 mb-8">
-          <ExperienceTab 
-            label="Job Experience" 
-            isActive={activeTab === 'job'} 
-            onClick={() => setActiveTab('job')} 
-          />
-          <ExperienceTab 
-            label="Other Experience" 
-            isActive={activeTab === 'other'} 
-            onClick={() => setActiveTab('other')} 
-          />
+        <div className="flex justify-between items-center mb-8 border-b border-gray-200 dark:border-gray-700/50 pb-4">
+          <div className="flex space-x-6">
+            <ExperienceTab 
+              label="Job Experience" 
+              isActive={activeTab === 'job'} 
+              onClick={() => setActiveTab('job')} 
+            />
+            <ExperienceTab 
+              label="Other Experience" 
+              isActive={activeTab === 'other'} 
+              onClick={() => setActiveTab('other')} 
+            />
+          </div>
+          {isAdmin && (
+            <button
+              onClick={handleAddNewExperience}
+              className="bg-green-500 hover:bg-green-600 active:scale-95 transition-all text-white font-semibold px-4 py-2 rounded-lg cursor-pointer flex items-center gap-2 text-sm shadow-md"
+            >
+              <Plus className="w-4 h-4" /> Add Experience
+            </button>
+          )}
         </div>
 
         <AnimatePresence mode="wait">
@@ -330,6 +427,7 @@ export default function ExperiencePage() {
                   experience={exp} 
                   isAdmin={isAdmin}
                   onUpdate={handleUpdateExperience} 
+                  onDelete={handleDeleteExperience}
                 />
               </ScrollAnimation>
             ))}

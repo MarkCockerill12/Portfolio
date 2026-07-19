@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
-import { X, ChevronLeft, ChevronRight, Film, Image as ImageIcon, ExternalLink, Pencil } from 'lucide-react'
+import { X, ChevronLeft, ChevronRight, Film, Image as ImageIcon, ExternalLink, Pencil, Trash2 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Project } from '@/lib/types'
 
@@ -22,13 +22,15 @@ interface ProjectModalProps {
   onClose: () => void
   isAdmin?: boolean
   onProjectUpdated?: (updatedProject: Project) => void
+  onProjectDeleted?: (id: number) => void
 }
 
 const ProjectModal: React.FC<ProjectModalProps> = ({ 
   project, 
   onClose,
   isAdmin = false,
-  onProjectUpdated
+  onProjectUpdated,
+  onProjectDeleted
 }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [showVideo, setShowVideo] = useState(false)
@@ -56,7 +58,13 @@ const ProjectModal: React.FC<ProjectModalProps> = ({
     setEditGithub(project.github || "")
     setEditHuggingface(project.huggingface || "")
     setEditDemo(project.demo || "")
-    setIsEditing(false)
+    
+    // Auto-enter edit mode for brand new projects
+    if (project.title === "New Project Title") {
+      setIsEditing(true)
+    } else {
+      setIsEditing(false)
+    }
   }, [project])
 
   const playSound = (frequency: number, duration: number = 200) => {
@@ -105,6 +113,13 @@ const ProjectModal: React.FC<ProjectModalProps> = ({
     }
     onProjectUpdated?.(updated)
     setIsEditing(false)
+  }
+
+  const handleDelete = () => {
+    if (confirm(`Are you sure you want to delete "${project.title}"?`)) {
+      onProjectDeleted?.(project.id)
+      onClose()
+    }
   }
 
   useEffect(() => {
@@ -298,20 +313,31 @@ const ProjectModal: React.FC<ProjectModalProps> = ({
               </div>
             </div>
 
-            <div className="flex gap-2 justify-end pt-4">
-              <button
-                type="button"
-                onClick={() => setIsEditing(false)}
-                className="px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all cursor-pointer font-semibold"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm font-semibold transition-all cursor-pointer"
-              >
-                Save Changes
-              </button>
+            <div className="flex gap-2 justify-between pt-4">
+              {isAdmin && project.title !== "New Project Title" && (
+                <button
+                  type="button"
+                  onClick={handleDelete}
+                  className="px-4 py-2 border border-red-500 text-red-500 hover:bg-red-500 hover:text-white rounded-lg text-sm font-semibold transition-all cursor-pointer"
+                >
+                  Delete Project
+                </button>
+              )}
+              <div className="flex gap-2 ml-auto">
+                <button
+                  type="button"
+                  onClick={() => setIsEditing(false)}
+                  className="px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all cursor-pointer font-semibold"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm font-semibold transition-all cursor-pointer"
+                >
+                  Save Changes
+                </button>
+              </div>
             </div>
           </form>
         ) : (
