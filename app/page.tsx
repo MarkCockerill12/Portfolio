@@ -1,13 +1,21 @@
 'use client'
 
 import Link from 'next/link'
-import React from 'react'
+import React, { useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { Code, Palette, Gamepad, Lightbulb } from 'lucide-react'
 import ScrollAnimation from '../app/components/ScrollAnimation'
 import HoverText from '../app/components/HoverText'
 
 export default function Home() {
+  const router = useRouter()
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    if (params.has("admin")) {
+      router.push("/admin")
+    }
+  }, [router])
   return (
     <ScrollAnimation>
       <div className="flex flex-col items-center justify-center min-h-[calc(100vh-4rem)]">
@@ -61,7 +69,7 @@ export default function Home() {
             transition={{ duration: 0.5, delay: 0.6 }}
           >
             <HoverText>
-              Welcome to my portfolio! I'm a computer science student with a passion for coding, art and gaming. 
+              Welcome to my portfolio! I&apos;m a computer science student with a passion for coding, art and gaming. 
               More projects will be added with time as some are work in progress.
             </HoverText>
           </motion.p>

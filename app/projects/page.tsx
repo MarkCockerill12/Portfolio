@@ -7,293 +7,52 @@ import ProjectModal from '../components/ProjectModal'
 import { Search, Filter } from 'lucide-react'
 import HoverText from '../components/HoverText'
 import ScrollAnimation from '../components/ScrollAnimation'
-
-interface Project {
-  id: number;
-  title: string;
-  description: string;
-  media: {
-    images?: string[];
-    video?: string;
-  };
-  github?: string;
-  huggingface?: string;
-  demo?: string;
-  technologies: string[];
-  details: string;
-  categories: string[];
-}
-
-const BASE_URL = "https://pub-699441ce0cfb40449cc458823a3f1ed2.r2.dev/portfolio"
-
-const projects: Project[] = [
-  { 
-    id: 20,
-    title: "Omni-Convert",
-    description: "A secure, high-performance client-side file conversion and media downloading toolkit.",
-    media: {
-      images: [`${BASE_URL}/media/Omni/omniconvert.WEBP`, `${BASE_URL}/media/Omni/omniconvert2.WEBP`],
-    },
-    github: "https://github.com/MarkCockerill12/OmniConverter",
-    demo: "https://omniconverter.vercel.app/",
-    technologies: ["Next.js", "React", "TypeScript", "Tailwind CSS", "FFmpeg.wasm", "Three.js", "Web Workers", "OPFS"],
-    details: "A comprehensive, privacy-first conversion suite running entirely in the browser. It features multithreaded FFmpeg.wasm for media transcoding, an interactive audio editor with trimming and bitrate controls, headless 3D loaders and exporters (supporting GLB, GLTF, OBJ, STL), a binary parser for Wii/Nintendo models, and a secure media downloader using client-side salt-and-pepper SHA-256 password validation.",
-    categories: ["Web"]
-  },
-  { 
-    id: 19,
-    title: "WikiRithim",
-    description: "A website that showcases many algorithims",
-    media: {
-      images: [`${BASE_URL}/media/WikiRithim/WikiRithim.webp`],
-    },
-    github: "https://github.com/MarkCockerill12/WikiRithim",
-    demo: "https://wiki-rithim.vercel.app/",
-    technologies: ["Trunk", "Rust", "WASM"],
-    details: "This website displays different types of algorithims and how they work. It includes Sorting, Searching, Linear, Trees, Graphs, Strings, Geometric and Maths algorithims.",
-    categories: ["Web"]
-  },
-  { 
-    id: 18,
-    title: "Handwronging - Neural Handwriting OCR",
-    description: "A specialized Optical Character Recognition engine featuring a custom Vision Transformer, honed through 13 iterations to decode complex cursive.",
-    media: {
-      images: [`${BASE_URL}/media/Handwronging/handwronging1.webp`, `${BASE_URL}/media/Handwronging/handwronging2.webp`],
-    },
-    huggingface: "https://huggingface.co/spaces/Hypernova823/Handwronging/tree/main/",
-    demo: "https://hypernova823-handwronging.hf.space/",
-    technologies: ["Python", "PyTorch", "Transformers", "Streamlit", "EasyOCR"],
-    details: "This application utilizes a two-stage 'forensic' neural architecture. First, an EasyOCR computer vision engine performs mathematical line fusion to isolate horizontal text rows. Second, a TrOCR model (DeiT Vision Encoder + RoBERTa Language Decoder) translates the visual features into text. The engine features the 'V13 Specialist' model, the culmination of 13 rigorous training iterations (some of which were trained on microsoft Large model and then discarded due to overfitting), fine-tuning a base TrOCR architecture on the IAM Handwriting Database (>65,000 instances) alongside a heavily augmented synthetic data pipeline. The application allows users to directly compare this custom specialist against Microsoft's massive 1.3B parameter generalist model. While the Microsoft model excels at broad, generalized text, the V13 Specialist is explicitly engineered to outperform it in specific edge cases, mastering complex cursive loops and messy manual pen-strokes. The frontend is built in Streamlit, utilizing deep programmatic CSS overrides to achieve a flawless dark-mode UI, complete with real-time neural matrix loading bars, confidence score tracking, and Text-to-Speech (gTTS) audio playback. The entire pipeline is deployed on Hugging Face Spaces.",
-    categories: ["AI", "Web", "Python"]
-  },
-  { 
-    id: 17,
-    title: "Agentic RAG System",
-    description: "A high-performance Retrieval-Augmented Generation (RAG) web application engineered with Rust, HTMX, and Groq",
-    media: {
-      images: [`${BASE_URL}/media/RAG/rag1.webp`],
-    },
-    github: "https://github.com/MarkCockerill12/Honours",
-    demo: "https://agentic-rag-n4wm.onrender.com/",
-    technologies: ["Rust", "Axum", "SQLite", "HTMX", "Groq API", "HuggingFace Candle", "Tailwind CSS", "Docker"],
-    details: "This system transforms local documents into an interactive knowledge base with autonomous agentic capabilities. It features dual-model resilience between Llama 3.3 and 3.1, private local embeddings using BERT, and an autonomous reasoning loop for precise document retrieval and synthesis. Optimized for performance with SQLite WAL mode and containerized for deployment on Render.",
-    categories: ["Web", "AI", "Rust"]
-  },
-    { 
-    id: 16,
-    title: "DevOps- Conference Booking System",
-    description: "A conference booking system with full DevOps implementation",
-    media: {
-      images: [`${BASE_URL}/media/DevOps/DevOps.webp`, `${BASE_URL}/media/DevOps/DevOps1.webp`, `${BASE_URL}/media/DevOps/DevOps2.webp`, `${BASE_URL}/media/DevOps/DevOps3.webp`, `${BASE_URL}/media/DevOps/DevOps4.webp`, `${BASE_URL}/media/DevOps/DevOps5.webp`, `${BASE_URL}/media/DevOps/DevOps6.webp`,  `${BASE_URL}/media/DevOps/DevOps7.webp`, `${BASE_URL}/media/DevOps/DevOps8.webp`, `${BASE_URL}/media/DevOps/DevOps9.webp`, `${BASE_URL}/media/DevOps/DevOps10.webp`, `${BASE_URL}/media/DevOps/DevOps11.webp`, `${BASE_URL}/media/DevOps/DevOps12.webp`, `${BASE_URL}/media/DevOps/DevOps13.webp`],
-      video: `${BASE_URL}/media/DevOps/DevOps14.webm`,
-    },
-    github: "https://github.com/MarkCockerill12/Booking-System",
-    technologies: ["Visual Studio Code", "React", "TypeScript", "Next.js", "AWS", "Vercel"],
-    details: "This project was created to showcase different DevOps practices, such as CI/CD, Infrastructure as Code and Automated Testing. The conference booking system allows users to create accounts, book and manage their bookings for different conferences. The frontend is hosted on Vercel and the backend is hosted on AWS. It makes use of multiple different AWS services such as Lambda, API Gateway, DynamoDB and S3. ",
-    categories: ["Web"]
-  },
-  { 
-    id: 15,
-    title: "Minecraft Book",
-    description: "A simple website that acts like a book from minecraft",
-    media: {
-      images: [`${BASE_URL}/media/MCbook/MCbook.webp`],
-    },
-    github: "https://github.com/MarkCockerill12/MinecraftBook",
-    demo: "https://minecraft-book.vercel.app/",
-    technologies: ["React", "Typescript", "Vercel", "Next.js"],
-    details: "This website acts like a book from minecraft, It allows you to edit and export text as pictures",
-    categories: ["Web"]
-  },
-  { 
-    id: 14,
-    title: "LoFi Web",
-    description: "A website that plays LoFi music with visuals to help with focus, studying and relaxation",
-    media: {
-      images: [`${BASE_URL}/media/Lofi/Lofi1.webp`, `${BASE_URL}/media/Lofi/Lofi2.webp`, `${BASE_URL}/media/Lofi/Lofi3.webp`, `${BASE_URL}/media/ChrisLofi/Lofi4.webp`, `${BASE_URL}/media/ChrisLofi/Lofi5.webp`],
-    },
-    github: "https://github.com/MarkCockerill12/LofiWeb",
-    technologies: ["Visual Studio Code", "React", "TypeScript", "Next.js", "Cloudflare R2", "Vercel"],
-    demo: "https://lofiweb.vercel.app/",
-    details: "This website was designed to help with studying and calming down. It displays a looping background with music, users can choose between different visuals, sound overlays, colours and songs to best fit their needs. The songs and videos are hosted on Cloudflare's R2 and the frontend is hosted on Vercel.",
-    categories: ["Web"]
-  },
-  { 
-    id: 13,
-    title: "CrossExamination- Christian Apologetics Website",
-    description: "A website that showcases different sources, facts and arguments regarding Christianity",
-    media: {
-      images: [`${BASE_URL}/media/Chris/ChristianWeb1.webp`, `${BASE_URL}/media/Chris/ChristianWeb2.webp`, `${BASE_URL}/media/Chris/ChristianWeb3.webp`, `${BASE_URL}/media/Chris/ChristianWeb4.webp`],
-    },
-    github: "https://github.com/MarkCockerill12/ChristianWeb",
-    technologies: ["Visual Studio Code", "React", "TypeScript", "Next.js", "Vercel"],
-    demo: "https://crossexamination.vercel.app/",
-    details: "This website goes into depth regarding multiple aspects of both Christianity and other religions. It tackles numerous topics and arguments, such as the problem of Evil in the world, Historical/Archaeological reliability and Science vs Religion. It explores these meticulously, quoting sources and conveying information in an easy to understand way. The website includes a homepage, biblical timeline, topics page, personal story and resources page. The frontend is hosted on Vercel.",
-    categories: ["Web"]
-  },
-  { 
-    id: 12,
-    title: "Investment Platform Project- University module sponsored by BarClays",
-    description: "An all in one investment platform for both investors and pitch founders",
-    media: {
-      images: [`${BASE_URL}/media/Invest/Invest1.webp`, `${BASE_URL}/media/Invest/Invest2.webp`, `${BASE_URL}/media/Invest/Invest3.webp`, `${BASE_URL}/media/Invest/Invest4.webp`, `${BASE_URL}/media/Invest/Invest5.webp`, `${BASE_URL}/media/Invest/Invest6.webp`, `${BASE_URL}/media/Invest/Invest7.webp`, `${BASE_URL}/media/Invest/Invest8.webp`, `${BASE_URL}/media/Invest/Invest9.webp`, `${BASE_URL}/media/Invest/Invest10.webp`],
-      video: `${BASE_URL}/media/Invest/DEMO.webm`,
-    },
-    technologies: ["Visual Studio Code", "React", "TypeScript", "Next.js", "Docker", "MongoDB", "Google Cloud", ],
-    details: "This project covers different aspects of a investment platform, covering the Frontend, Backend, BankAPI as well as MongoDB database. We created an intuitive and accessible website that allows users to create, browse and invest in different pitches. It handles transactions through a separate secure API and has a working notification system. The website takes fees from transactions in order to keep itself funded. The website securely holds user data and contains an online wallet, similar to how other platforms work. My team took inspirations from other apps and websites such as 212 Trading, Plus500, CrowdCube and KickStarter. Learning from their features, user feedback and design philosophies.",
-    categories: ["Web"]
-  },
-  { 
-    id: 11,
-    title: "ATM Simulation- University module sponsored by NCR",
-    description: "An application that acts as a mock ATM for NCR",
-    media: {
-      images: [`${BASE_URL}/media/Agile/Agile2.webp`, `${BASE_URL}/media/Agile/Agile3.webp`, `${BASE_URL}/media/Agile/Agile4.webp`, `${BASE_URL}/media/Agile/Agile5.webp`, `${BASE_URL}/media/Agile/Agile6.webp`, `${BASE_URL}/media/Agile/Agile7.webp`, `${BASE_URL}/media/Agile/Agile8.webp`, `${BASE_URL}/media/Agile/Agile1.webp`, `${BASE_URL}/media/Agile/Agile9.webp`],
-    },
-    github: "https://github.com/MarkCockerill12/AC31007AgileGroup1",
-    technologies: ["Visual Studio Code", "MySQL", "Go", "Amazon Web Services", "Docker", "React", "Electron", "Next.js", "Python", "Agile Methodologies"],
-    details: "This mock ATM program was our task issued by NCR for learning agile methodologies, it utilises electron to showcase the front end, which handles the visual aspects. The front end then communicates with a Go-coded switch by sending JSON, the switch sorts out the different card numbers and sends them to a separate simulation which in turn interacts with information in a database. This program is capable of multi currency support, multiple languages and has error handling. ",
-    categories: ["Web", "SQL"]
-  },
-  {
-    id: 10,
-    title: "SQL Company Website",
-    description: "A website that interacts with a database in form of SQL",
-    media: {
-      images: [`${BASE_URL}/media/SteelSummit/Steel1.webp`, `${BASE_URL}/media/SteelSummit/Steel2.webp`, `${BASE_URL}/media/SteelSummit/Steel3.webp`, `${BASE_URL}/media/SteelSummit/Steel4.webp`, `${BASE_URL}/media/SteelSummit/Steel5.webp`, `${BASE_URL}/media/SteelSummit/Steel6.webp`, `${BASE_URL}/media/SteelSummit/Steel7.webp`, `${BASE_URL}/media/SteelSummit/Steel8.webp`],
-    },
-    github: "https://github.com/MarkCockerill12/DataAWS",
-    technologies: ["Visual Studio Code", "MySQL", "PHP", "Amazon Web Services", "Docker"],
-    details: "This mock company website interacts with a database with SQL and php in order to execute queries. It has predefined functions, an SQL builder and more. It has a functional php-sql login system. This was a university assignment and was hosted on amazon web servers, however for the testing and development, docker was used to set up local servers in order for them to interact. Our next steps with this website would be to touch up some of the visual aspects of it.",
-    categories: ["SQL", "Web"]
-  },
-  
-  {
-    id: 9,
-    title: "Visual Novel Addon",
-    description: "A simple addon to Visual Novel 'Doki Doki Literature Club' by Team Salvato",
-    media: {
-      images: [`${BASE_URL}/media/Doki/DokiDev.webp`, `${BASE_URL}/media/Doki/DokiGame.webp`],
-    },
-    technologies: ["RenPy", "PicsArt", "Visual Studio Code"],
-    details: "A simple addon to Visual Novel 'Doki Doki Literature Club' by Team Salvato. This project was made for fun and the desire to experience the RenPy coding language.",
-    categories: ["Game"]
-  },
-  {
-    id: 8,
-    title: "NextGen ATM Website",
-    description: "A website that expands upon the possilities of ATMs, sponsored by NCR for 2025 Dundee Hackathon",
-    media: {
-      images: [`${BASE_URL}/media/Hak-ATM/atm1.webp`, `${BASE_URL}/media/Hak-ATM/atm2.webp`, `${BASE_URL}/media/Hak-ATM/atm3.webp`, `${BASE_URL}/media/Hak-ATM/atm4.webp`],
-    },
-    github: "https://github.com/MarkCockerill12/Hak25--NCR",
-    technologies: ["Visual Studio Code", "React", "Next.js", "Vercel"],
-    demo: "https://hak25-ncr.vercel.app",
-    details: "This mock ATM website was one of the projects my team took on during the 2025 Dundee Uni Hackaton. Our task was to create an ATM that would represent the future, and all the new functionalities that come with it. I decided to create an all-in-one type website, where you can manage your finances, stocks, bills and more with just a few clicks, as well as giving you a visual representation of all of these. Since the hackathon took place over 24 hours, some functionalities such as different languages arent available. The website uses local storage to remember any additions you make to your bank account, whether it be adding money, cards or stocks. The frontend is hosted on Vercel.",
-    categories: ["Web", "SQL"]
-  },
-  {
-    id: 7,
-    title: "Raspberry Pi Pico Web Texter",
-    description: "A program that uses Twilio and a Raspberry Pi Pico W to send text messages",
-    media: {
-      images: [`${BASE_URL}/media/Twilio/Twi1.webp`, `${BASE_URL}/media/Twilio/Twi2.webp`],
-    },
-    technologies: ["RenPy", "PicsArt", "Visual Studio Code"],
-    details: "The Raspberry Pi W hosts a web server which allows the user to input text, the program then uses the Twilio API to send text messages through the pico.",
-    categories: ["Python", "Raspberry Pi"]
-  },
-  {
-    id: 6,
-    title: "3D Animation- Penthouse",
-    description: "An animation of my room becoming a penthouse suite",
-    media: {
-      images: [`${BASE_URL}/media/3D/Penthouse/Penthouse.webp`],
-      video: `${BASE_URL}/media/3D/Penthouse/PenthouseVid.webm`,
-    },
-    technologies: ["Blender", "DaVinci Resolve",],
-    details: "This project was a combination of real life and blender animation, using DaVinci Resolve video editor to join the two together.",
-    categories: ["3D Animation"]
-  },
-  {
-    id: 5,
-    title: "Encrypted Login System with backdoor",
-    description: "A login system that is supposedly secure",
-    media: {
-      images: [`${BASE_URL}/media/Wadiya/Wadiya1.webp`, `${BASE_URL}/media/Wadiya/Wadiya2.webp`],
-    },
-    github: "https://github.com/MarkCockerill12/VirusWadiya",
-    technologies: ["Visual Studio Code", "C++"],
-    details: `This project was a product of our University Information Security module, where we were tasked with making a login system with a backdoor that was incredibly difficult to crack if only looking at the code. <a href="/docs/backdoor_explanation.pdf" target="_blank" class="text-blue-500 hover:underline">View detailed explanation</a>`,    
-    categories: ["Cyber Security", "C/C++/C#"]
-},
-  {
-    id: 4,
-    title: "This portfolio",
-    description: "This very Portfolio, made with react and tailwind",
-    media: {
-      images: [`${BASE_URL}/media/Portfolio/Port1.webp`, `${BASE_URL}/media/Portfolio/Port2.webp`],
-    },
-    github: "https://github.com/MarkCockerill12/Portfolio",
-    demo: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-    technologies: ["Visual Studio Code", "React", "Next.js", "TypeScript", "Tailwind", "Vercel", "Cloudflare R2"],
-    details: "This project was a product of our University Information Security module, where we were tasked with making a login system with a backdoor that was incredibly difficult to crack if only looking at the code. The media is hosted on Cloudflare's R2 and the frontend is hosted on Vercel.",
-    categories: ["Web",]
-  },
-  {
-    id: 3,
-    title: "Sonic Digital Drawing",
-    description: "A drawing of Sonic, created on Krita",
-    media: {
-      images: [`${BASE_URL}/media/Sonic/Sonic.webp`, `${BASE_URL}/media/Sonic/SonicShow.webp`],
-    },
-    technologies: ["Krita"],
-    details: "A digital drawing of Sonic the Hedgehog racing alongside Metal Sonic, created on Krita.",
-    categories: ["Digital Art"]
-  },
-  {
-    id: 2,
-    title: "Chat Bot and Server",
-    description: "A chat Bot and Server that interact with HexChat",
-    media: {
-      images: [`${BASE_URL}/media/HexChat/Hex1.webp`, `${BASE_URL}/media/HexChat/Hex2.webp`],
-    },
-    github: "https://github.com/MarkCockerill12/ChatBotLol",
-    technologies: ["HexChat", "Python", "MiniIRC", "Visual Studio Code"],
-    details: "A chat Bot and Server that interact with HexChat, the chat Bot responds to commands and user messages. The server attempts to replicate a MiniIRC server.",
-    categories: ["Python"]
-  },
-  {
-    id: 1,
-    title: "Shrimp",
-    description: "Shrimp",
-    media: {
-      images: [`${BASE_URL}/media/Shrimp/Shrimp.webp`, `${BASE_URL}/media/Shrimp/ShrimpShow.webp`],
-    },
-    technologies: ["C#", "Pure uncompromising genius", "Visual Studio"],
-    details: "A shrimple program that asks if you are a shrimp or not.",
-    categories: ["C/C++/C#", "Game"]
-  },
-]
-
-const allCategories = Array.from(new Set(projects.flatMap(project => project.categories)))
+import { defaultPortfolioData } from '@/lib/default-portfolio'
+import { Project } from '@/lib/types'
 
 export default function Projects() {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null)
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedCategories, setSelectedCategories] = useState<string[]>([])
-  const [filteredProjects, setFilteredProjects] = useState(projects)
+  const [projectsList, setProjectsList] = useState<Project[]>(defaultPortfolioData.projects)
+  const [filteredProjects, setFilteredProjects] = useState<Project[]>(defaultPortfolioData.projects)
   const [showFilters, setShowFilters] = useState(false)
+  const [isAdmin, setIsAdmin] = useState(false)
+
+  const loadData = async () => {
+    try {
+      const res = await fetch("/api/portfolio")
+      if (res.ok) {
+        const data = await res.json()
+        if (data.projects && data.projects.length > 0) {
+          setProjectsList(data.projects)
+        }
+      }
+    } catch (err) {
+      console.error("Failed to load projects dynamic catalog:", err)
+    }
+  }
 
   useEffect(() => {
-    const filtered = projects.filter(project => 
+    loadData()
+  }, [])
+
+  useEffect(() => {
+    fetch("/api/auth")
+      .then((res) => res.json())
+      .then((data) => setIsAdmin(data.authenticated))
+      .catch(() => setIsAdmin(false))
+  }, [])
+
+  useEffect(() => {
+    const filtered = projectsList.filter(project => 
       // Check if title matches search term
       project.title.toLowerCase().includes(searchTerm.toLowerCase()) &&
       // Check if project has ALL selected categories (AND logic)
       selectedCategories.every(cat => project.categories.includes(cat))
     )
     setFilteredProjects(filtered)
-  }, [searchTerm, selectedCategories])
+  }, [searchTerm, selectedCategories, projectsList])
 
   const toggleCategory = (category: string) => {
     setSelectedCategories(prev => 
@@ -303,7 +62,35 @@ export default function Projects() {
     )
   }
 
-  // ...rest of your code remains the same...
+  const handleProjectUpdated = async (updatedProject: Project) => {
+    try {
+      const res = await fetch("/api/portfolio")
+      if (!res.ok) return
+      const data = await res.json()
+      
+      data.projects = data.projects.map((proj: Project) => 
+        proj.id === updatedProject.id ? updatedProject : proj
+      )
+
+      const saveRes = await fetch("/api/portfolio", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ updatedData: data })
+      })
+
+      if (saveRes.ok) {
+        setProjectsList(data.projects)
+        setSelectedProject(updatedProject)
+        // Fire celebration confetti
+        const confetti = (await import("canvas-confetti")).default
+        confetti({ particleCount: 80, spread: 60, origin: { y: 0.6 } })
+      }
+    } catch (err) {
+      console.error("Failed to update project:", err)
+    }
+  }
+
+  const allCategories = Array.from(new Set(projectsList.flatMap(project => project.categories)))
 
   return (
     <motion.div
@@ -327,14 +114,14 @@ export default function Projects() {
                 placeholder="Search projects..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full p-2 pl-10 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                className="w-full p-2 pl-10 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
               />
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
             </div>
 
             <button
               onClick={() => setShowFilters(!showFilters)}
-              className={`px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 flex items-center gap-2 transition-all hover:bg-gray-100 dark:hover:bg-gray-700 ${
+              className={`px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 flex items-center gap-2 transition-all hover:bg-gray-100 dark:hover:bg-gray-700 ${
                 showFilters ? 'ring-2 ring-blue-500' : ''
               }`}
             >
@@ -360,7 +147,7 @@ export default function Projects() {
                       className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
                         selectedCategories.includes(category)
                           ? 'bg-blue-500 text-white hover:bg-blue-600'
-                          : 'bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600'
+                          : 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600'
                       }`}
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
@@ -421,7 +208,12 @@ export default function Projects() {
 
       <AnimatePresence>
         {selectedProject && (
-          <ProjectModal project={selectedProject} onClose={() => setSelectedProject(null)} />
+          <ProjectModal 
+            project={selectedProject} 
+            onClose={() => setSelectedProject(null)} 
+            isAdmin={isAdmin}
+            onProjectUpdated={handleProjectUpdated}
+          />
         )}
       </AnimatePresence>
     </motion.div>

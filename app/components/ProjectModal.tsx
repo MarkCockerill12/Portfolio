@@ -2,23 +2,9 @@
 
 import { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
-import { X, ChevronLeft, ChevronRight, Film, Image as ImageIcon, ExternalLink } from 'lucide-react'
+import { X, ChevronLeft, ChevronRight, Film, Image as ImageIcon, ExternalLink, Pencil } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
-
-interface Project {
-  id: number
-  title: string
-  media: {
-    images?: string[]
-    video?: string
-  }
-  github?: string
-  huggingface?: string
-  demo?: string
-  technologies: string[]
-  details: string
-  categories: string[]
-}
+import { Project } from '@/lib/types'
 
 const GitHubIcon = ({ className }: { className?: string }) => (
   <svg 
@@ -34,52 +20,102 @@ const GitHubIcon = ({ className }: { className?: string }) => (
 interface ProjectModalProps {
   project: Project
   onClose: () => void
+  isAdmin?: boolean
+  onProjectUpdated?: (updatedProject: Project) => void
 }
 
-const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) => {
+const ProjectModal: React.FC<ProjectModalProps> = ({ 
+  project, 
+  onClose,
+  isAdmin = false,
+  onProjectUpdated
+}) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [showVideo, setShowVideo] = useState(false)
   const [isLarge, setIsLarge] = useState(false)
   const modalRef = useRef<HTMLDivElement>(null)
 
-  // Sound playing functions
+  // Edit form states
+  const [isEditing, setIsEditing] = useState(false)
+  const [editTitle, setEditTitle] = useState(project.title)
+  const [editDesc, setEditDesc] = useState(project.description)
+  const [editDetails, setEditDetails] = useState(project.details)
+  const [editTech, setEditTech] = useState(project.technologies.join(", "))
+  const [editCats, setEditCats] = useState(project.categories.join(", "))
+  const [editGithub, setEditGithub] = useState(project.github || "")
+  const [editHuggingface, setEditHuggingface] = useState(project.huggingface || "")
+  const [editDemo, setEditDemo] = useState(project.demo || "")
+
+  useEffect(() => {
+    // Reset edit fields when project changes
+    setEditTitle(project.title)
+    setEditDesc(project.description)
+    setEditDetails(project.details)
+    setEditTech(project.technologies.join(", "))
+    setEditCats(project.categories.join(", "))
+    setEditGithub(project.github || "")
+    setEditHuggingface(project.huggingface || "")
+    setEditDemo(project.demo || "")
+    setIsEditing(false)
+  }, [project])
+
   const playSound = (frequency: number, duration: number = 200) => {
-    const audioContext = new (globalThis.AudioContext || (globalThis as any).webkitAudioContext)()
-    const oscillator = audioContext.createOscillator()
-    const gainNode = audioContext.createGain()
-    
-    oscillator.connect(gainNode)
-    gainNode.connect(audioContext.destination)
-    
-    oscillator.frequency.value = frequency
-    oscillator.type = 'sine'
-    
-    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime)
-    gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + duration / 1000)
-    
-    oscillator.start(audioContext.currentTime)
-    oscillator.stop(audioContext.currentTime + duration / 1000)
+    try {
+      const audioContext = new (globalThis.AudioContext || (globalThis as any).webkitAudioContext)()
+      const oscillator = audioContext.createOscillator()
+      const gainNode = audioContext.createGain()
+      
+      oscillator.connect(gainNode)
+      gainNode.connect(audioContext.destination)
+      
+      oscillator.frequency.value = frequency
+      oscillator.type = 'sine'
+      
+      gainNode.gain.setValueAtTime(0.3, audioContext.currentTime)
+      gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + duration / 1000)
+      
+      oscillator.start(audioContext.currentTime)
+      oscillator.stop(audioContext.currentTime + duration / 1000)
+    } catch (e) {
+      console.warn("AudioContext block", e)
+    }
   }
 
   const handleGreenButton = () => {
-    playSound(800, 150) // Higher pitched sound for green
-    setIsLarge(!isLarge) // Maximize/minimize functionality
+    playSound(800, 150)
+    setIsLarge(!isLarge)
   }
 
   const handleYellowButton = () => {
-    playSound(400, 200) // Lower pitched sound for yellow
-    // You can add minimize to taskbar functionality here if desired
+    playSound(400, 200)
+  }
+
+  const handleSave = (e: React.FormEvent) => {
+    e.preventDefault()
+    const updated: Project = {
+      ...project,
+      title: editTitle,
+      description: editDesc,
+      details: editDetails,
+      technologies: editTech.split(",").map(t => t.trim()).filter(Boolean),
+      categories: editCats.split(",").map(c => c.trim()).filter(Boolean),
+      github: editGithub || undefined,
+      huggingface: editHuggingface || undefined,
+      demo: editDemo || undefined
+    }
+    onProjectUpdated?.(updated)
+    setIsEditing(false)
   }
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose()
-      if (e.key === 'ArrowLeft' && !showVideo) {
+      if (e.key === 'ArrowLeft' && !showVideo && !isEditing) {
         setCurrentImageIndex(prev => 
           prev === 0 ? (project.media.images?.length || 1) - 1 : prev - 1
         )
       }
-      if (e.key === 'ArrowRight' && !showVideo) {
+      if (e.key === 'ArrowRight' && !showVideo && !isEditing) {
         setCurrentImageIndex(prev => 
           prev === (project.media.images?.length || 1) - 1 ? 0 : prev + 1
         )
@@ -98,7 +134,7 @@ const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) => {
       globalThis.removeEventListener('keydown', handleKeyDown)
       document.removeEventListener('mousedown', handleClickOutside)
     }
-  }, [project.media.images, onClose, showVideo])
+  }, [project.media.images, onClose, showVideo, isEditing])
 
   return (
     <motion.div
@@ -125,7 +161,7 @@ const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) => {
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
                 onClick={onClose}
-                className="w-3 h-3 bg-red-500 hover:bg-red-600 rounded-full flex items-center justify-center group"
+                className="w-3 h-3 bg-red-500 hover:bg-red-600 rounded-full flex items-center justify-center group cursor-pointer"
                 aria-label="Close"
               >
                 <X className="w-2 h-2 text-red-800 opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -136,7 +172,7 @@ const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) => {
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
                 onClick={handleYellowButton}
-                className="w-3 h-3 bg-yellow-500 hover:bg-yellow-600 rounded-full flex items-center justify-center group"
+                className="w-3 h-3 bg-yellow-500 hover:bg-yellow-600 rounded-full flex items-center justify-center group cursor-pointer"
                 aria-label="Minimize"
               >
                 <div className="w-2 h-0.5 bg-yellow-800 opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -147,7 +183,7 @@ const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) => {
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
                 onClick={handleGreenButton}
-                className="w-3 h-3 bg-green-500 hover:bg-green-600 rounded-full flex items-center justify-center group"
+                className="w-3 h-3 bg-green-500 hover:bg-green-600 rounded-full flex items-center justify-center group cursor-pointer"
                 aria-label={isLarge ? "Restore" : "Maximize"}
               >
                 <div className="w-1.5 h-1.5 border border-green-800 opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -155,181 +191,290 @@ const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) => {
             </div>
             
             {/* Window Title */}
-            <div className="absolute left-1/2 transform -translate-x-1/2 text-sm font-medium text-gray-600 dark:text-gray-300">
-              {project.title}
+            <div className="absolute left-1/2 transform -translate-x-1/2 text-sm font-medium text-gray-600 dark:text-gray-300 flex items-center gap-2">
+              <span>{project.title}</span>
+              {isAdmin && !isEditing && (
+                <button
+                  onClick={() => setIsEditing(true)}
+                  className="p-1 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-full text-gray-500 hover:text-gray-800 dark:hover:text-gray-100 transition-all cursor-pointer"
+                  title="Edit Project"
+                >
+                  <Pencil className="w-3.5 h-3.5" />
+                </button>
+              )}
             </div>
             
-            <div className="w-16"></div> {/* Spacer for balance */}
+            <div className="w-16"></div>
           </div>
         </div>
 
-        <div className="p-6 overflow-y-auto max-h-[calc(90vh-60px)]">
-
-          <div className={`relative ${isLarge ? 'h-[75vh]' : 'h-[50vh]'} mb-4 rounded-lg overflow-hidden bg-white dark:bg-gray-800`}>
-            {project.media.images && project.media.images.length > 0 && !showVideo && (
-              <>
-                <AnimatePresence initial={false} mode="wait">
-                  <motion.div
-                    key={currentImageIndex}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.3 }}
-                    className="relative w-full h-full"
-                  >
-                    <Image 
-                      src={project.media.images[currentImageIndex]} 
-                      alt={`${project.title} - Image ${currentImageIndex + 1}`} 
-                      fill
-                      className="object-contain"
-                      sizes="(max-width: 1200px) 100vw, 1200px"
-                      priority
-                    />
-                    <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/50 text-white px-3 py-1 rounded-full">
-                      {currentImageIndex + 1} / {project.media.images.length}
-                    </div>
-                  </motion.div>
-                </AnimatePresence>
-
-                {project.media.images.length > 1 && (
-                  <>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        setCurrentImageIndex(prev => 
-                          prev === 0 ? project.media.images.length - 1 : prev - 1
-                        )
-                      }}
-                      className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black/50 text-white p-2 rounded-full hover:bg-black/75 transition-all"
-                      aria-label="Previous image"
-                    >
-                      <ChevronLeft className="w-6 h-6" />
-                    </button>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        setCurrentImageIndex(prev => 
-                          prev === project.media.images.length - 1 ? 0 : prev + 1
-                        )
-                      }}
-                      className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black/50 text-white p-2 rounded-full hover:bg-black/75 transition-all"
-                      aria-label="Next image"
-                    >
-                      <ChevronRight className="w-6 h-6" />
-                    </button>
-                  </>
-                )}
-              </>
-            )}
-
-            {project.media.video && (
-              <div className={`w-full h-full ${showVideo ? 'block' : 'hidden'}`}>
-                <video 
-                  src={project.media.video} 
-                  controls 
-                  className="w-full h-full object-contain"
-                  playsInline
-                >
-                  <track 
-                    kind="captions" 
-                    srcLang="en" 
-                    src="/path/to/captions.vtt" 
-                    label="English"
-                    default 
-                  />
-                  Your browser does not support the video tag.
-                </video>
-              </div>
-            )}
-
-            <div className="absolute top-4 right-4 flex gap-2">
-              {project.media.video && project.media.images && (
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => {
-                    setShowVideo(!showVideo)
-                  }}
-                  className="bg-black/50 text-white p-2 rounded-full hover:bg-black/75 transition-all flex items-center gap-2"
-                >
-                  {showVideo ? <ImageIcon className="w-5 h-5" /> : <Film className="w-5 h-5" />}
-                  {showVideo ? 'View Images' : 'Play Video'}
-                </motion.button>
-              )}
-            </div>
-          </div>
-
-          <div className="space-y-6">
-            <div>
-              <h3 className="text-lg font-semibold mb-2">Technologies Used:</h3>
-              <div className="flex flex-wrap gap-2">
-                {project.technologies.map((tech, index) => (
-                  <span 
-                    key={tech} 
-                    className="bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-100 
-                             text-xs font-semibold px-2.5 py-0.5 rounded"
-                  >
-                    {tech}
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            <div>
-              <h3 className="text-lg font-semibold mb-2">Project Details:</h3>
-              <div 
-                className="prose dark:prose-invert max-w-none"
-                dangerouslySetInnerHTML={{ __html: project.details }}
+        {isEditing ? (
+          <form onSubmit={handleSave} className="p-6 overflow-y-auto max-h-[calc(90vh-60px)] space-y-4">
+            <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100">Edit Project Details</h3>
+            
+            <div className="space-y-1">
+              <label className="text-xs font-semibold text-gray-500 dark:text-gray-400">Title</label>
+              <input
+                type="text"
+                value={editTitle}
+                onChange={(e) => setEditTitle(e.target.value)}
+                className="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-blue-500"
+                required
               />
             </div>
 
-            <div className="flex gap-4 justify-end">
-              {project.github && (
-                <motion.a
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  href={project.github}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 
-                           px-4 py-2 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 
-                           transition-colors"
-                >
-                  <GitHubIcon className="w-5 h-5" />
-                  View on GitHub
-                </motion.a>
+            <div className="space-y-1">
+              <label className="text-xs font-semibold text-gray-500 dark:text-gray-400">Short Description</label>
+              <input
+                type="text"
+                value={editDesc}
+                onChange={(e) => setEditDesc(e.target.value)}
+                className="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-blue-500"
+                required
+              />
+            </div>
+
+            <div className="space-y-1">
+              <label className="text-xs font-semibold text-gray-500 dark:text-gray-400">Detailed Description (HTML/text)</label>
+              <textarea
+                value={editDetails}
+                onChange={(e) => setEditDetails(e.target.value)}
+                rows={5}
+                className="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-blue-500 resize-none font-mono text-xs leading-relaxed"
+                required
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-1">
+                <label className="text-xs font-semibold text-gray-500 dark:text-gray-400">Technologies (comma-separated)</label>
+                <input
+                  type="text"
+                  value={editTech}
+                  onChange={(e) => setEditTech(e.target.value)}
+                  className="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  required
+                />
+              </div>
+              <div className="space-y-1">
+                <label className="text-xs font-semibold text-gray-500 dark:text-gray-400">Categories (comma-separated)</label>
+                <input
+                  type="text"
+                  value={editCats}
+                  onChange={(e) => setEditCats(e.target.value)}
+                  className="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-3 gap-4">
+              <div className="space-y-1">
+                <label className="text-xs font-semibold text-gray-500 dark:text-gray-400">GitHub Link</label>
+                <input
+                  type="text"
+                  value={editGithub}
+                  onChange={(e) => setEditGithub(e.target.value)}
+                  className="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-blue-500"
+                />
+              </div>
+              <div className="space-y-1">
+                <label className="text-xs font-semibold text-gray-500 dark:text-gray-400">Hugging Face Link</label>
+                <input
+                  type="text"
+                  value={editHuggingface}
+                  onChange={(e) => setEditHuggingface(e.target.value)}
+                  className="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-blue-500"
+                />
+              </div>
+              <div className="space-y-1">
+                <label className="text-xs font-semibold text-gray-500 dark:text-gray-400">Live Demo Link</label>
+                <input
+                  type="text"
+                  value={editDemo}
+                  onChange={(e) => setEditDemo(e.target.value)}
+                  className="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-blue-500"
+                />
+              </div>
+            </div>
+
+            <div className="flex gap-2 justify-end pt-4">
+              <button
+                type="button"
+                onClick={() => setIsEditing(false)}
+                className="px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all cursor-pointer font-semibold"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm font-semibold transition-all cursor-pointer"
+              >
+                Save Changes
+              </button>
+            </div>
+          </form>
+        ) : (
+          <div className="p-6 overflow-y-auto max-h-[calc(90vh-60px)]">
+            <div className={`relative ${isLarge ? 'h-[75vh]' : 'h-[50vh]'} mb-4 rounded-lg overflow-hidden bg-white dark:bg-gray-800`}>
+              {project.media.images && project.media.images.length > 0 && !showVideo && (
+                <>
+                  <AnimatePresence initial={false} mode="wait">
+                    <motion.div
+                      key={currentImageIndex}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.3 }}
+                      className="relative w-full h-full"
+                    >
+                      <Image 
+                        src={project.media.images[currentImageIndex]} 
+                        alt={`${project.title} - Image ${currentImageIndex + 1}`} 
+                        fill
+                        className="object-contain"
+                        sizes="(max-width: 1200px) 100vw, 1200px"
+                        priority
+                      />
+                      <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/50 text-white px-3 py-1 rounded-full">
+                        {currentImageIndex + 1} / {project.media.images.length}
+                      </div>
+                    </motion.div>
+                  </AnimatePresence>
+
+                  {project.media.images.length > 1 && (
+                    <>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          setCurrentImageIndex(prev => 
+                            prev === 0 ? project.media.images.length - 1 : prev - 1
+                          )
+                        }}
+                        className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black/50 text-white p-2 rounded-full hover:bg-black/75 transition-all"
+                        aria-label="Previous image"
+                      >
+                        <ChevronLeft className="w-6 h-6" />
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          setCurrentImageIndex(prev => 
+                            prev === project.media.images.length - 1 ? 0 : prev + 1
+                          )
+                        }}
+                        className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black/50 text-white p-2 rounded-full hover:bg-black/75 transition-all"
+                        aria-label="Next image"
+                      >
+                        <ChevronRight className="w-6 h-6" />
+                      </button>
+                    </>
+                  )}
+                </>
               )}
-              {project.huggingface && (
-                <motion.a
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  href={project.huggingface}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 bg-orange-500 text-white px-4 py-2 rounded-lg 
-                           hover:bg-orange-600 transition-colors"
-                >
-                  <Image src="https://pub-699441ce0cfb40449cc458823a3f1ed2.r2.dev/portfolio/media/hf-logo.webp" alt="Hugging Face" width={20} height={20} />
-                  View on Hugging Face
-                </motion.a>
+
+              {project.media.video && (
+                <div className={`w-full h-full ${showVideo ? 'block' : 'hidden'}`}>
+                  <video 
+                    src={project.media.video} 
+                    controls 
+                    className="w-full h-full object-contain"
+                    playsInline
+                  >
+                    Your browser does not support the video tag.
+                  </video>
+                </div>
               )}
-              {project.demo && (
-                <motion.a
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  href={project.demo}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 bg-blue-500 text-white px-4 py-2 rounded-lg 
-                           hover:bg-blue-600 transition-colors"
-                >
-                  <ExternalLink className="w-5 h-5" />
-                  Live Demo
-                </motion.a>
-              )}
+
+              <div className="absolute top-4 right-4 flex gap-2">
+                {project.media.video && project.media.images && (
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => {
+                      setShowVideo(!showVideo)
+                    }}
+                    className="bg-black/50 text-white p-2 rounded-full hover:bg-black/75 transition-all flex items-center gap-2"
+                  >
+                    {showVideo ? <ImageIcon className="w-5 h-5" /> : <Film className="w-5 h-5" />}
+                    {showVideo ? 'View Images' : 'Play Video'}
+                  </motion.button>
+                )}
+              </div>
+            </div>
+
+            <div className="space-y-6">
+              <div>
+                <h3 className="text-lg font-semibold mb-2">Technologies Used:</h3>
+                <div className="flex flex-wrap gap-2">
+                  {project.technologies.map((tech) => (
+                    <span 
+                      key={tech} 
+                      className="bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-100 
+                               text-xs font-semibold px-2.5 py-0.5 rounded"
+                    >
+                      {tech}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <h3 className="text-lg font-semibold mb-2">Project Details:</h3>
+                <div 
+                  className="prose dark:prose-invert max-w-none text-gray-800 dark:text-gray-200"
+                  dangerouslySetInnerHTML={{ __html: project.details }}
+                />
+              </div>
+
+              <div className="flex gap-4 justify-end">
+                {project.github && (
+                  <motion.a
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    href={project.github}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 
+                             px-4 py-2 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 
+                             transition-colors cursor-pointer"
+                  >
+                    <GitHubIcon className="w-5 h-5" />
+                    View on GitHub
+                  </motion.a>
+                )}
+                {project.huggingface && (
+                  <motion.a
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    href={project.huggingface}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 bg-orange-500 text-white px-4 py-2 rounded-lg 
+                             hover:bg-orange-600 transition-colors cursor-pointer"
+                  >
+                    <Image src="https://pub-699441ce0cfb40449cc458823a3f1ed2.r2.dev/portfolio/media/hf-logo.webp" alt="Hugging Face" width={20} height={20} />
+                    View on Hugging Face
+                  </motion.a>
+                )}
+                {project.demo && (
+                  <motion.a
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    href={project.demo}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 bg-blue-500 text-white px-4 py-2 rounded-lg 
+                             hover:bg-blue-600 transition-colors cursor-pointer"
+                  >
+                    <ExternalLink className="w-5 h-5" />
+                    Live Demo
+                  </motion.a>
+                )}
+              </div>
             </div>
           </div>
-        </div>
+        )}
       </motion.div>
     </motion.div>
   )

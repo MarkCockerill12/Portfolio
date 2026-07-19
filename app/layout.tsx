@@ -2,6 +2,7 @@ import './globals.css'
 import { Inter, Press_Start_2P } from 'next/font/google'
 import Header from './components/Header'
 import Footer from './components/Footer'
+import CookieBanner from './components/CookieBanner'
 import React from 'react'
 import { ThemeProvider } from 'next-themes'
 
@@ -29,6 +30,7 @@ export default function RootLayout({
                 {children}
               </main>
               <Footer />
+              <CookieBanner />
             </div>
           </div>
         </ThemeProvider>
