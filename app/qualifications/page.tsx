@@ -2,11 +2,13 @@
 
 import React, { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ChevronDown, ChevronUp, Pencil, Trash2, Plus } from 'lucide-react'
+import { ChevronDown, ChevronUp, Pencil, Plus } from 'lucide-react'
 import ScrollAnimation from '../components/ScrollAnimation'
 import HoverText from '../components/HoverText'
 import Image from 'next/image'
 import CertificateModal from '../components/CertificateModal'
+import EducationModal from '../components/EducationModal'
+import ModuleModal from '../components/ModuleModal'
 import { defaultPortfolioData } from '@/lib/default-portfolio'
 import { Education, Module, Certificate } from '@/lib/types'
 
@@ -27,201 +29,58 @@ const GradeBadge = ({ grade, size = "normal", variant = "green" }: {
 interface EducationCardProps {
   education: Education
   isAdmin: boolean
-  onUpdate: (updated: Education) => void
-  onDelete?: (inst: string) => void
+  onSelect: (edu: Education) => void
 }
 
-const EducationCard = ({ education, isAdmin, onUpdate, onDelete }: EducationCardProps) => {
-  const [isEditing, setIsEditing] = useState(false)
-  const [inst, setInst] = useState(education.institution)
-  const [yrs, setYrs] = useState(education.years)
-  const [qual, setQual] = useState(education.qualification || "")
-  const [stat, setStat] = useState(education.status || "")
-  const [gradeAch, setGradeAch] = useState(education.grade?.achieved || "")
-  const [gradeLbl, setGradeLbl] = useState(education.grade?.label || "")
-
-  useEffect(() => {
-    setInst(education.institution)
-    setYrs(education.years)
-    setQual(education.qualification || "")
-    setStat(education.status || "")
-    setGradeAch(education.grade?.achieved || "")
-    setGradeLbl(education.grade?.label || "")
-    
-    if (education.institution === "New Institution") {
-      setIsEditing(true)
-    } else {
-      setIsEditing(false)
-    }
-  }, [education])
-
-  const handleSave = (e: React.FormEvent) => {
-    e.preventDefault()
-    onUpdate({
-      ...education,
-      institution: inst,
-      years: yrs,
-      qualification: qual || undefined,
-      status: stat || undefined,
-      grade: gradeAch ? { achieved: gradeAch, label: gradeLbl || "Achieved Grade" } : undefined
-    })
-    setIsEditing(false)
-  }
-
+const EducationCard = ({ education, isAdmin, onSelect }: EducationCardProps) => {
   return (
     <motion.div
-        className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 relative border border-gray-100 dark:border-gray-700/50"
+        onClick={() => onSelect(education)}
+        className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 relative border border-gray-100 dark:border-gray-700/50 cursor-pointer"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
     >
-        {isEditing ? (
-          <form onSubmit={handleSave} className="space-y-4">
-            <h3 className="font-bold text-lg">Edit Education Details</h3>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-1">
-                <label className="text-xs font-semibold text-gray-500">Institution</label>
-                <input
-                  type="text"
-                  value={inst}
-                  onChange={(e) => setInst(e.target.value)}
-                  className="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-blue-500"
-                  required
-                />
-              </div>
-              <div className="space-y-1">
-                <label className="text-xs font-semibold text-gray-500">Years</label>
-                <input
-                  type="text"
-                  value={yrs}
-                  onChange={(e) => setYrs(e.target.value)}
-                  className="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-blue-500"
-                  required
-                />
-              </div>
+        <div className="absolute top-4 right-4 flex items-center gap-1.5">
+          {isAdmin && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation()
+                onSelect(education)
+              }}
+              className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full text-gray-500 hover:text-gray-800 dark:hover:text-gray-100 transition-all cursor-pointer"
+              title="Edit Education"
+            >
+              <Pencil className="w-4 h-4" />
+            </button>
+          )}
+        </div>
+        <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-gray-100">
+            <HoverText>{education.institution}</HoverText>
+        </h3>
+        <p className="text-gray-650 dark:text-gray-400 mb-2">{education.years}</p>
+        {education.qualification && (
+            <p className="text-gray-800 dark:text-gray-200 mb-1">
+                {education.status}: {education.qualification}
+            </p>
+        )}
+        {education.grade && (
+            <div className="flex items-center gap-2 mb-4">
+                <span className="text-sm text-gray-505 dark:text-gray-400">{education.grade.label}:</span>
+                <GradeBadge grade={education.grade.achieved} />
             </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-1">
-                <label className="text-xs font-semibold text-gray-500">Qualification</label>
-                <input
-                  type="text"
-                  value={qual}
-                  onChange={(e) => setQual(e.target.value)}
-                  className="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-blue-500"
-                />
-              </div>
-              <div className="space-y-1">
-                <label className="text-xs font-semibold text-gray-500">Status</label>
-                <input
-                  type="text"
-                  value={stat}
-                  onChange={(e) => setStat(e.target.value)}
-                  className="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-blue-500"
-                />
-              </div>
+        )}
+        {education.qualifications && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                {education.qualifications.map((qual) => (
+                    <div key={`${qual.subject}-${qual.level}`} className="flex justify-between items-center">
+                        <span className="text-gray-700 dark:text-gray-300">
+                            {qual.level} {qual.subject}:
+                        </span>
+                        <GradeBadge grade={qual.grade} size="small" />
+                    </div>
+                ))}
             </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-1">
-                <label className="text-xs font-semibold text-gray-500">Grade Label</label>
-                <input
-                  type="text"
-                  value={gradeLbl}
-                  onChange={(e) => setGradeLbl(e.target.value)}
-                  className="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-blue-500"
-                  placeholder="e.g. Achieved Grade"
-                />
-              </div>
-              <div className="space-y-1">
-                <label className="text-xs font-semibold text-gray-500">Grade Achieved</label>
-                <input
-                  type="text"
-                  value={gradeAch}
-                  onChange={(e) => setGradeAch(e.target.value)}
-                  className="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-blue-500"
-                  placeholder="e.g. 1st or A"
-                />
-              </div>
-            </div>
-
-            <div className="flex justify-between pt-2">
-              {isAdmin && education.institution !== "New Institution" && (
-                <button
-                  type="button"
-                  onClick={() => onDelete?.(education.institution)}
-                  className="px-3.5 py-1.5 border border-red-500 text-red-500 hover:bg-red-500 hover:text-white rounded-lg text-xs font-semibold cursor-pointer"
-                >
-                  Delete Card
-                </button>
-              )}
-              <div className="flex gap-2 ml-auto">
-                <button
-                  type="button"
-                  onClick={() => setIsEditing(false)}
-                  className="px-3.5 py-1.5 border border-gray-300 dark:border-gray-700 rounded-lg text-xs font-semibold cursor-pointer"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-3.5 py-1.5 bg-blue-500 text-white hover:bg-blue-600 rounded-lg text-xs font-semibold cursor-pointer"
-                >
-                  Save
-                </button>
-              </div>
-            </div>
-          </form>
-        ) : (
-          <>
-            <div className="absolute top-4 right-4 flex items-center gap-1.5">
-              {isAdmin && (
-                <>
-                  <button
-                    onClick={() => setIsEditing(true)}
-                    className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full text-gray-500 hover:text-gray-800 dark:hover:text-gray-100 transition-all cursor-pointer"
-                    title="Edit Education Card"
-                  >
-                    <Pencil className="w-4 h-4" />
-                  </button>
-                  <button
-                    onClick={() => onDelete?.(education.institution)}
-                    className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full text-gray-450 hover:text-red-500 transition-all cursor-pointer"
-                    title="Delete Education Card"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
-                </>
-              )}
-            </div>
-            <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-gray-100">
-                <HoverText>{education.institution}</HoverText>
-            </h3>
-            <p className="text-gray-600 dark:text-gray-400 mb-2">{education.years}</p>
-            {education.qualification && (
-                <p className="text-gray-800 dark:text-gray-200 mb-1">
-                    {education.status}: {education.qualification}
-                </p>
-            )}
-            {education.grade && (
-                <div className="flex items-center gap-2 mb-4">
-                    <span className="text-sm text-gray-500 dark:text-gray-400">{education.grade.label}:</span>
-                    <GradeBadge grade={education.grade.achieved} />
-                </div>
-            )}
-            {education.qualifications && (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                    {education.qualifications.map((qual) => (
-                        <div key={`${qual.subject}-${qual.level}`} className="flex justify-between items-center">
-                            <span className="text-gray-700 dark:text-gray-300">
-                                {qual.level} {qual.subject}:
-                            </span>
-                            <GradeBadge grade={qual.grade} size="small" />
-                        </div>
-                    ))}
-                </div>
-            )}
-          </>
         )}
     </motion.div>
   )
@@ -230,47 +89,12 @@ const EducationCard = ({ education, isAdmin, onUpdate, onDelete }: EducationCard
 interface ModuleCardProps {
   module: Module
   isAdmin: boolean
-  onUpdate: (updated: Module) => void
-  onDelete?: (id: string) => void
+  onSelect: (mod: Module) => void
 }
 
-const ModuleCard = ({ module, isAdmin, onUpdate, onDelete }: ModuleCardProps) => {
+const ModuleCard = ({ module, isAdmin, onSelect }: ModuleCardProps) => {
   const [isExpanded, setIsExpanded] = useState(false)
-  const [isEditing, setIsEditing] = useState(false)
   
-  const [name, setName] = useState(module.name)
-  const [grade, setGrade] = useState(module.moduleGrade)
-  const [desc, setDesc] = useState(module.description)
-  const [yr, setYr] = useState(module.year)
-  const [sem, setSem] = useState(module.semester)
-
-  useEffect(() => {
-    setName(module.name)
-    setGrade(module.moduleGrade)
-    setDesc(module.description)
-    setYr(module.year)
-    setSem(module.semester)
-    
-    if (module.name === "New Module") {
-      setIsEditing(true)
-    } else {
-      setIsEditing(false)
-    }
-  }, [module])
-
-  const handleSave = (e: React.FormEvent) => {
-    e.preventDefault()
-    onUpdate({
-      ...module,
-      name,
-      moduleGrade: grade,
-      description: desc,
-      year: Number(yr),
-      semester: Number(sem)
-    })
-    setIsEditing(false)
-  }
-
   return (
       <motion.div 
           className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden mb-6 border border-gray-100 dark:border-gray-750"
@@ -279,172 +103,73 @@ const ModuleCard = ({ module, isAdmin, onUpdate, onDelete }: ModuleCardProps) =>
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
       >
-          {isEditing ? (
-            <form onSubmit={handleSave} className="p-6 space-y-4">
-              <h3 className="font-bold text-lg">Edit Module Details</h3>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <label className="text-xs font-semibold text-gray-500">Module Name</label>
-                  <input
-                    type="text"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    className="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-blue-500"
-                    required
-                  />
-                </div>
-                <div className="space-y-1">
-                  <label className="text-xs font-semibold text-gray-500">Module Grade</label>
-                  <input
-                    type="text"
-                    value={grade}
-                    onChange={(e) => setGrade(e.target.value)}
-                    className="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-blue-500"
-                    required
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <label className="text-xs font-semibold text-gray-500">Year</label>
-                  <input
-                    type="number"
-                    value={yr}
-                    onChange={(e) => setYr(Number(e.target.value))}
-                    className="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-blue-500"
-                    required
-                  />
-                </div>
-                <div className="space-y-1">
-                  <label className="text-xs font-semibold text-gray-500">Semester</label>
-                  <input
-                    type="number"
-                    value={sem}
-                    onChange={(e) => setSem(Number(e.target.value))}
-                    className="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-blue-500"
-                    required
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-1">
-                <label className="text-xs font-semibold text-gray-500">Description</label>
-                <textarea
-                  value={desc}
-                  onChange={(e) => setDesc(e.target.value)}
-                  rows={4}
-                  className="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-blue-500 resize-none leading-relaxed"
-                  required
-                />
-              </div>
-
-              <div className="flex justify-between pt-2">
-                {isAdmin && module.name !== "New Module" && (
-                  <button
-                    type="button"
-                    onClick={() => onDelete?.(module.id)}
-                    className="px-3.5 py-1.5 border border-red-500 text-red-500 hover:bg-red-500 hover:text-white rounded-lg text-xs font-semibold cursor-pointer"
-                  >
-                    Delete Card
-                  </button>
-                )}
-                <div className="flex gap-2 ml-auto">
-                  <button
-                    type="button"
-                    onClick={() => setIsEditing(false)}
-                    className="px-3.5 py-1.5 border border-gray-300 dark:border-gray-700 rounded-lg text-xs font-semibold cursor-pointer"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    className="px-3.5 py-1.5 bg-blue-500 text-white hover:bg-blue-600 rounded-lg text-xs font-semibold cursor-pointer"
-                  >
-                    Save
-                  </button>
-                </div>
-              </div>
-            </form>
-          ) : (
-            <>
-              <div className="w-full p-6 flex justify-between items-center relative">
-                  <button 
-                      className="flex flex-col items-start flex-grow text-left cursor-pointer"
-                      onClick={() => setIsExpanded(!isExpanded)}
-                  >
-                      <h3 className="text-xl font-bold">
-                          <HoverText>{module.name}</HoverText>
-                      </h3>
-                      <p className="text-gray-600 dark:text-gray-400">
-                          Year {module.year}, Semester {module.semester}
-                      </p>
-                  </button>
-                  <div className="flex items-center space-x-4">
-                      <div className="flex items-center gap-2">
-                          <span className="text-sm text-gray-500 dark:text-gray-400">Module Grade:</span>
-                          <GradeBadge grade={module.moduleGrade} />
-                      </div>
-                      {isAdmin && (
-                        <div className="flex items-center gap-1">
-                          <button
-                            onClick={() => setIsEditing(true)}
-                            className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full text-gray-500 hover:text-gray-800 dark:hover:text-gray-100 transition-all cursor-pointer"
-                            title="Edit Module Details"
-                          >
-                            <Pencil className="w-4 h-4" />
-                          </button>
-                          <button
-                            onClick={() => onDelete?.(module.id)}
-                            className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full text-gray-450 hover:text-red-500 transition-all cursor-pointer"
-                            title="Delete Module Card"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                        </div>
-                      )}
-                      <button 
-                        className="cursor-pointer"
-                        onClick={() => setIsExpanded(!isExpanded)}
-                      >
-                        {isExpanded ? <ChevronUp size={24} /> : <ChevronDown size={24} />}
-                      </button>
+          <div className="w-full p-6 flex justify-between items-center relative">
+              <button 
+                  className="flex flex-col items-start flex-grow text-left cursor-pointer"
+                  onClick={() => onSelect(module)}
+              >
+                  <h3 className="text-xl font-bold">
+                      <HoverText>{module.name}</HoverText>
+                  </h3>
+                  <p className="text-gray-650 dark:text-gray-400">
+                      Year {module.year}, Semester {module.semester}
+                  </p>
+              </button>
+              <div className="flex items-center space-x-4">
+                  <div className="flex items-center gap-2 cursor-pointer" onClick={() => onSelect(module)}>
+                      <span className="text-sm text-gray-550 dark:text-gray-400">Module Grade:</span>
+                      <GradeBadge grade={module.moduleGrade} />
                   </div>
-              </div>
-
-              <AnimatePresence>
-                  {isExpanded && (
-                      <motion.div
-                          initial={{ height: 0, opacity: 0 }}
-                          animate={{ height: 'auto', opacity: 1 }}
-                          exit={{ height: 0, opacity: 0 }}
-                          transition={{ duration: 0.3 }}
-                          className="px-6 pb-6"
-                      >
-                          <p className="text-gray-600 dark:text-gray-300 mb-4">
-                              <HoverText>{module.description}</HoverText>
-                          </p>
-                          {module.projects?.map((project, index) => (
-                              <div key={`${module.id}-${index}`} className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4 mb-2">
-                                  <div className="flex justify-between items-center mb-2">
-                                      <h4 className="font-semibold">
-                                          <HoverText>{project.name}</HoverText>
-                                      </h4>
-                                      <div className="flex items-center gap-2">
-                                          <span className="text-sm text-gray-500 dark:text-gray-400">Project Grade:</span>
-                                          <GradeBadge grade={project.grade} variant="blue" />
-                                      </div>
-                                  </div>
-                                  <p className="text-sm text-gray-600 dark:text-gray-300">
-                                      <HoverText>{project.description}</HoverText>
-                                  </p>
-                              </div>
-                          ))}
-                      </motion.div>
+                  {isAdmin && (
+                    <button
+                      onClick={() => onSelect(module)}
+                      className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full text-gray-500 hover:text-gray-800 dark:hover:text-gray-100 transition-all cursor-pointer"
+                      title="Edit Module Details"
+                    >
+                      <Pencil className="w-4 h-4" />
+                    </button>
                   )}
-              </AnimatePresence>
-            </>
-          )}
+                  <button 
+                    className="cursor-pointer text-gray-500"
+                    onClick={() => setIsExpanded(!isExpanded)}
+                  >
+                    {isExpanded ? <ChevronUp size={24} /> : <ChevronDown size={24} />}
+                  </button>
+              </div>
+          </div>
+
+          <AnimatePresence>
+              {isExpanded && (
+                  <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.3 }}
+                      className="px-6 pb-6 cursor-pointer"
+                      onClick={() => onSelect(module)}
+                  >
+                      <p className="text-gray-600 dark:text-gray-300 mb-4">
+                          <HoverText>{module.description}</HoverText>
+                      </p>
+                      {module.projects?.map((project, index) => (
+                          <div key={`${module.id}-${index}`} className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4 mb-2">
+                              <div className="flex justify-between items-center mb-2">
+                                  <h4 className="font-semibold">
+                                      <HoverText>{project.name}</HoverText>
+                                  </h4>
+                                  <div className="flex items-center gap-2">
+                                      <span className="text-sm text-gray-550 dark:text-gray-400">Project Grade:</span>
+                                      <GradeBadge grade={project.grade} variant="blue" />
+                                  </div>
+                              </div>
+                              <p className="text-sm text-gray-600 dark:text-gray-350">
+                                  <HoverText>{project.description}</HoverText>
+                              </p>
+                          </div>
+                      ))}
+                  </motion.div>
+              )}
+          </AnimatePresence>
       </motion.div>
   )
 }
@@ -486,22 +211,25 @@ const CertificatesSection = ({ certificates, isAdmin, onSelect }: CertificatesSe
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: idx * 0.1 }}
       >
-        <div className="flex-grow flex-1 flex flex-col justify-center min-w-[250px]">
+        <div className="flex-grow flex-1 flex flex-col justify-center min-w-[250px] cursor-pointer" onClick={() => onSelect(cert)}>
           <div className="flex justify-between items-start mb-2">
             <h3 className="text-3xl font-bold text-blue-700 dark:text-blue-400">
               <HoverText>{cert.title}</HoverText>
             </h3>
             {isAdmin && (
               <button
-                onClick={() => onSelect(cert)}
-                className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full text-gray-500 hover:text-gray-850 dark:hover:text-gray-100 cursor-pointer"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  onSelect(cert)
+                }}
+                className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full text-gray-500 hover:text-gray-855 dark:hover:text-gray-100 cursor-pointer"
                 title="Edit Certificate"
               >
                 <Pencil className="w-4 h-4" />
               </button>
             )}
           </div>
-          <p className="text-gray-700 dark:text-gray-200 text-lg leading-relaxed">{cert.description}</p>
+          <p className="text-gray-755 dark:text-gray-200 text-lg leading-relaxed">{cert.description}</p>
         </div>
         <div className="flex-shrink-0 flex-1 flex items-center justify-center min-w-[320px] max-w-[500px] w-full">
           <div className="w-full aspect-[4/3] relative rounded-xl overflow-hidden shadow-lg cursor-pointer hover:scale-105 transition-transform duration-200"
@@ -517,12 +245,16 @@ const CertificatesSection = ({ certificates, isAdmin, onSelect }: CertificatesSe
 
 export default function Qualifications() {
   const [activeTab, setActiveTab] = useState<'modules' | 'certificates'>('modules')
-  const [selectedCert, setSelectedCert] = useState<Certificate | null>(null)
   
   const [educationHistory, setEducationHistory] = useState<Education[]>(defaultPortfolioData.educationHistory)
   const [modules, setModules] = useState<Module[]>(defaultPortfolioData.modules)
   const [certificates, setCertificates] = useState<Certificate[]>(defaultPortfolioData.certificates)
   const [isAdmin, setIsAdmin] = useState(false)
+
+  // Selected states for popup modals
+  const [selectedCert, setSelectedCert] = useState<Certificate | null>(null)
+  const [selectedEdu, setSelectedEdu] = useState<Education | null>(null)
+  const [selectedMod, setSelectedMod] = useState<Module | null>(null)
 
   const loadData = async () => {
     try {
@@ -573,6 +305,7 @@ export default function Qualifications() {
 
       if (saveRes.ok) {
         setEducationHistory(data.educationHistory)
+        setSelectedEdu(null)
         const confetti = (await import("canvas-confetti")).default
         confetti({ particleCount: 80, spread: 60, origin: { y: 0.6 } })
       }
@@ -582,7 +315,6 @@ export default function Qualifications() {
   }
 
   const handleDeleteEducation = async (institution: string) => {
-    if (!confirm(`Are you sure you want to delete "${institution}"?`)) return
     try {
       const res = await fetch("/api/portfolio")
       if (!res.ok) return
@@ -598,6 +330,7 @@ export default function Qualifications() {
 
       if (saveRes.ok) {
         setEducationHistory(data.educationHistory)
+        setSelectedEdu(null)
       }
     } catch (err) {
       console.error("Failed to delete education history card:", err)
@@ -612,7 +345,7 @@ export default function Qualifications() {
       status: "Achieved",
       grade: { label: "Grade Achieved", achieved: "1st" }
     }
-    setEducationHistory(prev => [...prev, newEdu])
+    setSelectedEdu(newEdu)
   }
 
   // CRUD for University Modules
@@ -639,6 +372,7 @@ export default function Qualifications() {
 
       if (saveRes.ok) {
         setModules(data.modules)
+        setSelectedMod(null)
         const confetti = (await import("canvas-confetti")).default
         confetti({ particleCount: 80, spread: 60, origin: { y: 0.6 } })
       }
@@ -648,7 +382,6 @@ export default function Qualifications() {
   }
 
   const handleDeleteModule = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this module card?")) return
     try {
       const res = await fetch("/api/portfolio")
       if (!res.ok) return
@@ -664,6 +397,7 @@ export default function Qualifications() {
 
       if (saveRes.ok) {
         setModules(data.modules)
+        setSelectedMod(null)
       }
     } catch (err) {
       console.error("Failed to delete module:", err)
@@ -679,7 +413,7 @@ export default function Qualifications() {
       moduleGrade: "Grade",
       description: "Enter module details description."
     }
-    setModules(prev => [...prev, newMod])
+    setSelectedMod(newMod)
   }
 
   // CRUD for Certificates
@@ -706,7 +440,7 @@ export default function Qualifications() {
 
       if (saveRes.ok) {
         setCertificates(data.certificates)
-        setSelectedCert(updated)
+        setSelectedCert(null)
         const confetti = (await import("canvas-confetti")).default
         confetti({ particleCount: 80, spread: 60, origin: { y: 0.6 } })
       }
@@ -798,8 +532,7 @@ export default function Qualifications() {
                     key={edu.institution} 
                     education={edu} 
                     isAdmin={isAdmin} 
-                    onUpdate={handleUpdateEducation} 
-                    onDelete={handleDeleteEducation}
+                    onSelect={(item) => setSelectedEdu(item)}
                   />
                 ))}
               </div>
@@ -844,8 +577,7 @@ export default function Qualifications() {
                                 key={module.id} 
                                 module={module} 
                                 isAdmin={isAdmin} 
-                                onUpdate={handleUpdateModule} 
-                                onDelete={handleDeleteModule}
+                                onSelect={(item) => setSelectedMod(item)}
                               />
                             ))}
                           </div>
@@ -868,16 +600,46 @@ export default function Qualifications() {
               <div className="flex flex-col gap-16 max-w-5xl mx-auto py-8">
                 <CertificatesSection certificates={certificates} isAdmin={isAdmin} onSelect={(cert) => setSelectedCert(cert)} />
               </div>
-              {selectedCert && (
-                <CertificateModal 
-                  certificate={selectedCert} 
-                  isAdmin={isAdmin} 
-                  onCertificateUpdated={handleCertificateUpdated} 
-                  onCertificateDeleted={handleCertificateDeleted}
-                  onClose={() => setSelectedCert(null)} 
-                />
-              )}
             </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Certificate Modal */}
+        <AnimatePresence>
+          {selectedCert && (
+            <CertificateModal 
+              certificate={selectedCert} 
+              isAdmin={isAdmin} 
+              onCertificateUpdated={handleCertificateUpdated} 
+              onCertificateDeleted={handleCertificateDeleted}
+              onClose={() => setSelectedCert(null)} 
+            />
+          )}
+        </AnimatePresence>
+
+        {/* Education Modal */}
+        <AnimatePresence>
+          {selectedEdu && (
+            <EducationModal
+              education={selectedEdu}
+              isAdmin={isAdmin}
+              onUpdate={handleUpdateEducation}
+              onDelete={handleDeleteEducation}
+              onClose={() => setSelectedEdu(null)}
+            />
+          )}
+        </AnimatePresence>
+
+        {/* Module Modal */}
+        <AnimatePresence>
+          {selectedMod && (
+            <ModuleModal
+              module={selectedMod}
+              isAdmin={isAdmin}
+              onUpdate={handleUpdateModule}
+              onDelete={handleDeleteModule}
+              onClose={() => setSelectedMod(null)}
+            />
           )}
         </AnimatePresence>
       </div>
