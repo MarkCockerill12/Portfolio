@@ -1,8 +1,8 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
-import { X, Pencil, Trash2, Plus } from 'lucide-react'
-import { motion } from 'framer-motion'
+import { useState, useEffect } from 'react'
+import { Trash2, Plus } from 'lucide-react'
+import ModalShell from './ModalShell'
 import { Education, Qualification } from '@/lib/types'
 
 interface EducationModalProps {
@@ -20,7 +20,6 @@ export default function EducationModal({
   onUpdate,
   onDelete
 }: EducationModalProps) {
-  const modalRef = useRef<HTMLDivElement>(null)
   const [isEditing, setIsEditing] = useState(false)
 
   const [inst, setInst] = useState(education.institution)
@@ -46,23 +45,6 @@ export default function EducationModal({
       setIsEditing(false)
     }
   }, [education])
-
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose()
-    }
-    const handleClickOutside = (e: MouseEvent) => {
-      if (modalRef.current && !modalRef.current.contains(e.target as Node)) {
-        onClose()
-      }
-    }
-    globalThis.addEventListener('keydown', handleKeyDown)
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => {
-      globalThis.removeEventListener('keydown', handleKeyDown)
-      document.removeEventListener('mousedown', handleClickOutside)
-    }
-  }, [onClose])
 
   const handleAddSubQual = () => {
     setSubQuals(prev => [...prev, { subject: "", level: "A-Level", grade: "A" }])
@@ -99,44 +81,14 @@ export default function EducationModal({
   }
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="fixed inset-0 bg-black/75 flex items-center justify-center p-4 z-50 backdrop-blur-sm"
+    <ModalShell
+      title={inst || "Education details"}
+      onClose={onClose}
+      isAdmin={isAdmin}
+      isEditing={isEditing}
+      onEdit={() => setIsEditing(true)}
     >
-      <motion.div
-        ref={modalRef}
-        initial={{ scale: 0.95, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        exit={{ scale: 0.95, opacity: 0 }}
-        className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-hidden"
-      >
-        {/* Window Header */}
-        <div className="bg-gray-100 dark:bg-gray-700 px-4 py-3 rounded-t-lg border-b border-gray-200 dark:border-gray-600">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <button onClick={onClose} className="w-3 h-3 bg-red-500 rounded-full cursor-pointer" aria-label="Close" />
-              <div className="w-3 h-3 bg-yellow-500 rounded-full" />
-              <div className="w-3 h-3 bg-green-500 rounded-full" />
-            </div>
-            
-            <div className="absolute left-1/2 transform -translate-x-1/2 text-sm font-medium text-gray-600 dark:text-gray-300 flex items-center gap-2">
-              <span>{inst || "Education details"}</span>
-              {isAdmin && !isEditing && (
-                <button
-                  onClick={() => setIsEditing(true)}
-                  className="p-1 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-full text-gray-500 hover:text-gray-850 dark:hover:text-gray-100 transition-all cursor-pointer"
-                >
-                  <Pencil className="w-3.5 h-3.5" />
-                </button>
-              )}
-            </div>
-            <div className="w-16"></div>
-          </div>
-        </div>
-
-        {isEditing ? (
+      {isEditing ? (
           <form onSubmit={handleSave} className="p-6 overflow-y-auto max-h-[calc(90vh-60px)] space-y-4">
             <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100">Edit Education Details</h3>
             
@@ -323,8 +275,7 @@ export default function EducationModal({
               )}
             </div>
           </div>
-        )}
-      </motion.div>
-    </motion.div>
+      )}
+    </ModalShell>
   )
 }

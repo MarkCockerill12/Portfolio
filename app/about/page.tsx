@@ -3,8 +3,7 @@
 import Image from 'next/image'
 import React, { useState } from 'react'
 import HoverText from '../components/HoverText'
-import ScrollAnimation from '../components/ScrollAnimation'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence } from 'motion/react'
 import { Code, Gamepad, Palette, Music, BookOpen, BookHeart } from 'lucide-react'
 
 const BASE_URL = "https://pub-699441ce0cfb40449cc458823a3f1ed2.r2.dev/portfolio"
@@ -166,17 +165,15 @@ export default function About() {
   const [activeTab, setActiveTab] = useState('about')
 
   return (
-    <ScrollAnimation>
-      <div className="flex flex-col items-center space-y-8">
-        <div className="flex space-x-4">
-        <TabButton id="about" label="About Me" activeTab={activeTab} setActiveTab={setActiveTab} className="hover:text-blue-500" />          
-        <TabButton id="hobbies" label="Hobbies" activeTab={activeTab} setActiveTab={setActiveTab} />
-        </div>
-
-        <AnimatePresence mode="wait">
-          {activeTab === 'about' ? <AboutSection /> : <HobbiesSection />}
-        </AnimatePresence>
+    <div className="flex flex-col items-center space-y-8">
+      <div className="flex space-x-4">
+      <TabButton id="about" label="About Me" activeTab={activeTab} setActiveTab={setActiveTab} className="hover:text-blue-500" />          
+      <TabButton id="hobbies" label="Hobbies" activeTab={activeTab} setActiveTab={setActiveTab} />
       </div>
-    </ScrollAnimation>
+
+      <AnimatePresence mode="wait">
+        {activeTab === 'about' ? <AboutSection /> : <HobbiesSection />}
+      </AnimatePresence>
+    </div>
   )
 }

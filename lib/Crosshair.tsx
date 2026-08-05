@@ -1,183 +1,127 @@
+'use client'
+
 import React, { useEffect, useRef, RefObject } from "react";
-import { gsap } from "gsap";
 
 const lerp = (a: number, b: number, n: number): number => (1 - n) * a + n * b;
 
-const getMousePos = (
-  e: Event,
-  container?: HTMLElement | null
-): { x: number; y: number } => {
-  const mouseEvent = e as MouseEvent;
-  if (container) {
-    const bounds = container.getBoundingClientRect();
-    return {
-      x: mouseEvent.clientX - bounds.left,
-      y: mouseEvent.clientY - bounds.top,
-    };
-  }
-  return { x: mouseEvent.clientX, y: mouseEvent.clientY };
-};
+// Matches the previous gsap "power3.easeOut" opacity fade.
+const FADE = "opacity 0.9s cubic-bezier(0.215, 0.61, 0.355, 1)";
+// Duration of the noise-displacement burst triggered when hovering a link.
+const GLITCH_MS = 500;
 
 interface CrosshairProps {
   color?: string;
   containerRef?: RefObject<HTMLElement>;
-  speed?: number; // new prop
+  speed?: number;
 }
 
 const Crosshair: React.FC<CrosshairProps> = ({
   color = "white",
   containerRef = null,
-  speed = 0.15, // default
+  speed = 0.15,
 }) => {
   const cursorRef = useRef<HTMLDivElement>(null);
   const lineHorizontalRef = useRef<HTMLDivElement>(null);
   const lineVerticalRef = useRef<HTMLDivElement>(null);
   const filterXRef = useRef<SVGFETurbulenceElement>(null);
   const filterYRef = useRef<SVGFETurbulenceElement>(null);
-
-  let mouse = { x: 0, y: 0 };
+  const mouse = useRef({ x: 0, y: 0 });
 
   useEffect(() => {
-    const handleMouseMove = (ev: Event) => {
-      const mouseEvent = ev as MouseEvent;
-      mouse = getMousePos(mouseEvent, containerRef?.current);
-      if (containerRef?.current) {
-        const bounds = containerRef.current.getBoundingClientRect();
-        if (
-          mouseEvent.clientX < bounds.left ||
-          mouseEvent.clientX > bounds.right ||
-          mouseEvent.clientY < bounds.top ||
-          mouseEvent.clientY > bounds.bottom
-        ) {
-          gsap.to(
-            [lineHorizontalRef.current, lineVerticalRef.current].filter(
-              Boolean
-            ),
-            { opacity: 0 }
-          );
-        } else {
-          gsap.to(
-            [lineHorizontalRef.current, lineVerticalRef.current].filter(
-              Boolean
-            ),
-            { opacity: 1 }
-          );
-        }
+    const horizontal = lineHorizontalRef.current;
+    const vertical = lineVerticalRef.current;
+    if (!horizontal || !vertical) return;
+
+    const container = containerRef?.current ?? null;
+    const target: HTMLElement | Window = container || window;
+    const lines = [horizontal, vertical];
+
+    for (const line of lines) {
+      line.style.transition = FADE;
+      line.style.opacity = "0";
+    }
+
+    // Smoothed position trailing the raw pointer, one entry per axis.
+    const rendered = { x: 0, y: 0 };
+    let started = false;
+    let frame = 0;
+    let glitchStart = 0;
+
+    const setOpacity = (value: string) => {
+      for (const line of lines) line.style.opacity = value;
+    };
+
+    const handleMouseMove = (ev: MouseEvent) => {
+      if (container) {
+        const bounds = container.getBoundingClientRect();
+        mouse.current = {
+          x: ev.clientX - bounds.left,
+          y: ev.clientY - bounds.top,
+        };
+        const outside =
+          ev.clientX < bounds.left ||
+          ev.clientX > bounds.right ||
+          ev.clientY < bounds.top ||
+          ev.clientY > bounds.bottom;
+        setOpacity(outside ? "0" : "1");
+      } else {
+        mouse.current = { x: ev.clientX, y: ev.clientY };
       }
-    };
 
-    const target: HTMLElement | Window = containerRef?.current || window;
-    target.addEventListener("mousemove", handleMouseMove);
-
-    const renderedStyles: {
-      [key: string]: { previous: number; current: number; amt: number };
-    } = {
-      tx: { previous: 0, current: 0, amt: speed },
-      ty: { previous: 0, current: 0, amt: speed },
-    };
-
-    gsap.set(
-      [lineHorizontalRef.current, lineVerticalRef.current].filter(Boolean),
-      { opacity: 0 }
-    );
-
-    const onMouseMove = (_ev: Event) => {
-      renderedStyles.tx.previous = renderedStyles.tx.current = mouse.x;
-      renderedStyles.ty.previous = renderedStyles.ty.current = mouse.y;
-
-      gsap.to(
-        [lineHorizontalRef.current, lineVerticalRef.current].filter(Boolean),
-        {
-          duration: 0.9,
-          ease: "Power3.easeOut",
-          opacity: 1,
-        }
-      );
-
-      requestAnimationFrame(render);
-
-      target.removeEventListener("mousemove", onMouseMove);
-    };
-
-    target.addEventListener("mousemove", onMouseMove);
-
-    const primitiveValues = { turbulence: 0 };
-
-    const tl = gsap
-      .timeline({
-        paused: true,
-        onStart: () => {
-          if (lineHorizontalRef.current) {
-            lineHorizontalRef.current.style.filter = "url(#filter-noise-x)";
-          }
-          if (lineVerticalRef.current) {
-            lineVerticalRef.current.style.filter = "url(#filter-noise-y)";
-          }
-        },
-        onUpdate: () => {
-          if (filterXRef.current && filterYRef.current) {
-            filterXRef.current.setAttribute(
-              "baseFrequency",
-              primitiveValues.turbulence.toString()
-            );
-            filterYRef.current.setAttribute(
-              "baseFrequency",
-              primitiveValues.turbulence.toString()
-            );
-          }
-        },
-        onComplete: () => {
-          if (lineHorizontalRef.current && lineVerticalRef.current) {
-            lineHorizontalRef.current.style.filter = "none";
-            lineVerticalRef.current.style.filter = "none";
-          }
-        },
-      })
-      .to(primitiveValues, {
-        duration: 0.5,
-        ease: "power1",
-        startAt: { turbulence: 1 },
-        turbulence: 0,
-      });
-
-    const enter = () => tl.restart();
-    const leave = () => {
-      tl.progress(1).kill();
+      if (!started) {
+        started = true;
+        rendered.x = mouse.current.x;
+        rendered.y = mouse.current.y;
+        setOpacity("1");
+        frame = requestAnimationFrame(render);
+      }
     };
 
     const render = () => {
-      renderedStyles.tx.current = mouse.x;
-      renderedStyles.ty.current = mouse.y;
+      rendered.x = lerp(rendered.x, mouse.current.x, speed);
+      rendered.y = lerp(rendered.y, mouse.current.y, speed);
+      vertical.style.transform = `translateX(${rendered.x}px)`;
+      horizontal.style.transform = `translateY(${rendered.y}px)`;
 
-      for (const key in renderedStyles) {
-        const style = renderedStyles[key];
-        style.previous = lerp(style.previous, style.current, style.amt);
+      if (glitchStart) {
+        const t = Math.min((performance.now() - glitchStart) / GLITCH_MS, 1);
+        // gsap "power1" eases out, so the turbulence decays as (1 - t)^2.
+        const turbulence = (1 - t) ** 2;
+        filterXRef.current?.setAttribute("baseFrequency", `${turbulence}`);
+        filterYRef.current?.setAttribute("baseFrequency", `${turbulence}`);
+        if (t === 1) endGlitch();
       }
 
-      if (lineHorizontalRef.current && lineVerticalRef.current) {
-        gsap.set(lineVerticalRef.current, { x: renderedStyles.tx.previous });
-        gsap.set(lineHorizontalRef.current, { y: renderedStyles.ty.previous });
-      }
-
-      requestAnimationFrame(render);
+      frame = requestAnimationFrame(render);
     };
 
-    const links: NodeListOf<HTMLAnchorElement> = containerRef?.current
-      ? containerRef.current.querySelectorAll("a")
-      : document.querySelectorAll("a");
+    const endGlitch = () => {
+      glitchStart = 0;
+      horizontal.style.filter = "none";
+      vertical.style.filter = "none";
+    };
 
-    links.forEach((link) => {
+    const enter = () => {
+      glitchStart = performance.now();
+      horizontal.style.filter = "url(#filter-noise-x)";
+      vertical.style.filter = "url(#filter-noise-y)";
+    };
+
+    const links = (container ?? document).querySelectorAll("a");
+    for (const link of links) {
       link.addEventListener("mouseenter", enter);
-      link.addEventListener("mouseleave", leave);
-    });
+      link.addEventListener("mouseleave", endGlitch);
+    }
+
+    target.addEventListener("mousemove", handleMouseMove as EventListener);
 
     return () => {
-      target.removeEventListener("mousemove", handleMouseMove);
-      target.removeEventListener("mousemove", onMouseMove);
-      links.forEach((link) => {
+      cancelAnimationFrame(frame);
+      target.removeEventListener("mousemove", handleMouseMove as EventListener);
+      for (const link of links) {
         link.removeEventListener("mouseenter", enter);
-        link.removeEventListener("mouseleave", leave);
-      });
+        link.removeEventListener("mouseleave", endGlitch);
+      }
     };
   }, [containerRef, speed]);
 

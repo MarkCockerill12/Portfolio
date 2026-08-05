@@ -3,19 +3,11 @@
 import { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
 import { X, ChevronLeft, ChevronRight, Film, Image as ImageIcon, ExternalLink, Pencil, Trash2 } from 'lucide-react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence } from 'motion/react'
+import { GitHubMark } from './BrandIcons'
+import { useDismissable } from './ModalShell'
+import { useUpload } from '@/lib/use-upload'
 import { Project } from '@/lib/types'
-
-const GitHubIcon = ({ className }: { className?: string }) => (
-  <svg 
-    viewBox="0 0 24 24" 
-    fill="currentColor" 
-    className={className} 
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
-  </svg>
-)
 
 interface ProjectModalProps {
   project: Project
@@ -51,8 +43,8 @@ const ProjectModal: React.FC<ProjectModalProps> = ({
   // Media edit states
   const [editImages, setEditImages] = useState<string[]>(project.media.images || [])
   const [editVideo, setEditVideo] = useState(project.media.video || "")
-  const [uploading, setUploading] = useState(false)
-  const [uploadingVideo, setUploadingVideo] = useState(false)
+  const { upload: uploadImage, uploading } = useUpload("portfolio/media/projects")
+  const { upload: uploadVideo, uploading: uploadingVideo } = useUpload("portfolio/media/projects")
 
   useEffect(() => {
     // Reset edit fields when project changes
@@ -107,59 +99,13 @@ const ProjectModal: React.FC<ProjectModalProps> = ({
   }
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
-
-    setUploading(true)
-    const formData = new FormData()
-    formData.append("file", file)
-    formData.append("folder", "portfolio/media/projects")
-
-    try {
-      const res = await fetch("/api/upload", {
-        method: "POST",
-        body: formData,
-      })
-      if (res.ok) {
-        const data = await res.json()
-        setEditImages((prev) => [...prev, data.url])
-      } else {
-        alert("Failed to upload image file.")
-      }
-    } catch (err) {
-      console.error(err)
-      alert("Error uploading file to Cloudflare R2.")
-    } finally {
-      setUploading(false)
-    }
+    const url = await uploadImage(e)
+    if (url) setEditImages((prev) => [...prev, url])
   }
 
   const handleVideoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
-
-    setUploadingVideo(true)
-    const formData = new FormData()
-    formData.append("file", file)
-    formData.append("folder", "portfolio/media/projects")
-
-    try {
-      const res = await fetch("/api/upload", {
-        method: "POST",
-        body: formData,
-      })
-      if (res.ok) {
-        const data = await res.json()
-        setEditVideo(data.url)
-      } else {
-        alert("Failed to upload video file.")
-      }
-    } catch (err) {
-      console.error(err)
-      alert("Error uploading file to Cloudflare R2.")
-    } finally {
-      setUploadingVideo(false)
-    }
+    const url = await uploadVideo(e)
+    if (url) setEditVideo(url)
   }
 
   const handleRemoveImage = (index: number) => {
@@ -194,34 +140,25 @@ const ProjectModal: React.FC<ProjectModalProps> = ({
     }
   }
 
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose()
-      if (e.key === 'ArrowLeft' && !showVideo && !isEditing) {
-        setCurrentImageIndex(prev => 
-          prev === 0 ? (project.media.images?.length || 1) - 1 : prev - 1
-        )
-      }
-      if (e.key === 'ArrowRight' && !showVideo && !isEditing) {
-        setCurrentImageIndex(prev => 
-          prev === (project.media.images?.length || 1) - 1 ? 0 : prev + 1
-        )
-      }
-    }
+  useDismissable(modalRef, onClose)
 
-    const handleClickOutside = (e: MouseEvent) => {
-      if (modalRef.current && !modalRef.current.contains(e.target as Node)) {
-        onClose()
+  // Arrow keys page through the gallery, but only while it is on screen.
+  useEffect(() => {
+    if (showVideo || isEditing) return
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const count = project.media.images?.length || 1
+      if (e.key === 'ArrowLeft') {
+        setCurrentImageIndex(prev => (prev === 0 ? count - 1 : prev - 1))
+      }
+      if (e.key === 'ArrowRight') {
+        setCurrentImageIndex(prev => (prev === count - 1 ? 0 : prev + 1))
       }
     }
 
     globalThis.addEventListener('keydown', handleKeyDown)
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => {
-      globalThis.removeEventListener('keydown', handleKeyDown)
-      document.removeEventListener('mousedown', handleClickOutside)
-    }
-  }, [project.media.images, onClose, showVideo, isEditing])
+    return () => globalThis.removeEventListener('keydown', handleKeyDown)
+  }, [project.media.images, showVideo, isEditing])
 
   return (
     <motion.div
@@ -582,7 +519,7 @@ const ProjectModal: React.FC<ProjectModalProps> = ({
                              px-4 py-2 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 
                              transition-colors cursor-pointer"
                   >
-                    <GitHubIcon className="w-5 h-5" />
+                    <GitHubMark className="w-5 h-5" />
                     View on GitHub
                   </motion.a>
                 )}

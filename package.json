@@ -8,33 +8,27 @@
         "lint": "next lint"
     },
     "dependencies": {
-        "@aws-sdk/client-s3": "^3.1090.0",
-        "@headlessui/react": "^2.2.9",
+        "@aws-sdk/client-s3": "^3.1103.0",
+        "@headlessui/react": "^2.2.10",
         "canvas-confetti": "^1.9.4",
-        "class-variance-authority": "^0.7.1",
-        "clsx": "^2.1.1",
-        "framer-motion": "^11.18.2",
-        "gsap": "^3.14.2",
-        "lucide-react": "^0.475.0",
-        "motion": "^12.35.2",
-        "next": "^15.5.12",
+        "lucide-react": "^1.28.0",
+        "motion": "^12.43.0",
+        "next": "^15.5.22",
         "next-themes": "^0.4.6",
-        "react": "^19.2.4",
-        "react-dom": "^19.2.4",
-        "react-intersection-observer": "^9.16.0",
-        "sharp": "^0.35.3",
-        "tailwind-merge": "^3.5.0",
-        "tailwindcss-animate": "^1.0.7"
+        "react": "^19.2.8",
+        "react-dom": "^19.2.8",
+        "sharp": "^0.35.3"
     },
     "devDependencies": {
-        "@types/node": "latest",
-        "@types/react": "latest",
-        "@types/react-dom": "latest",
-        "autoprefixer": "^10.4.27",
+        "@types/canvas-confetti": "^1.9.0",
+        "@types/node": "^26.1.2",
+        "@types/react": "^19.2.18",
+        "@types/react-dom": "^19.2.4",
+        "autoprefixer": "^10.5.4",
         "eslint": "^9.39.5",
-        "eslint-config-next": "^15.0.4",
-        "postcss": "^8.5.8",
+        "eslint-config-next": "^15.5.22",
+        "postcss": "^8.5.25",
         "tailwindcss": "^3.4.19",
-        "typescript": "latest"
+        "typescript": "^5.9.3"
     }
 }

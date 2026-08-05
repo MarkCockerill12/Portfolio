@@ -1,3 +1,5 @@
+'use client'
+
 import { useEffect, useRef, useState } from 'react'
 import { usePathname } from 'next/navigation'
 import { useTheme } from 'next-themes'
@@ -114,16 +116,18 @@ const BackgroundAnimation = ({ animationType }: { animationType: AnimationType }
 
       getTextProximityFactor() {
         if (textElementCenters.length === 0) return 1;
-        let closestDistance = Infinity;
+        // Compare squared distances so the per-particle, per-frame hot loop
+        // avoids a sqrt for every text element on the page.
+        let closestSquared = Infinity;
 
         for (let i = 0; i < textElementCenters.length; i++) {
           const center = textElementCenters[i];
-          const distance = Math.sqrt((this.x - center.x) ** 2 + (this.y - center.y) ** 2);
-          if (distance < closestDistance) closestDistance = distance;
+          const squared = (this.x - center.x) ** 2 + (this.y - center.y) ** 2;
+          if (squared < closestSquared) closestSquared = squared;
         }
 
         const proximityThreshold = 800; // Adjust this value to change the fade effect range
-        return Math.min(closestDistance / proximityThreshold, 1);
+        return Math.min(Math.sqrt(closestSquared) / proximityThreshold, 1);
       }
     }
 
@@ -155,6 +159,8 @@ const BackgroundAnimation = ({ animationType }: { animationType: AnimationType }
       }
     }
 
+    let frame = 0
+
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height)
 
@@ -162,26 +168,32 @@ const BackgroundAnimation = ({ animationType }: { animationType: AnimationType }
         createFirework(Math.random() * canvas.width, canvas.height)
       }
 
-      particles.forEach((particle, index) => {
+      // Iterate backwards so removing a dead particle cannot make the loop
+      // skip the one that shifts into its place.
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const particle = particles[i]
         particle.update()
         particle.draw()
 
         if (animationType !== 'circles' && particle.life <= 0) {
-          particles.splice(index, 1)
+          particles.splice(i, 1)
         }
-      })
+      }
 
       if ((animationType === 'squares' || animationType === 'fireworks') && particles.length < particleCount) {
         particles.push(new Particle())
       }
 
-      requestAnimationFrame(animate)
+      frame = requestAnimationFrame(animate)
     }
 
     createParticles()
     animate()
 
     return () => {
+      // Without this the previous loop keeps drawing forever, so every theme
+      // toggle, style switch or route change stacked another one on the canvas.
+      cancelAnimationFrame(frame)
       window.removeEventListener('resize', resizeCanvas)
     }
   }, [animationType, resolvedTheme, pathname])
@@ -225,8 +237,6 @@ const BackgroundAnimation = ({ animationType }: { animationType: AnimationType }
       }
     }
   }, [showSplash])
-
-  const baseColor = resolvedTheme === 'dark' ? '#60a5fa' : '#1e293b'
 
   return (
     <>
