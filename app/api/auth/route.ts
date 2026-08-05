@@ -1,5 +1,15 @@
+import { timingSafeEqual } from "node:crypto"
 import { cookies } from "next/headers"
 import { NextResponse } from "next/server"
+
+const COOKIE_NAME = "admin_session"
+
+/** Constant-time compare so a wrong password cannot be narrowed down by timing. */
+function matches(candidate: string, expected: string) {
+  const a = Buffer.from(candidate)
+  const b = Buffer.from(expected)
+  return a.length === b.length && timingSafeEqual(a, b)
+}
 
 export async function POST(request: Request) {
   try {
@@ -10,13 +20,14 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Administration password is not configured on the server environment" }, { status: 500 })
     }
 
-    if (password === expectedPassword) {
+    if (typeof password === "string" && matches(password, expectedPassword)) {
       const cookieStore = await cookies()
-      cookieStore.set("admin_session", "authenticated", {
+      cookieStore.set(COOKIE_NAME, "authenticated", {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         sameSite: "strict",
-        maxAge: 60 * 60 * 24 * 7, // 1 week
+        // No maxAge: this is a session cookie, so closing the browser signs
+        // the admin out and the password is required again next visit.
         path: "/",
       })
 
@@ -24,20 +35,19 @@ export async function POST(request: Request) {
     }
 
     return NextResponse.json({ error: "Incorrect password" }, { status: 401 })
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: "Invalid request" }, { status: 400 })
   }
 }
 
 export async function GET() {
   const cookieStore = await cookies()
-  const session = cookieStore.get("admin_session")?.value
-  const authenticated = session === "authenticated"
+  const authenticated = cookieStore.get(COOKIE_NAME)?.value === "authenticated"
   return NextResponse.json({ authenticated })
 }
 
 export async function DELETE() {
   const cookieStore = await cookies()
-  cookieStore.delete("admin_session")
+  cookieStore.delete(COOKIE_NAME)
   return NextResponse.json({ success: true })
 }

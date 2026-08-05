@@ -2,6 +2,7 @@ import { cookies } from "next/headers"
 import { NextResponse } from "next/server"
 import { getPortfolioFromR2, savePortfolioToR2 } from "@/lib/r2"
 import { defaultPortfolioData } from "@/lib/default-portfolio"
+import { PortfolioData } from "@/lib/types"
 
 export async function GET() {
   try {
@@ -22,6 +23,16 @@ export async function GET() {
   }
 }
 
+/** Every section of the catalog is an array; a PUT must replace all of them. */
+const REQUIRED_SECTIONS: (keyof PortfolioData)[] = [
+  "projects",
+  "jobExperiences",
+  "otherExperiences",
+  "educationHistory",
+  "modules",
+  "certificates",
+]
+
 export async function PUT(request: Request) {
   const cookieStore = await cookies()
   const session = cookieStore.get("admin_session")?.value
@@ -31,8 +42,19 @@ export async function PUT(request: Request) {
 
   try {
     const { updatedData } = await request.json()
-    if (!updatedData) {
+
+    // A PUT overwrites the whole catalog, so a malformed payload would wipe
+    // sections it never meant to touch. Check the shape before it reaches R2.
+    if (!updatedData || typeof updatedData !== "object") {
       return NextResponse.json({ error: "Invalid payload data" }, { status: 400 })
+    }
+
+    const missing = REQUIRED_SECTIONS.filter((section) => !Array.isArray(updatedData[section]))
+    if (missing.length > 0) {
+      return NextResponse.json(
+        { error: `Payload is missing valid arrays for: ${missing.join(", ")}` },
+        { status: 400 }
+      )
     }
 
     const success = await savePortfolioToR2(updatedData)

@@ -1,4 +1,4 @@
-import React, { ReactNode, useState } from 'react';
+import React, { ReactNode, useEffect, useRef, useState } from 'react';
 
 interface TooltipProps {
   children: ReactNode;
@@ -8,13 +8,19 @@ interface TooltipProps {
 
 const Tooltip: React.FC<TooltipProps> = ({ children, content, delay = 700 }) => {
   const [show, setShow] = useState(false);
-  let timeout: NodeJS.Timeout;
+  // A local `let` was reset on every render, so the pending timer often
+  // survived mouse-leave and popped the tooltip open over nothing.
+  const timeout = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => () => {
+    if (timeout.current) clearTimeout(timeout.current);
+  }, []);
 
   const handleMouseEnter = () => {
-    timeout = setTimeout(() => setShow(true), delay);
+    timeout.current = setTimeout(() => setShow(true), delay);
   };
   const handleMouseLeave = () => {
-    clearTimeout(timeout);
+    if (timeout.current) clearTimeout(timeout.current);
     setShow(false);
   };
 

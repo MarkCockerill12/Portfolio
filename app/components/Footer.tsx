@@ -1,19 +1,21 @@
 'use client'
 
-import { Github, Linkedin } from 'lucide-react'
+import { Github, Linkedin } from './BrandIcons'
 import React from 'react'
-import { motion } from 'framer-motion'
+import { motion } from 'motion/react'
+
+// Declared outside the component so it keeps a stable identity and React does
+// not tear down and rebuild the links on every render.
+const ClickAnimation = ({ children }: { children: React.ReactNode }) => (
+  <motion.div
+    whileTap={{ scale: 0.95 }}
+    whileHover={{ scale: 1.05 }}
+  >
+    {children}
+  </motion.div>
+)
 
 const Footer = () => {
-  const ClickAnimation = ({ children }: { children: React.ReactNode }) => (
-    <motion.div
-      whileTap={{ scale: 0.95 }}
-      whileHover={{ scale: 1.05 }}
-    >
-      {children}
-    </motion.div>
-  )
-
   return (
     <footer className="bg-white dark:bg-gray-800 py-4">
       <div className="container mx-auto px-4 flex justify-between items-center">

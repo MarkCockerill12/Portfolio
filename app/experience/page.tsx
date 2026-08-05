@@ -1,13 +1,14 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { Code, Palette, Gamepad, FishSymbol, Pencil, Plus, Trash2, Globe } from 'lucide-react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { useState } from 'react'
+import { Code, Palette, Gamepad, FishSymbol, Pencil, Plus, Globe } from 'lucide-react'
+import { motion, AnimatePresence } from 'motion/react'
 import ScrollAnimation from '../components/ScrollAnimation'
 import HoverText from '../components/HoverText'
 import React from 'react'
 import { Experience } from '@/lib/types'
-import { defaultPortfolioData } from '@/lib/default-portfolio'
+import { celebrate, usePortfolio } from '@/lib/use-portfolio'
+import { useIsAdmin } from '@/lib/use-admin'
 import ExperienceModal from '../components/ExperienceModal'
 
 const ICON_MAP: Record<string, React.ReactNode> = {
@@ -103,112 +104,33 @@ const ExperienceCard = ({ experience, isAdmin, onSelect }: ExperienceCardProps) 
 
 export default function ExperiencePage() {
   const [activeTab, setActiveTab] = useState<'job' | 'other'>('job')
-  const [jobList, setJobList] = useState<Experience[]>(defaultPortfolioData.jobExperiences)
-  const [otherList, setOtherList] = useState<Experience[]>(defaultPortfolioData.otherExperiences)
-  const [isAdmin, setIsAdmin] = useState(false)
   const [selectedExperience, setSelectedExperience] = useState<Experience | null>(null)
 
-  const loadData = async () => {
-    try {
-      const res = await fetch("/api/portfolio")
-      if (res.ok) {
-        const data = await res.json()
-        if (data.jobExperiences) setJobList(data.jobExperiences)
-        if (data.otherExperiences) setOtherList(data.otherExperiences)
-      }
-    } catch (err) {
-      console.error("Failed to load experience dynamic catalog:", err)
-    }
-  }
+  const { data, save } = usePortfolio()
+  const isAdmin = useIsAdmin()
 
-  useEffect(() => {
-    loadData()
-  }, [])
-
-  useEffect(() => {
-    fetch("/api/auth")
-      .then((res) => res.json())
-      .then((data) => setIsAdmin(data.authenticated))
-      .catch(() => setIsAdmin(false))
-  }, [])
+  // Both tabs are stored as separate arrays on the same catalog.
+  const section = activeTab === 'job' ? 'jobExperiences' : 'otherExperiences'
 
   const handleUpdateExperience = async (updated: Experience) => {
-    try {
-      const res = await fetch("/api/portfolio")
-      if (!res.ok) return
-      const data = await res.json()
+    const saved = await save((draft) => {
+      const list = draft[section]
+      const index = list.findIndex((exp) => exp.id === updated.id)
+      if (index === -1) list.push(updated)
+      else list[index] = updated
+    })
 
-      if (activeTab === 'job') {
-        const exists = data.jobExperiences.some((exp: Experience) => exp.id === updated.id)
-        if (exists) {
-          data.jobExperiences = data.jobExperiences.map((exp: Experience) => 
-            exp.id === updated.id ? updated : exp
-          )
-        } else {
-          data.jobExperiences.push(updated)
-        }
-      } else {
-        const exists = data.otherExperiences.some((exp: Experience) => exp.id === updated.id)
-        if (exists) {
-          data.otherExperiences = data.otherExperiences.map((exp: Experience) => 
-            exp.id === updated.id ? updated : exp
-          )
-        } else {
-          data.otherExperiences.push(updated)
-        }
-      }
-
-      const saveRes = await fetch("/api/portfolio", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ updatedData: data })
-      })
-
-      if (saveRes.ok) {
-        if (activeTab === 'job') {
-          setJobList(data.jobExperiences)
-        } else {
-          setOtherList(data.otherExperiences)
-        }
-        setSelectedExperience(null)
-        // Celebration!
-        const confetti = (await import("canvas-confetti")).default
-        confetti({ particleCount: 80, spread: 60, origin: { y: 0.6 } })
-      }
-    } catch (err) {
-      console.error("Failed to save experience update:", err)
+    if (saved) {
+      setSelectedExperience(null)
+      celebrate()
     }
   }
 
   const handleDeleteExperience = async (id: string) => {
-    try {
-      const res = await fetch("/api/portfolio")
-      if (!res.ok) return
-      const data = await res.json()
-
-      if (activeTab === 'job') {
-        data.jobExperiences = data.jobExperiences.filter((exp: Experience) => exp.id !== id)
-      } else {
-        data.otherExperiences = data.otherExperiences.filter((exp: Experience) => exp.id !== id)
-      }
-
-      const saveRes = await fetch("/api/portfolio", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ updatedData: data })
-      })
-
-      if (saveRes.ok) {
-        if (activeTab === 'job') {
-          setJobList(data.jobExperiences)
-        } else {
-          setOtherList(data.otherExperiences)
-        }
-        setSelectedExperience(null)
-      }
-    } catch (err) {
-      console.error("Failed to delete experience:", err)
-    }
+    const saved = await save((draft) => {
+      draft[section] = draft[section].filter((exp) => exp.id !== id)
+    })
+    if (saved) setSelectedExperience(null)
   }
 
   const handleAddNewExperience = () => {
@@ -222,67 +144,65 @@ export default function ExperiencePage() {
     setSelectedExperience(newExp)
   }
 
-  const currentList = activeTab === 'job' ? jobList : otherList
+  const currentList = data[section]
 
   return (
-    <ScrollAnimation>
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
-        <div className="flex justify-between items-center mb-8 border-b border-gray-200 dark:border-gray-700/50 pb-4">
-          <div className="flex space-x-6">
-            <ExperienceTab 
-              label="Job Experience" 
-              isActive={activeTab === 'job'} 
-              onClick={() => setActiveTab('job')} 
-            />
-            <ExperienceTab 
-              label="Other Experience" 
-              isActive={activeTab === 'other'} 
-              onClick={() => setActiveTab('other')} 
-            />
-          </div>
-          {isAdmin && (
-            <button
-              onClick={handleAddNewExperience}
-              className="bg-green-500 hover:bg-green-600 active:scale-95 transition-all text-white font-semibold px-4 py-2 rounded-lg cursor-pointer flex items-center gap-2 text-sm shadow-md"
-            >
-              <Plus className="w-4 h-4" /> Add Experience
-            </button>
-          )}
+    <div className="container mx-auto px-4 py-8 max-w-4xl">
+      <div className="flex justify-between items-center mb-8 border-b border-gray-200 dark:border-gray-700/50 pb-4">
+        <div className="flex space-x-6">
+          <ExperienceTab 
+            label="Job Experience" 
+            isActive={activeTab === 'job'} 
+            onClick={() => setActiveTab('job')} 
+          />
+          <ExperienceTab 
+            label="Other Experience" 
+            isActive={activeTab === 'other'} 
+            onClick={() => setActiveTab('other')} 
+          />
         </div>
-
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={activeTab}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.2 }}
-            className="grid grid-cols-1 gap-8"
+        {isAdmin && (
+          <button
+            onClick={handleAddNewExperience}
+            className="bg-green-500 hover:bg-green-600 active:scale-95 transition-all text-white font-semibold px-4 py-2 rounded-lg cursor-pointer flex items-center gap-2 text-sm shadow-md"
           >
-            {currentList.map((exp) => (
-              <ScrollAnimation key={exp.id}>
-                <ExperienceCard 
-                  experience={exp} 
-                  isAdmin={isAdmin}
-                  onSelect={(item) => setSelectedExperience(item)}
-                />
-              </ScrollAnimation>
-            ))}
-          </motion.div>
-        </AnimatePresence>
-
-        <AnimatePresence>
-          {selectedExperience && (
-            <ExperienceModal
-              experience={selectedExperience}
-              isAdmin={isAdmin}
-              onUpdate={handleUpdateExperience}
-              onDelete={handleDeleteExperience}
-              onClose={() => setSelectedExperience(null)}
-            />
-          )}
-        </AnimatePresence>
+            <Plus className="w-4 h-4" /> Add Experience
+          </button>
+        )}
       </div>
-    </ScrollAnimation>
+
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={activeTab}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -10 }}
+          transition={{ duration: 0.2 }}
+          className="grid grid-cols-1 gap-8"
+        >
+          {currentList.map((exp) => (
+            <ScrollAnimation key={exp.id}>
+              <ExperienceCard 
+                experience={exp} 
+                isAdmin={isAdmin}
+                onSelect={(item) => setSelectedExperience(item)}
+              />
+            </ScrollAnimation>
+          ))}
+        </motion.div>
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {selectedExperience && (
+          <ExperienceModal
+            experience={selectedExperience}
+            isAdmin={isAdmin}
+            onUpdate={handleUpdateExperience}
+            onDelete={handleDeleteExperience}
+            onClose={() => setSelectedExperience(null)}
+          />
+        )}
+      </AnimatePresence>
+    </div>
   )
 }

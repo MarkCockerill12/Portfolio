@@ -1,28 +1,23 @@
 'use client'
 
-import { motion, useAnimation } from 'framer-motion'
-import { useEffect, ReactNode } from 'react'
-import { useInView } from 'react-intersection-observer'
+import { motion } from 'motion/react'
+import { ReactNode } from 'react'
 
 interface ScrollAnimationProps {
   children: ReactNode
 }
 
+/**
+ * Fades and lifts its children in the first time they scroll into view.
+ * Uses the animation library's own viewport tracking, so no separate
+ * IntersectionObserver wrapper or animation controller is needed.
+ */
 const ScrollAnimation: React.FC<ScrollAnimationProps> = ({ children }) => {
-  const controls = useAnimation()
-  const [ref, inView] = useInView()
-
-  useEffect(() => {
-    if (inView) {
-      controls.start('visible')
-    }
-  }, [controls, inView])
-
   return (
     <motion.div
-      ref={ref}
-      animate={controls}
       initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true }}
       variants={{
         visible: { opacity: 1, y: 0 },
         hidden: { opacity: 0, y: 50 }
@@ -35,4 +30,3 @@ const ScrollAnimation: React.FC<ScrollAnimationProps> = ({ children }) => {
 }
 
 export default ScrollAnimation
-

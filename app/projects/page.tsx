@@ -1,61 +1,38 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { useMemo, useState } from 'react'
+import { motion, AnimatePresence } from 'motion/react'
 import ProjectCard from '../components/ProjectCard'
 import ProjectModal from '../components/ProjectModal'
 import { Search, Filter, Plus } from 'lucide-react'
 import HoverText from '../components/HoverText'
 import ScrollAnimation from '../components/ScrollAnimation'
-import { defaultPortfolioData } from '@/lib/default-portfolio'
+import { celebrate, usePortfolio } from '@/lib/use-portfolio'
+import { useIsAdmin } from '@/lib/use-admin'
 import { Project } from '@/lib/types'
 
 export default function Projects() {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null)
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedCategories, setSelectedCategories] = useState<string[]>([])
-  const [projectsList, setProjectsList] = useState<Project[]>(defaultPortfolioData.projects)
-  const [filteredProjects, setFilteredProjects] = useState<Project[]>(defaultPortfolioData.projects)
   const [showFilters, setShowFilters] = useState(false)
-  const [isAdmin, setIsAdmin] = useState(false)
 
-  const loadData = async () => {
-    try {
-      const res = await fetch("/api/portfolio")
-      if (res.ok) {
-        const data = await res.json()
-        if (data.projects && data.projects.length > 0) {
-          setProjectsList(data.projects)
-        }
-      }
-    } catch (err) {
-      console.error("Failed to load projects dynamic catalog:", err)
-    }
-  }
+  const { data, save } = usePortfolio()
+  const isAdmin = useIsAdmin()
+  const projectsList = data.projects
 
-  useEffect(() => {
-    loadData()
-  }, [])
-
-  useEffect(() => {
-    fetch("/api/auth")
-      .then((res) => res.json())
-      .then((data) => setIsAdmin(data.authenticated))
-      .catch(() => setIsAdmin(false))
-  }, [])
-
-  useEffect(() => {
-    const filtered = projectsList.filter(project => 
+  const filteredProjects = useMemo(
+    () => projectsList.filter(project =>
       // Check if title matches search term
       project.title.toLowerCase().includes(searchTerm.toLowerCase()) &&
       // Check if project has ALL selected categories (AND logic)
       selectedCategories.every(cat => project.categories.includes(cat))
-    )
-    setFilteredProjects(filtered)
-  }, [searchTerm, selectedCategories, projectsList])
+    ),
+    [projectsList, searchTerm, selectedCategories]
+  )
 
   const toggleCategory = (category: string) => {
-    setSelectedCategories(prev => 
+    setSelectedCategories(prev =>
       prev.includes(category)
         ? prev.filter(c => c !== category)
         : [...prev, category]
@@ -63,59 +40,23 @@ export default function Projects() {
   }
 
   const handleProjectUpdated = async (updatedProject: Project) => {
-    try {
-      const res = await fetch("/api/portfolio")
-      if (!res.ok) return
-      const data = await res.json()
-      
-      const exists = data.projects.some((proj: Project) => proj.id === updatedProject.id)
-      if (exists) {
-        data.projects = data.projects.map((proj: Project) => 
-          proj.id === updatedProject.id ? updatedProject : proj
-        )
-      } else {
-        data.projects.push(updatedProject)
-      }
+    const saved = await save((draft) => {
+      const index = draft.projects.findIndex((proj) => proj.id === updatedProject.id)
+      if (index === -1) draft.projects.push(updatedProject)
+      else draft.projects[index] = updatedProject
+    })
 
-      const saveRes = await fetch("/api/portfolio", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ updatedData: data })
-      })
-
-      if (saveRes.ok) {
-        setProjectsList(data.projects)
-        setSelectedProject(updatedProject)
-        // Fire celebration confetti
-        const confetti = (await import("canvas-confetti")).default
-        confetti({ particleCount: 80, spread: 60, origin: { y: 0.6 } })
-      }
-    } catch (err) {
-      console.error("Failed to update project:", err)
+    if (saved) {
+      setSelectedProject(updatedProject)
+      celebrate()
     }
   }
 
   const handleProjectDeleted = async (id: number) => {
-    try {
-      const res = await fetch("/api/portfolio")
-      if (!res.ok) return
-      const data = await res.json()
-
-      data.projects = data.projects.filter((proj: Project) => proj.id !== id)
-
-      const saveRes = await fetch("/api/portfolio", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ updatedData: data })
-      })
-
-      if (saveRes.ok) {
-        setProjectsList(data.projects)
-        setSelectedProject(null)
-      }
-    } catch (err) {
-      console.error("Failed to delete project:", err)
-    }
+    const saved = await save((draft) => {
+      draft.projects = draft.projects.filter((proj) => proj.id !== id)
+    })
+    if (saved) setSelectedProject(null)
   }
 
   const handleAddNewProject = () => {
@@ -136,12 +77,7 @@ export default function Projects() {
   const allCategories = Array.from(new Set(projectsList.flatMap(project => project.categories)))
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="container mx-auto px-4 py-8"
-    >
+    <div className="container mx-auto px-4 py-8">
       <ScrollAnimation>
         <h1 className="text-4xl font-bold mb-8 text-center font-press-start-2p">
           <HoverText>My Projects</HoverText>
@@ -244,7 +180,7 @@ export default function Projects() {
               <p className="text-xl">No projects found matching your criteria</p>
             </motion.div>
           ) : (
-            filteredProjects.map((project) => (
+            filteredProjects.map((project, index) => (
               <ScrollAnimation key={project.id}>
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
@@ -252,7 +188,11 @@ export default function Projects() {
                   exit={{ opacity: 0, y: -20 }}
                   transition={{ duration: 0.3 }}
                 >
-                  <ProjectCard project={project} onSelect={() => setSelectedProject(project)} />
+                  <ProjectCard
+                    project={project}
+                    onSelect={() => setSelectedProject(project)}
+                    priority={index < 3}
+                  />
                 </motion.div>
               </ScrollAnimation>
             ))
@@ -271,6 +211,6 @@ export default function Projects() {
           />
         )}
       </AnimatePresence>
-    </motion.div>
+    </div>
   )
 }

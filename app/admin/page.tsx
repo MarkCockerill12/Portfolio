@@ -1,28 +1,18 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { motion } from "framer-motion"
+import { motion } from "motion/react"
 import { ShieldAlert, KeyRound } from "lucide-react"
+import { setAdminSession, useIsAdmin } from "@/lib/use-admin"
 
 export default function AdminLogin() {
   const [password, setPassword] = useState("")
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
   const router = useRouter()
 
-  useEffect(() => {
-    // Check if already authenticated
-    fetch("/api/auth")
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.authenticated) {
-          setIsAuthenticated(true)
-        }
-      })
-      .catch(() => {})
-  }, [])
+  const isAuthenticated = useIsAdmin()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -37,13 +27,14 @@ export default function AdminLogin() {
       })
 
       if (res.ok) {
-        setIsAuthenticated(true)
+        setAdminSession(true)
+        setPassword("")
         router.push("/")
       } else {
         const data = await res.json()
         setError(data.error || "Incorrect password")
       }
-    } catch (err) {
+    } catch {
       setError("Failed to connect to authentication server")
     } finally {
       setLoading(false)
@@ -55,7 +46,7 @@ export default function AdminLogin() {
     try {
       const res = await fetch("/api/auth", { method: "DELETE" })
       if (res.ok) {
-        setIsAuthenticated(false)
+        setAdminSession(false)
         router.refresh()
       }
     } catch (err) {

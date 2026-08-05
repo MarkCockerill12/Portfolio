@@ -3,6 +3,7 @@ import { Inter, Press_Start_2P } from 'next/font/google'
 import Header from './components/Header'
 import Footer from './components/Footer'
 import CookieBanner from './components/CookieBanner'
+import ViewTransitions from './components/ViewTransitions'
 import React from 'react'
 import { ThemeProvider } from 'next-themes'
 
@@ -23,10 +24,11 @@ export default function RootLayout({
     <html lang="en" className={`scroll-smooth ${inter.variable} ${pressStart2P.variable}`} suppressHydrationWarning>
       <body>
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
+          <ViewTransitions />
           <div className="relative min-h-screen bg-gradient-custom">
             <div className="relative z-10 flex flex-col min-h-screen">
               <Header />
-              <main className="flex-grow container mx-auto px-4 py-8">
+              <main className="page-transition flex-grow container mx-auto px-4 py-8">
                 {children}
               </main>
               <Footer />

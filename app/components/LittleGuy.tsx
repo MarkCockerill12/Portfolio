@@ -1,7 +1,9 @@
+'use client'
+
 import React, { useEffect, useState, useRef } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence } from 'motion/react'
 import { useTheme } from 'next-themes'
-import usePathname from './usePathname'
+import { usePathname } from 'next/navigation'
 import Crosshair from '../../lib/Crosshair'
 import confetti from 'canvas-confetti'
 
@@ -178,34 +180,36 @@ const LittleGuy: React.FC<LittleGuyProps> = ({ visible, onClose }) => {
     dragStartPos.current = { x: e.clientX, y: e.clientY };
     e.preventDefault();
   }
-  const handleDrag = (e: MouseEvent) => {
-    if (!dragging) return;
-    const docW = document.documentElement.scrollWidth;
-    const docH = document.documentElement.scrollHeight;
-    const guyWidth = 80, guyHeight = 120;
-    const newLeft = Math.max(0, Math.min(docW - guyWidth, e.clientX - dragOffset.x));
-    const newTop = Math.max(0, Math.min(docH - guyHeight, e.clientY - dragOffset.y));
-    if (dragStartPos.current) {
-      const dist = Math.hypot(e.clientX - dragStartPos.current.x, e.clientY - dragStartPos.current.y);
-      if (dist > 5 && !dragMoved.current) {
-        dragMoved.current = true;
-        // Always show woah message on first drag, regardless of chat state
-        setMessages((msgs) => {
-          if (msgs.length === 0 || msgs[msgs.length - 1].text !== 'Woah hey where we goin') {
-            return [...msgs, { from: 'guy', text: 'Woah hey where we goin', key: getUniqueKey() }];
-          }
-          return msgs;
-        });
-      }
-    }
-    setGuyPos({ left: newLeft, top: newTop });
-  }
-  const handleDragEnd = () => {
-    setDragging(false);
-    dragStartPos.current = null;
-  }
   useEffect(() => {
     if (!dragging) return;
+
+    const handleDrag = (e: MouseEvent) => {
+      const docW = document.documentElement.scrollWidth;
+      const docH = document.documentElement.scrollHeight;
+      const guyWidth = 80, guyHeight = 120;
+      const newLeft = Math.max(0, Math.min(docW - guyWidth, e.clientX - dragOffset.x));
+      const newTop = Math.max(0, Math.min(docH - guyHeight, e.clientY - dragOffset.y));
+      if (dragStartPos.current) {
+        const dist = Math.hypot(e.clientX - dragStartPos.current.x, e.clientY - dragStartPos.current.y);
+        if (dist > 5 && !dragMoved.current) {
+          dragMoved.current = true;
+          // Always show woah message on first drag, regardless of chat state
+          setMessages((msgs) => {
+            if (msgs.length === 0 || msgs[msgs.length - 1].text !== 'Woah hey where we goin') {
+              return [...msgs, { from: 'guy', text: 'Woah hey where we goin', key: getUniqueKey() }];
+            }
+            return msgs;
+          });
+        }
+      }
+      setGuyPos({ left: newLeft, top: newTop });
+    }
+
+    const handleDragEnd = () => {
+      setDragging(false);
+      dragStartPos.current = null;
+    }
+
     window.addEventListener('mousemove', handleDrag);
     window.addEventListener('mouseup', handleDragEnd);
     return () => {
@@ -443,7 +447,10 @@ const LittleGuy: React.FC<LittleGuyProps> = ({ visible, onClose }) => {
                 onClick={handleGuyClick}
                 style={{ zIndex: 2000 }}
               >
-                {/* Render pixel character image for scenario, flip if needed */}
+                {/* Render pixel character image for scenario, flip if needed.
+                    Deliberately a plain <img>: next/image would resample this
+                    sprite and destroy the crisp `image-rendering: pixelated` look. */}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={guyImg}
                   alt="Little Guy"

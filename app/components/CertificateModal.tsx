@@ -2,9 +2,11 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { motion, AnimatePresence } from "framer-motion";
-import { X, Pencil, Trash2 } from "lucide-react";
+import { motion, AnimatePresence } from "motion/react";
+import { X, Pencil } from "lucide-react";
 import confetti from "canvas-confetti";
+import { useDismissable } from "./ModalShell";
+import { useUpload } from "@/lib/use-upload";
 import { Certificate } from "@/lib/types";
 
 interface CertificateModalProps {
@@ -27,7 +29,9 @@ const CertificateModal: React.FC<CertificateModalProps> = ({
   const [editTitle, setEditTitle] = useState(certificate.title);
   const [editDesc, setEditDesc] = useState(certificate.description);
   const [editImage, setEditImage] = useState(certificate.image);
-  const [uploading, setUploading] = useState(false);
+  const { upload, uploading } = useUpload("portfolio/media/Certificates");
+
+  useDismissable(modalRef, onClose);
 
   useEffect(() => {
     // Only fire confetti if it is not a default placeholder/new template cert
@@ -69,49 +73,9 @@ const CertificateModal: React.FC<CertificateModalProps> = ({
     }
   }, [certificate]);
 
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    const handleClickOutside = (e: MouseEvent) => {
-      if (modalRef.current && !modalRef.current.contains(e.target as Node)) {
-        onClose();
-      }
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [onClose]);
-
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    setUploading(true);
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("folder", "portfolio/media/Certificates");
-
-    try {
-      const res = await fetch("/api/upload", {
-        method: "POST",
-        body: formData,
-      });
-      if (res.ok) {
-        const data = await res.json();
-        setEditImage(data.url);
-      } else {
-        alert("Failed to upload image file.");
-      }
-    } catch (err) {
-      console.error(err);
-      alert("Error uploading file to Cloudflare R2.");
-    } finally {
-      setUploading(false);
-    }
+    const url = await upload(e);
+    if (url) setEditImage(url);
   };
 
   const handleSave = (e: React.FormEvent) => {

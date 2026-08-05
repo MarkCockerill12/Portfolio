@@ -1,15 +1,15 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import React, { useState } from 'react'
+import { motion, AnimatePresence } from 'motion/react'
 import { ChevronDown, ChevronUp, Pencil, Plus } from 'lucide-react'
-import ScrollAnimation from '../components/ScrollAnimation'
 import HoverText from '../components/HoverText'
 import Image from 'next/image'
 import CertificateModal from '../components/CertificateModal'
 import EducationModal from '../components/EducationModal'
 import ModuleModal from '../components/ModuleModal'
-import { defaultPortfolioData } from '@/lib/default-portfolio'
+import { celebrate, usePortfolio } from '@/lib/use-portfolio'
+import { useIsAdmin } from '@/lib/use-admin'
 import { Education, Module, Certificate } from '@/lib/types'
 
 const GradeBadge = ({ grade, size = "normal", variant = "green" }: { 
@@ -245,96 +245,35 @@ const CertificatesSection = ({ certificates, isAdmin, onSelect }: CertificatesSe
 
 export default function Qualifications() {
   const [activeTab, setActiveTab] = useState<'modules' | 'certificates'>('modules')
-  
-  const [educationHistory, setEducationHistory] = useState<Education[]>(defaultPortfolioData.educationHistory)
-  const [modules, setModules] = useState<Module[]>(defaultPortfolioData.modules)
-  const [certificates, setCertificates] = useState<Certificate[]>(defaultPortfolioData.certificates)
-  const [isAdmin, setIsAdmin] = useState(false)
 
   // Selected states for popup modals
   const [selectedCert, setSelectedCert] = useState<Certificate | null>(null)
   const [selectedEdu, setSelectedEdu] = useState<Education | null>(null)
   const [selectedMod, setSelectedMod] = useState<Module | null>(null)
 
-  const loadData = async () => {
-    try {
-      const res = await fetch("/api/portfolio")
-      if (res.ok) {
-        const data = await res.json()
-        if (data.educationHistory) setEducationHistory(data.educationHistory)
-        if (data.modules) setModules(data.modules)
-        if (data.certificates) setCertificates(data.certificates)
-      }
-    } catch (err) {
-      console.error("Failed to load qualifications dynamic catalog:", err)
-    }
-  }
-
-  useEffect(() => {
-    loadData()
-  }, [])
-
-  useEffect(() => {
-    fetch("/api/auth")
-      .then((res) => res.json())
-      .then((data) => setIsAdmin(data.authenticated))
-      .catch(() => setIsAdmin(false))
-  }, [])
+  const { data, save } = usePortfolio()
+  const isAdmin = useIsAdmin()
+  const { educationHistory, modules, certificates } = data
 
   // CRUD for Education History
   const handleUpdateEducation = async (updated: Education) => {
-    try {
-      const res = await fetch("/api/portfolio")
-      if (!res.ok) return
-      const data = await res.json()
+    const saved = await save((draft) => {
+      const index = draft.educationHistory.findIndex((edu) => edu.institution === updated.institution)
+      if (index === -1) draft.educationHistory.push(updated)
+      else draft.educationHistory[index] = updated
+    })
 
-      const exists = data.educationHistory.some((edu: Education) => edu.institution === updated.institution)
-      if (exists) {
-        data.educationHistory = data.educationHistory.map((edu: Education) =>
-          edu.institution === updated.institution ? updated : edu
-        )
-      } else {
-        data.educationHistory.push(updated)
-      }
-
-      const saveRes = await fetch("/api/portfolio", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ updatedData: data })
-      })
-
-      if (saveRes.ok) {
-        setEducationHistory(data.educationHistory)
-        setSelectedEdu(null)
-        const confetti = (await import("canvas-confetti")).default
-        confetti({ particleCount: 80, spread: 60, origin: { y: 0.6 } })
-      }
-    } catch (err) {
-      console.error("Failed to update education details:", err)
+    if (saved) {
+      setSelectedEdu(null)
+      celebrate()
     }
   }
 
   const handleDeleteEducation = async (institution: string) => {
-    try {
-      const res = await fetch("/api/portfolio")
-      if (!res.ok) return
-      const data = await res.json()
-
-      data.educationHistory = data.educationHistory.filter((edu: Education) => edu.institution !== institution)
-
-      const saveRes = await fetch("/api/portfolio", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ updatedData: data })
-      })
-
-      if (saveRes.ok) {
-        setEducationHistory(data.educationHistory)
-        setSelectedEdu(null)
-      }
-    } catch (err) {
-      console.error("Failed to delete education history card:", err)
-    }
+    const saved = await save((draft) => {
+      draft.educationHistory = draft.educationHistory.filter((edu) => edu.institution !== institution)
+    })
+    if (saved) setSelectedEdu(null)
   }
 
   const handleAddNewEducation = () => {
@@ -350,58 +289,23 @@ export default function Qualifications() {
 
   // CRUD for University Modules
   const handleUpdateModule = async (updated: Module) => {
-    try {
-      const res = await fetch("/api/portfolio")
-      if (!res.ok) return
-      const data = await res.json()
+    const saved = await save((draft) => {
+      const index = draft.modules.findIndex((m) => m.id === updated.id)
+      if (index === -1) draft.modules.push(updated)
+      else draft.modules[index] = updated
+    })
 
-      const exists = data.modules.some((m: Module) => m.id === updated.id)
-      if (exists) {
-        data.modules = data.modules.map((m: Module) =>
-          m.id === updated.id ? updated : m
-        )
-      } else {
-        data.modules.push(updated)
-      }
-
-      const saveRes = await fetch("/api/portfolio", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ updatedData: data })
-      })
-
-      if (saveRes.ok) {
-        setModules(data.modules)
-        setSelectedMod(null)
-        const confetti = (await import("canvas-confetti")).default
-        confetti({ particleCount: 80, spread: 60, origin: { y: 0.6 } })
-      }
-    } catch (err) {
-      console.error("Failed to update module details:", err)
+    if (saved) {
+      setSelectedMod(null)
+      celebrate()
     }
   }
 
   const handleDeleteModule = async (id: string) => {
-    try {
-      const res = await fetch("/api/portfolio")
-      if (!res.ok) return
-      const data = await res.json()
-
-      data.modules = data.modules.filter((m: Module) => m.id !== id)
-
-      const saveRes = await fetch("/api/portfolio", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ updatedData: data })
-      })
-
-      if (saveRes.ok) {
-        setModules(data.modules)
-        setSelectedMod(null)
-      }
-    } catch (err) {
-      console.error("Failed to delete module:", err)
-    }
+    const saved = await save((draft) => {
+      draft.modules = draft.modules.filter((m) => m.id !== id)
+    })
+    if (saved) setSelectedMod(null)
   }
 
   const handleAddNewModule = () => {
@@ -418,58 +322,23 @@ export default function Qualifications() {
 
   // CRUD for Certificates
   const handleCertificateUpdated = async (updated: Certificate) => {
-    try {
-      const res = await fetch("/api/portfolio")
-      if (!res.ok) return
-      const data = await res.json()
+    const saved = await save((draft) => {
+      const index = draft.certificates.findIndex((cert) => cert.id === updated.id)
+      if (index === -1) draft.certificates.push(updated)
+      else draft.certificates[index] = updated
+    })
 
-      const exists = data.certificates.some((c: Certificate) => c.id === updated.id)
-      if (exists) {
-        data.certificates = data.certificates.map((cert: Certificate) =>
-          cert.id === updated.id ? updated : cert
-        )
-      } else {
-        data.certificates.push(updated)
-      }
-
-      const saveRes = await fetch("/api/portfolio", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ updatedData: data })
-      })
-
-      if (saveRes.ok) {
-        setCertificates(data.certificates)
-        setSelectedCert(null)
-        const confetti = (await import("canvas-confetti")).default
-        confetti({ particleCount: 80, spread: 60, origin: { y: 0.6 } })
-      }
-    } catch (err) {
-      console.error("Failed to save certificate updates:", err)
+    if (saved) {
+      setSelectedCert(null)
+      celebrate()
     }
   }
 
   const handleCertificateDeleted = async (id: string) => {
-    try {
-      const res = await fetch("/api/portfolio")
-      if (!res.ok) return
-      const data = await res.json()
-
-      data.certificates = data.certificates.filter((cert: Certificate) => cert.id !== id)
-
-      const saveRes = await fetch("/api/portfolio", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ updatedData: data })
-      })
-
-      if (saveRes.ok) {
-        setCertificates(data.certificates)
-        setSelectedCert(null)
-      }
-    } catch (err) {
-      console.error("Failed to delete certificate:", err)
-    }
+    const saved = await save((draft) => {
+      draft.certificates = draft.certificates.filter((cert) => cert.id !== id)
+    })
+    if (saved) setSelectedCert(null)
   }
 
   const handleAddNewCertificate = () => {
@@ -483,166 +352,164 @@ export default function Qualifications() {
   }
 
   return (
-    <ScrollAnimation>
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex justify-between items-center mb-10 mt-2 border-b border-gray-200 dark:border-gray-700/50 pb-4 max-w-5xl mx-auto">
-          <div className="flex gap-4">
-            <TabButton id="modules" label="University Modules" activeTab={activeTab} setActiveTab={setActiveTab} />
-            <TabButton id="certificates" label="Certificates" activeTab={activeTab} setActiveTab={setActiveTab} />
-          </div>
-          {isAdmin && activeTab === 'certificates' && (
-            <button
-              onClick={handleAddNewCertificate}
-              className="bg-green-500 hover:bg-green-600 active:scale-95 transition-all text-white font-semibold px-4 py-2 rounded-lg cursor-pointer flex items-center gap-2 text-sm shadow-md"
-            >
-              <Plus className="w-4 h-4" /> Add Certificate
-            </button>
-          )}
+    <div className="container mx-auto px-4 py-8">
+      <div className="flex justify-between items-center mb-10 mt-2 border-b border-gray-200 dark:border-gray-700/50 pb-4 max-w-5xl mx-auto">
+        <div className="flex gap-4">
+          <TabButton id="modules" label="University Modules" activeTab={activeTab} setActiveTab={setActiveTab} />
+          <TabButton id="certificates" label="Certificates" activeTab={activeTab} setActiveTab={setActiveTab} />
         </div>
-        <AnimatePresence mode="wait">
-          {activeTab === 'modules' && (
-            <motion.div
-              key="modules"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.3 }}
-            >
-              <div className="flex justify-between items-center mb-8 max-w-4xl mx-auto border-b border-gray-200 dark:border-gray-750 pb-3">
-                <motion.h1 
-                  className="text-3xl font-bold font-press-start-2p"
-                  initial={{ opacity: 0, y: -20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5 }}
-                >
-                  <HoverText>Academic Qualifications</HoverText>
-                </motion.h1>
-                {isAdmin && (
-                  <button
-                    onClick={handleAddNewEducation}
-                    className="bg-green-500 hover:bg-green-600 active:scale-95 transition-all text-white font-semibold px-3 py-1.5 rounded-lg cursor-pointer flex items-center gap-1.5 text-xs shadow"
-                  >
-                    <Plus className="w-3.5 h-3.5" /> Add Education
-                  </button>
-                )}
-              </div>
-              <div className="grid gap-6 max-w-4xl mx-auto mb-12">
-                {educationHistory.map((edu) => (
-                  <EducationCard 
-                    key={edu.institution} 
-                    education={edu} 
-                    isAdmin={isAdmin} 
-                    onSelect={(item) => setSelectedEdu(item)}
-                  />
-                ))}
-              </div>
-              
-              <div className="flex justify-between items-center mb-6 max-w-4xl mx-auto border-b border-gray-200 dark:border-gray-750 pb-3">
-                <motion.h2 
-                  className="text-2xl font-bold font-press-start-2p"
-                  initial={{ opacity: 0, y: -20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5 }}
-                >
-                  <HoverText>University Modules</HoverText>
-                </motion.h2>
-                {isAdmin && (
-                  <button
-                    onClick={handleAddNewModule}
-                    className="bg-green-500 hover:bg-green-600 active:scale-95 transition-all text-white font-semibold px-3 py-1.5 rounded-lg cursor-pointer flex items-center gap-1.5 text-xs shadow"
-                  >
-                    <Plus className="w-3.5 h-3.5" /> Add Module
-                  </button>
-                )}
-              </div>
-              <div className="grid gap-6 max-w-4xl mx-auto">
-                {Array.from(new Set(modules.map(m => m.year))).sort((a, b) => b - a).map((year) => (
-                  <div key={year} className="mb-4">
-                    <h3 className="text-2xl font-bold mb-6 text-blue-700 dark:text-blue-400 border-b-2 border-blue-100 dark:border-blue-900 pb-2">
-                      Year {year}
-                    </h3>
-                    {[1, 2].map((semester) => {
-                      const yearSemesterModules = modules.filter(module => module.year === year && module.semester === semester);
-                      if (yearSemesterModules.length === 0) return null;
-                      
-                      return (
-                        <div key={semester} className="mb-8 last:mb-0">
-                          <h4 className="text-xl font-semibold mb-4 text-gray-700 dark:text-gray-300 flex items-center gap-2">
-                            <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
-                            Semester {semester}
-                          </h4>
-                          <div className="space-y-4">
-                            {yearSemesterModules.map((module) => (
-                              <ModuleCard 
-                                key={module.id} 
-                                module={module} 
-                                isAdmin={isAdmin} 
-                                onSelect={(item) => setSelectedMod(item)}
-                              />
-                            ))}
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                ))}
-              </div>
-            </motion.div>
-          )}
-          {activeTab === 'certificates' && (
-            <motion.div
-              key="certificates"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.3 }}
-            >
-              <div className="flex flex-col gap-16 max-w-5xl mx-auto py-8">
-                <CertificatesSection certificates={certificates} isAdmin={isAdmin} onSelect={(cert) => setSelectedCert(cert)} />
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* Certificate Modal */}
-        <AnimatePresence>
-          {selectedCert && (
-            <CertificateModal 
-              certificate={selectedCert} 
-              isAdmin={isAdmin} 
-              onCertificateUpdated={handleCertificateUpdated} 
-              onCertificateDeleted={handleCertificateDeleted}
-              onClose={() => setSelectedCert(null)} 
-            />
-          )}
-        </AnimatePresence>
-
-        {/* Education Modal */}
-        <AnimatePresence>
-          {selectedEdu && (
-            <EducationModal
-              education={selectedEdu}
-              isAdmin={isAdmin}
-              onUpdate={handleUpdateEducation}
-              onDelete={handleDeleteEducation}
-              onClose={() => setSelectedEdu(null)}
-            />
-          )}
-        </AnimatePresence>
-
-        {/* Module Modal */}
-        <AnimatePresence>
-          {selectedMod && (
-            <ModuleModal
-              module={selectedMod}
-              isAdmin={isAdmin}
-              onUpdate={handleUpdateModule}
-              onDelete={handleDeleteModule}
-              onClose={() => setSelectedMod(null)}
-            />
-          )}
-        </AnimatePresence>
+        {isAdmin && activeTab === 'certificates' && (
+          <button
+            onClick={handleAddNewCertificate}
+            className="bg-green-500 hover:bg-green-600 active:scale-95 transition-all text-white font-semibold px-4 py-2 rounded-lg cursor-pointer flex items-center gap-2 text-sm shadow-md"
+          >
+            <Plus className="w-4 h-4" /> Add Certificate
+          </button>
+        )}
       </div>
-    </ScrollAnimation>
+      <AnimatePresence mode="wait">
+        {activeTab === 'modules' && (
+          <motion.div
+            key="modules"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.3 }}
+          >
+            <div className="flex justify-between items-center mb-8 max-w-4xl mx-auto border-b border-gray-200 dark:border-gray-750 pb-3">
+              <motion.h1 
+                className="text-3xl font-bold font-press-start-2p"
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+              >
+                <HoverText>Academic Qualifications</HoverText>
+              </motion.h1>
+              {isAdmin && (
+                <button
+                  onClick={handleAddNewEducation}
+                  className="bg-green-500 hover:bg-green-600 active:scale-95 transition-all text-white font-semibold px-3 py-1.5 rounded-lg cursor-pointer flex items-center gap-1.5 text-xs shadow"
+                >
+                  <Plus className="w-3.5 h-3.5" /> Add Education
+                </button>
+              )}
+            </div>
+            <div className="grid gap-6 max-w-4xl mx-auto mb-12">
+              {educationHistory.map((edu) => (
+                <EducationCard 
+                  key={edu.institution} 
+                  education={edu} 
+                  isAdmin={isAdmin} 
+                  onSelect={(item) => setSelectedEdu(item)}
+                />
+              ))}
+            </div>
+            
+            <div className="flex justify-between items-center mb-6 max-w-4xl mx-auto border-b border-gray-200 dark:border-gray-750 pb-3">
+              <motion.h2 
+                className="text-2xl font-bold font-press-start-2p"
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+              >
+                <HoverText>University Modules</HoverText>
+              </motion.h2>
+              {isAdmin && (
+                <button
+                  onClick={handleAddNewModule}
+                  className="bg-green-500 hover:bg-green-600 active:scale-95 transition-all text-white font-semibold px-3 py-1.5 rounded-lg cursor-pointer flex items-center gap-1.5 text-xs shadow"
+                >
+                  <Plus className="w-3.5 h-3.5" /> Add Module
+                </button>
+              )}
+            </div>
+            <div className="grid gap-6 max-w-4xl mx-auto">
+              {Array.from(new Set(modules.map(m => m.year))).sort((a, b) => b - a).map((year) => (
+                <div key={year} className="mb-4">
+                  <h3 className="text-2xl font-bold mb-6 text-blue-700 dark:text-blue-400 border-b-2 border-blue-100 dark:border-blue-900 pb-2">
+                    Year {year}
+                  </h3>
+                  {[1, 2].map((semester) => {
+                    const yearSemesterModules = modules.filter(module => module.year === year && module.semester === semester);
+                    if (yearSemesterModules.length === 0) return null;
+                    
+                    return (
+                      <div key={semester} className="mb-8 last:mb-0">
+                        <h4 className="text-xl font-semibold mb-4 text-gray-700 dark:text-gray-300 flex items-center gap-2">
+                          <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
+                          Semester {semester}
+                        </h4>
+                        <div className="space-y-4">
+                          {yearSemesterModules.map((module) => (
+                            <ModuleCard 
+                              key={module.id} 
+                              module={module} 
+                              isAdmin={isAdmin} 
+                              onSelect={(item) => setSelectedMod(item)}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        )}
+        {activeTab === 'certificates' && (
+          <motion.div
+            key="certificates"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.3 }}
+          >
+            <div className="flex flex-col gap-16 max-w-5xl mx-auto py-8">
+              <CertificatesSection certificates={certificates} isAdmin={isAdmin} onSelect={(cert) => setSelectedCert(cert)} />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Certificate Modal */}
+      <AnimatePresence>
+        {selectedCert && (
+          <CertificateModal 
+            certificate={selectedCert} 
+            isAdmin={isAdmin} 
+            onCertificateUpdated={handleCertificateUpdated} 
+            onCertificateDeleted={handleCertificateDeleted}
+            onClose={() => setSelectedCert(null)} 
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Education Modal */}
+      <AnimatePresence>
+        {selectedEdu && (
+          <EducationModal
+            education={selectedEdu}
+            isAdmin={isAdmin}
+            onUpdate={handleUpdateEducation}
+            onDelete={handleDeleteEducation}
+            onClose={() => setSelectedEdu(null)}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Module Modal */}
+      <AnimatePresence>
+        {selectedMod && (
+          <ModuleModal
+            module={selectedMod}
+            isAdmin={isAdmin}
+            onUpdate={handleUpdateModule}
+            onDelete={handleDeleteModule}
+            onClose={() => setSelectedMod(null)}
+          />
+        )}
+      </AnimatePresence>
+    </div>
   )
 }

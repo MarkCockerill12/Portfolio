@@ -1,83 +1,64 @@
 import { cookies } from "next/headers"
 import { NextResponse } from "next/server"
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3"
 import sharp from "sharp"
+import { uploadMediaToR2 } from "@/lib/r2"
 
-const R2_ACCESS_KEY_ID = process.env.R2_ACCESS_KEY_ID
-const R2_SECRET_ACCESS_KEY = process.env.R2_SECRET_ACCESS_KEY
-const R2_ENDPOINT = process.env.R2_ENDPOINT
-const R2_BUCKET_NAME = process.env.R2_BUCKET_NAME
-const R2_PUBLIC_URL = process.env.R2_PUBLIC_URL
-
-const s3Client = new S3Client({
-  region: "auto",
-  endpoint: R2_ENDPOINT,
-  credentials: {
-    accessKeyId: R2_ACCESS_KEY_ID || "",
-    secretAccessKey: R2_SECRET_ACCESS_KEY || "",
-  },
-})
+/** Vercel caps serverless request bodies at ~4.5 MB, so reject early with a clear message. */
+const MAX_BYTES = 4.5 * 1024 * 1024
+const ALLOWED_PREFIXES = ["image/", "video/"]
+/** Animated and vector formats are stored as-is; re-encoding them to WebP loses the point. */
+const PASSTHROUGH_IMAGES = ["image/gif", "image/svg+xml"]
 
 export async function POST(request: Request) {
   const cookieStore = await cookies()
-  const session = cookieStore.get("admin_session")?.value
-  if (session !== "authenticated") {
+  if (cookieStore.get("admin_session")?.value !== "authenticated") {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   }
 
   try {
     const formData = await request.formData()
-    const file = formData.get("file") as File | null
+    const file = formData.get("file")
     const folder = (formData.get("folder") as string) || "portfolio/media"
 
-    if (!file) {
+    if (!(file instanceof File)) {
       return NextResponse.json({ error: "No file provided" }, { status: 400 })
     }
 
-    const bytes = await file.arrayBuffer()
-    const buffer = Buffer.from(bytes)
+    if (!ALLOWED_PREFIXES.some((prefix) => file.type.startsWith(prefix))) {
+      return NextResponse.json({ error: "Only image and video uploads are allowed" }, { status: 415 })
+    }
 
-    // Sanitize filename
+    if (file.size > MAX_BYTES) {
+      return NextResponse.json(
+        { error: `File is ${(file.size / 1024 / 1024).toFixed(1)} MB; the limit is 4.5 MB` },
+        { status: 413 }
+      )
+    }
+
+    // Keep the key inside the intended prefix: a crafted folder or filename
+    // must not be able to climb out of portfolio/media.
+    const safeFolder = folder.replace(/\.\./g, "").replace(/^\/+|\/+$/g, "")
     const sanitizedName = file.name.replace(/[^a-zA-Z0-9.-]/g, "_")
-    let key = `${folder.replace(/\/$/, "")}/${Date.now()}-${sanitizedName}`
+    let key = `${safeFolder}/${Date.now()}-${sanitizedName}`
 
-    let finalBuffer = buffer
-    let finalContentType = file.type
+    let buffer = Buffer.from(await file.arrayBuffer())
+    let contentType = file.type
 
-    // If it's an image (excluding gifs and vector graphics), convert to high-quality WebP
-    if (file.type.startsWith("image/") && !file.type.includes("gif") && !file.type.includes("svg+xml")) {
+    if (file.type.startsWith("image/") && !PASSTHROUGH_IMAGES.includes(file.type)) {
       try {
-        console.log(`Converting image ${file.name} to WebP...`)
-        finalBuffer = await sharp(buffer)
-          .webp({ quality: 85 })
-          .toBuffer()
-        finalContentType = "image/webp"
-        
-        // Rewrite extension in R2 Key to .webp
-        const dotIdx = key.lastIndexOf(".")
-        if (dotIdx !== -1) {
-          key = key.substring(0, dotIdx) + ".webp"
-        } else {
-          key = key + ".webp"
-        }
+        buffer = await sharp(buffer).webp({ quality: 85 }).toBuffer()
+        contentType = "image/webp"
+        key = key.replace(/(\.[^./]*)?$/, ".webp")
       } catch (sharpError) {
         console.warn("Sharp image conversion failed; uploading original format.", sharpError)
       }
     }
 
-    console.log(`Uploading file to R2 with key: ${key}...`)
+    const publicUrl = await uploadMediaToR2(buffer, key, contentType || "application/octet-stream")
+    if (!publicUrl) {
+      return NextResponse.json({ error: "Failed to upload file to R2" }, { status: 500 })
+    }
 
-    const command = new PutObjectCommand({
-      Bucket: R2_BUCKET_NAME,
-      Key: key,
-      Body: finalBuffer,
-      ContentType: finalContentType || "application/octet-stream",
-      CacheControl: "public, max-age=31536000",
-    })
-
-    await s3Client.send(command)
-
-    const publicUrl = `${R2_PUBLIC_URL}/${key}`
     return NextResponse.json({ success: true, url: publicUrl })
   } catch (error: any) {
     console.error("R2 Upload Error:", error)
