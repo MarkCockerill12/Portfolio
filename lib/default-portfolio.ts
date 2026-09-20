@@ -4,7 +4,29 @@ const BASE_URL = "https://pub-699441ce0cfb40449cc458823a3f1ed2.r2.dev/portfolio"
 
 export const defaultPortfolioData: PortfolioData = {
   projects: [
-    { 
+    {
+      id: 21,
+      title: "Cosy3D",
+      description: "A low-fi 3D island to wander around, shipped with a launcher that keeps itself and the game up to date.",
+      media: {
+        images: [
+          `${BASE_URL}/media/Cosy3D/town.webp`,
+          `${BASE_URL}/media/Cosy3D/cliffs.webp`,
+          `${BASE_URL}/media/Cosy3D/hot_springs.webp`,
+          `${BASE_URL}/media/Cosy3D/observatory.webp`,
+          `${BASE_URL}/media/Cosy3D/beach.webp`,
+          `${BASE_URL}/media/Cosy3D/snowfield.webp`,
+          `${BASE_URL}/media/Cosy3D/metro.webp`,
+          `${BASE_URL}/media/Cosy3D/cave.webp`,
+          `${BASE_URL}/media/Cosy3D/bus_stop.webp`,
+          `${BASE_URL}/media/Cosy3D/bedroom.webp`,
+        ],
+      },
+      technologies: ["Godot 4", "GDScript", "Blender", "Mixamo", "Jolt Physics", "Cloudflare R2", "Python"],
+      details: "<p>A small island to be on rather than to win. You wander, sit on benches and campfire logs, talk to the people who live there, swim, and turn up somewhere you have not been before - a cave, a hot spring, an observatory, a snowfield at the top of the cliffs. Every new place is photographed into a journal you can travel back through.</p><p>Built in Godot 4.8 in GDScript, on the GL Compatibility renderer so it runs on anything. It renders at 70% and upscales, which is where the soft, low-fi look comes from, and it drops the render scale further by itself if the frame rate ever dips. Shaders are compiled behind the loading screen rather than in front of the player, which took the stutter on a first run from 3.3 seconds to about 0.15.</p><p>It ships as one program. The launcher asks where to install, fetches only the files whose checksums changed, verifies each one, and starts the game; it updates itself the same way, by renaming itself out of its own way. Builds live in Cloudflare R2, stored by content hash so a pack shared by both platforms is kept once. Every texture was given its own resolution by measuring what it actually loses when shrunk, which halved the download.</p><p><strong>Download:</strong> <a href='https://pub-699441ce0cfb40449cc458823a3f1ed2.r2.dev/cosy-3d/CosyLauncher.exe'>Windows (CosyLauncher.exe)</a> &middot; <a href='https://pub-699441ce0cfb40449cc458823a3f1ed2.r2.dev/cosy-3d/CosyLauncher-linux.tar.gz'>Linux (tar.gz)</a>. Both are the launcher, not the game: run it and it installs the rest. The Windows build is not code-signed, so SmartScreen will want a \"More info\" then \"Run anyway\".</p>",
+      categories: ["Game"]
+    },
+    {
       id: 20,
       title: "Omni-Convert",
       description: "A secure, high-performance client-side file conversion and media downloading toolkit.",
