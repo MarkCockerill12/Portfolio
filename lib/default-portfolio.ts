@@ -5,6 +5,27 @@ const BASE_URL = "https://pub-699441ce0cfb40449cc458823a3f1ed2.r2.dev/portfolio"
 export const defaultPortfolioData: PortfolioData = {
   projects: [
     {
+      id: 22,
+      title: "Free(up)Mail",
+      description: "Clears the junk out of Outlook, Gmail and any other inbox from one private desktop app. It runs entirely on your own computer, and every email is backed up before it goes.",
+      media: {
+        images: [
+          `${BASE_URL}/media/FreeUpMail/main.webp`,
+          `${BASE_URL}/media/FreeUpMail/theme-dark.webp`,
+          `${BASE_URL}/media/FreeUpMail/review.webp`,
+          `${BASE_URL}/media/FreeUpMail/accounts.webp`,
+          `${BASE_URL}/media/FreeUpMail/rules.webp`,
+          `${BASE_URL}/media/FreeUpMail/deleted.webp`,
+          `${BASE_URL}/media/FreeUpMail/welcome.webp`,
+          `${BASE_URL}/media/FreeUpMail/theme-aero.webp`,
+        ],
+      },
+      github: "https://github.com/MarkCockerill12/Free-up-Mail",
+      technologies: ["Python", "SQLite", "IMAP", "Microsoft Graph", "JavaScript", "pywebview", "PyInstaller", "GitHub Actions"],
+      details: "<p>Free(up)Mail reads every mailbox you own (Outlook, Gmail, Yahoo, iCloud or any IMAP account) and groups all of it by sender. Each sender gets a suggestion: <strong>Delete</strong> for mailing lists and marketing, <strong>Keep</strong> for people you have emailed, <strong>Review</strong> for anything unclear. You decide, then one Clean up moves the junk to Trash. A copy of every email is saved on your computer first, so anything can be put back, even after the Trash has been emptied. Rules sort new mail too, either inside the app or installed straight into Gmail and Outlook.</p><p>There is no server and no account: it talks directly to Gmail and IMAP providers, and to Outlook through Microsoft Graph with Microsoft's own sign-in page. Every account has its own permissions (list, open, move to Trash, sort, create rules), checked before every call. People you have emailed, starred mail, receipts, security alerts and delivery updates are protected, and each email is re-checked on the server before it is moved, so nothing that changed since the scan is touched. The local interface only answers a secret key made fresh on every launch.</p><p>Written in Python with only the standard library, it ships as a single file with its own native window and five themes, from Windows XP to a minimal dark mode. The sender list and totals come from an in-memory cache kept in step by SQLite triggers, which took the sender list from 730 ms to 7 ms on a 13,000-email mailbox. Big Gmail cleanups run over several connections at once, and Outlook moves emails while the remaining backups are still downloading. It updates itself from GitHub releases, checking the download's SHA-256 against the published one before swapping itself in, and its tests run against fake Gmail, IMAP and Outlook servers so they never touch a real mailbox.</p><p><strong>Download:</strong> <a href='https://github.com/MarkCockerill12/Free-up-Mail/releases/latest/download/FreeUpMail-windows.exe'>Windows (FreeUpMail-windows.exe)</a> &middot; <a href='https://github.com/MarkCockerill12/Free-up-Mail/releases/latest'>macOS, Linux and the Python version</a>. Start it with <code>--demo</code> to try it on made-up mailboxes. The Windows build is not code-signed, so SmartScreen will want a \"More info\" then \"Run anyway\".</p>",
+      categories: ["Python", "Web"]
+    },
+    {
       id: 21,
       title: "Cosy3D",
       description: "A low-fi 3D island to wander around, shipped with a launcher that keeps itself and the game up to date.",
