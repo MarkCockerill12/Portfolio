@@ -199,14 +199,19 @@ const BackgroundAnimation = ({ animationType }: { animationType: AnimationType }
   }, [animationType, resolvedTheme, pathname])
 
   useEffect(() => {
+    // Space inside a form field is typing, not the splash easter egg.
+    const isTyping = (e: KeyboardEvent) => {
+      const el = e.target as HTMLElement | null
+      return !!el && (el.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(el.tagName))
+    }
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.code === 'Space') {
+      if (e.code === 'Space' && !isTyping(e)) {
         e.preventDefault(); // Prevent page scroll
         setShowSplash(true)
       }
     }
     const handleKeyUp = (e: KeyboardEvent) => {
-      if (e.code === 'Space') {
+      if (e.code === 'Space' && !isTyping(e)) {
         e.preventDefault(); // Prevent page scroll
         setShowSplash(false)
         setMouseActive(false)

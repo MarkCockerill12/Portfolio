@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import { motion } from 'motion/react'
 import { Code, Palette, Gamepad, Lightbulb } from 'lucide-react'
 import HoverText from '../app/components/HoverText'
+import EditableText from '../app/components/EditableText'
 
 export default function Home() {
   const router = useRouter()
@@ -60,17 +61,18 @@ export default function Home() {
             </motion.div>
           ))}
         </motion.div></Link>
-        <motion.p 
-          className="text-xl mb-8 max-w-2xl mx-auto"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.6 }}
-        >
-          <HoverText>
-            Welcome to my portfolio! I&apos;m a computer science student with a passion for coding, art and gaming. 
-            More projects will be added with time as some are work in progress.
-          </HoverText>
-        </motion.p>
+        <EditableText id="home.intro" className="max-w-2xl mx-auto">
+          {(text) => (
+            <motion.p
+              className="text-xl mb-8"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.6 }}
+            >
+              <HoverText>{text}</HoverText>
+            </motion.p>
+          )}
+        </EditableText>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}

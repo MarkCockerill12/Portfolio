@@ -143,7 +143,7 @@ export default function ModuleModal({
                 value={desc}
                 onChange={(e) => setDesc(e.target.value)}
                 rows={4}
-                className="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-blue-550 resize-none leading-relaxed"
+                className="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-blue-550 resize-y leading-relaxed"
                 required
               />
             </div>
@@ -192,7 +192,7 @@ export default function ModuleModal({
                     value={proj.description}
                     onChange={(e) => handleProjectChange(index, "description", e.target.value)}
                     rows={2}
-                    className="w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded px-2.5 py-1 text-xs text-foreground focus:outline-none resize-none font-sans"
+                    className="w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded px-2.5 py-1 text-xs text-foreground focus:outline-none resize-y font-sans"
                     required
                   />
                 </div>

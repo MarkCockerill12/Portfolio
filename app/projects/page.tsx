@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
 import ProjectCard from '../components/ProjectCard'
 import ProjectModal from '../components/ProjectModal'
@@ -20,6 +20,23 @@ export default function Projects() {
   const { data, save } = usePortfolio()
   const isAdmin = useIsAdmin()
   const projectsList = data.projects
+
+  // `/projects?project=<id>` opens that project, so shared links land on it.
+  // Retried as the live catalog arrives, since newer projects are only in R2.
+  const deepLinkHandled = useRef(false)
+  useEffect(() => {
+    if (deepLinkHandled.current) return
+    const id = Number(new URLSearchParams(globalThis.location.search).get('project'))
+    if (!id) {
+      deepLinkHandled.current = true
+      return
+    }
+    const match = projectsList.find((p) => p.id === id)
+    if (match) {
+      deepLinkHandled.current = true
+      setSelectedProject(match)
+    }
+  }, [projectsList])
 
   const filteredProjects = useMemo(
     () => projectsList.filter(project =>

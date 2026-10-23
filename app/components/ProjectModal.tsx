@@ -4,7 +4,8 @@ import { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
 import { X, ChevronLeft, ChevronRight, Film, Image as ImageIcon, ExternalLink, Pencil, Trash2 } from 'lucide-react'
 import { motion, AnimatePresence } from 'motion/react'
-import { GitHubMark } from './BrandIcons'
+import { GitHubMark, Linkedin } from './BrandIcons'
+import { LINKEDIN_PROFILE } from '@/lib/default-content'
 import { useDismissable } from './ModalShell'
 import { useUpload } from '@/lib/use-upload'
 import { Project } from '@/lib/types'
@@ -140,6 +141,42 @@ const ProjectModal: React.FC<ProjectModalProps> = ({
     }
   }
 
+  // LinkedIn has no public API for writing to a profile's Projects section, and
+  // its share box only takes a link, so these copy the text to paste and open
+  // the right LinkedIn page.
+  const [copied, setCopied] = useState('')
+  const shareToLinkedIn = async (target: 'post' | 'profile') => {
+    const link = `${globalThis.location.origin}/projects?project=${project.id}`
+    const tags = project.technologies
+      .slice(0, 5)
+      // "C++" -> #Cpp and "C#" -> #Csharp rather than collapsing to #C.
+      .map((t) => `#${t.replace(/\+\+/g, 'pp').replace(/#/g, 'sharp').replace(/[^A-Za-z0-9]/g, '')}`)
+      .filter((t) => t.length > 1)
+      .join(' ')
+    const text =
+      target === 'post'
+        ? [`New on my portfolio: ${project.title}`, project.description, project.github && `Code: ${project.github}`, `More: ${link}`, tags]
+            .filter(Boolean)
+            .join('\n\n')
+        : [project.title, project.description, `Skills: ${project.technologies.join(', ')}`, project.github ?? project.demo ?? link]
+            .filter(Boolean)
+            .join('\n\n')
+
+    try {
+      await navigator.clipboard.writeText(text)
+      setCopied(target === 'post' ? 'Post copied: paste it into LinkedIn' : 'Details copied: paste them into the new project')
+    } catch {
+      setCopied('Could not copy automatically')
+    }
+    setTimeout(() => setCopied(''), 6000)
+
+    const url =
+      target === 'post'
+        ? `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(link)}`
+        : `${LINKEDIN_PROFILE}details/projects/`
+    window.open(url, '_blank', 'noopener,noreferrer')
+  }
+
   useDismissable(modalRef, onClose)
 
   // Arrow keys page through the gallery, but only while it is on screen.
@@ -249,11 +286,11 @@ const ProjectModal: React.FC<ProjectModalProps> = ({
 
             <div className="space-y-1">
               <label className="text-xs font-semibold text-gray-500 dark:text-gray-400">Short Description</label>
-              <input
-                type="text"
+              <textarea
                 value={editDesc}
                 onChange={(e) => setEditDesc(e.target.value)}
-                className="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-blue-500"
+                rows={3}
+                className="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-blue-500 resize-y leading-relaxed"
                 required
               />
             </div>
@@ -263,8 +300,8 @@ const ProjectModal: React.FC<ProjectModalProps> = ({
               <textarea
                 value={editDetails}
                 onChange={(e) => setEditDetails(e.target.value)}
-                rows={5}
-                className="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-blue-500 resize-none font-mono text-xs leading-relaxed"
+                rows={12}
+                className="w-full min-h-[8rem] bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-blue-500 resize-y font-mono text-xs leading-relaxed"
                 required
               />
             </div>
@@ -502,12 +539,31 @@ const ProjectModal: React.FC<ProjectModalProps> = ({
               <div>
                 <h3 className="text-lg font-semibold mb-2">Project Details:</h3>
                 <div 
-                  className="prose dark:prose-invert max-w-none text-gray-800 dark:text-gray-200"
+                  className="prose dark:prose-invert max-w-none text-gray-800 dark:text-gray-200 [&_p+p]:mt-4 [&_a]:text-blue-500 [&_a]:underline"
                   dangerouslySetInnerHTML={{ __html: project.details }}
                 />
               </div>
 
-              <div className="flex gap-4 justify-end">
+              <div className="flex flex-wrap gap-4 justify-end">
+                {isAdmin && (
+                  <div className="flex flex-wrap gap-2 mr-auto items-center">
+                    <button
+                      onClick={() => shareToLinkedIn('post')}
+                      className="inline-flex items-center gap-2 bg-[#0A66C2] hover:bg-[#004182] text-white px-3 py-2 rounded-lg text-sm transition-colors cursor-pointer"
+                      title="Copies a ready-written post, then opens LinkedIn's share box with this project's link"
+                    >
+                      <Linkedin className="w-4 h-4" /> Post on LinkedIn
+                    </button>
+                    <button
+                      onClick={() => shareToLinkedIn('profile')}
+                      className="inline-flex items-center gap-2 border border-[#0A66C2] text-[#0A66C2] dark:text-[#70B5F9] dark:border-[#70B5F9] hover:bg-[#0A66C2]/10 px-3 py-2 rounded-lg text-sm transition-colors cursor-pointer"
+                      title="Copies the name, description and link, then opens the Projects section of your LinkedIn profile"
+                    >
+                      <Linkedin className="w-4 h-4" /> Add to LinkedIn profile
+                    </button>
+                    {copied && <span className="text-xs text-green-600 dark:text-green-400">{copied}</span>}
+                  </div>
+                )}
                 {project.github && (
                   <motion.a
                     whileHover={{ scale: 1.05 }}

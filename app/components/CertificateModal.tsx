@@ -151,7 +151,7 @@ const CertificateModal: React.FC<CertificateModalProps> = ({
                   value={editDesc}
                   onChange={(e) => setEditDesc(e.target.value)}
                   rows={4}
-                  className="w-full bg-gray-50 dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-blue-500 resize-none leading-relaxed"
+                  className="w-full bg-gray-50 dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-blue-500 resize-y leading-relaxed"
                   required
                 />
               </div>
