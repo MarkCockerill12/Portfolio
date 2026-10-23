@@ -68,6 +68,48 @@ export interface Certificate {
   image: string
 }
 
+export interface Recommendation {
+  id: string
+  name: string
+  headline?: string // e.g. "Sales Leader @ Insights"
+  relationship?: string // e.g. "Managed Mark directly"
+  date?: string
+  text: string
+  linkedin?: string // the recommender's profile URL
+  avatar?: string
+  source: "linkedin" | "quote"
+}
+
+export interface ImpactStat {
+  value: string // "£12,693", "73.9 min", "90%"
+  label: string
+  detail?: string
+}
+
+export interface ImpactScenario {
+  scale: string
+  hours: string
+  value: string
+  revenue: string
+}
+
+export interface ImpactQuote {
+  text: string
+  author: string
+}
+
+export interface ImpactCaseStudy {
+  id: string
+  title: string
+  organisation: string
+  period?: string
+  summary: string
+  stats: ImpactStat[]
+  scenarios?: ImpactScenario[]
+  quotes?: ImpactQuote[]
+  footnote?: string
+}
+
 export interface PortfolioData {
   projects: Project[]
   jobExperiences: Experience[]
@@ -75,4 +117,9 @@ export interface PortfolioData {
   educationHistory: Education[]
   modules: Module[]
   certificates: Certificate[]
+  // Optional so catalogs saved before these sections existed stay valid;
+  // pages fall back to the defaults in `lib/default-content.ts`.
+  content?: Record<string, string>
+  recommendations?: Recommendation[]
+  impact?: ImpactCaseStudy[]
 }

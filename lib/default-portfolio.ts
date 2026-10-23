@@ -5,6 +5,169 @@ const BASE_URL = "https://pub-699441ce0cfb40449cc458823a3f1ed2.r2.dev/portfolio"
 export const defaultPortfolioData: PortfolioData = {
   projects: [
     {
+      id: 32,
+      title: "ScrapBook",
+      description: "A website made of 27 single-screen channels, each rebuilding a different corner of internet nostalgia, from Frutiger Aero and the early web to the Wii menu and a 1996 3D chat world.",
+      media: {
+        images: [
+          `${BASE_URL}/media/ScrapBook/map.webp`,
+          `${BASE_URL}/media/ScrapBook/silicon-dreams.webp`,
+          `${BASE_URL}/media/ScrapBook/frutiger-aero.webp`,
+          `${BASE_URL}/media/ScrapBook/early-internet.webp`,
+          `${BASE_URL}/media/ScrapBook/xbox-360.webp`,
+          `${BASE_URL}/media/ScrapBook/cottagecore.webp`,
+          `${BASE_URL}/media/ScrapBook/vaporwave.webp`,
+          `${BASE_URL}/media/ScrapBook/academia.webp`,
+          `${BASE_URL}/media/ScrapBook/wii.webp`,
+        ],
+      },
+      github: "https://github.com/MarkCockerill12/scrapbook",
+      technologies: ["Next.js", "React", "TypeScript", "Three.js", "anime.js", "Zustand", "CSS Modules", "Cloudflare R2", "Playwright", "Bun"],
+      details: "<p>ScrapBook is a collage of aesthetics. Each of its 27 channels is its own little world with its own layout, fonts, sounds and toys: Frutiger Aero, Early Internet, Cottagecore, the Xbox 360 dashboard, Vaporwave, Dark Academia, the Wii menu and more. You flip between them with a CRT-style channel dial, or open the map, drawn as a scrapbook lying open on a desk. The rule for every page was that no two should share any visual DNA.</p><p>Every page is interactive, with things to drag and throw, custom cursors, easter eggs, achievements, and visitor counters and guestbooks kept in the browser. All of the sound is synthesised in code, with no audio files, and each channel has its own audio bus. Silicon Dreams is entered through the screen of an SGI Octane and drops you into a 1996-style 3D chat world built in three.js, with four worlds, a ray-traced render gallery and a free-fly camera. The PS1 channel runs on its own software rasteriser.</p><p>Every page is designed on a fixed 1600&times;900 canvas and scaled to fit, so the composition is identical at any size. Tailwind only styles the shell; each page gets its own CSS Module, design tokens, fonts and reset, so styles can never leak from one channel into another. Images go through a pipeline (raw, to WebP, to a manifest, to Cloudflare R2) and pages ask for images by slot rather than by filename, so layouts never wait on assets. Shader compile time in Silicon Dreams went from 7 seconds to 2.7, and every page is checked by a Playwright screenshot review at two sizes. It is built for desktop: on a phone the 16:9 canvas would only fill about a quarter of the screen.</p>",
+      categories: ["Web"]
+    },
+    {
+      id: 31,
+      title: "CodeCards",
+      description: "A gamified flashcard app for learning software engineering: 1,694 cards across 59 topics, scheduled by spaced repetition so you revise just before you would forget.",
+      media: {
+        images: [
+          `${BASE_URL}/media/CodeCards/dashboard.webp`,
+          `${BASE_URL}/media/CodeCards/card.webp`,
+          `${BASE_URL}/media/CodeCards/path.webp`,
+          `${BASE_URL}/media/CodeCards/session.webp`,
+          `${BASE_URL}/media/CodeCards/stats.webp`,
+          `${BASE_URL}/media/CodeCards/shop.webp`,
+        ],
+      },
+      github: "https://github.com/MarkCockerill12/CodeCards",
+      technologies: ["Next.js", "React", "TypeScript", "Tailwind CSS", "Framer Motion", "Zustand", "ts-fsrs", "Shiki", "Zod", "Playwright", "GitHub Actions"],
+      details: "<p>CodeCards teaches programming languages, computer science, security, cloud and systems through flashcards. You pick your topics and climb each one through five tiers, from Basics to Expert. Flip a card, say how well you knew it (Again, Hard, Good or Easy), and the FSRS-5 algorithm decides when you see it next. A tier is cleared once every card has been seen and 80% are remembered, and a tier test lets you skip ahead if you already know a topic.</p><p>There are seven kinds of card: plain flip, predict the output, spot the bug, fill the gap, compare, complexity and scenario. Get a card wrong and up to two of the cards it builds on are slipped into the same session. Weak spots are tracked per tag, and a slow \"Good\" counts against you too. Reviews earn XP, coins and chests (6% of reviews drop one), spent in a shop of 86 purely cosmetic items: card skins, themes, mascots and synthesised sound packs. There are deliberately no streaks, daily quests or leaderboards.</p><p>Everything runs in the browser, with no server, no account and no tracking. Progress stays on your device, with a privacy mode, export and import, and offline support. The cards are treated as code: every card that can be checked is run in 9 real runtimes (Node, Python, Go, Rust, Java, C#, PHP, Kotlin and C) and its stored answer compared, which caught a wrong answer about JavaScript's largest safe integer. The build rejects circular prerequisites, code is highlighted at build time so it costs nothing at runtime, and a nightly job checks every linked resource still works.</p>",
+      categories: ["Web"]
+    },
+    {
+      id: 30,
+      title: "DolphinAchiever",
+      description: "Patches the Dolphin emulator so that, when you enter a level, it shows which RetroAchievements you can still earn right there.",
+      media: {
+        images: [
+          `${BASE_URL}/media/DolphinAchiever/galaxy.webp`,
+          `${BASE_URL}/media/DolphinAchiever/sunshine.webp`,
+          `${BASE_URL}/media/DolphinAchiever/patcher.webp`,
+        ],
+      },
+      github: "https://github.com/MarkCockerill12/DolphinAchieveHelper",
+      technologies: ["C++", "PowerShell", "WinForms", "Dolphin", "rcheevos", "Dear ImGui", "CMake", "MSBuild"],
+      details: "<p>RetroAchievements are hard to hunt in big Wii and GameCube games because nothing tells you which ones are possible where you are standing. DolphinAchiever fixes that. Enter a level and a panel in the corner lists the achievements you can still earn there, missable ones first, each with its badge, title, points and how to unlock it. Hold the apostrophe key to bring the list back, and achievements drop off it the moment they unlock. It draws with Dolphin's own on-screen display, so it works in windowed, fullscreen and exclusive fullscreen with nothing running alongside.</p><p>Nothing is written per game. Where you are is worked out from the achievement set itself: every trigger is scanned for memory compared against fixed values, and the address compared against the widest spread of values is taken as the game's \"where am I\". A list only appears once it has stayed the same for 45 frames. It places 136 of Super Mario Galaxy's 161 achievements, and of the 97 that name a galaxy, 94 land in the right one and none in a wrong one. It also covers Galaxy 2, Sunshine, both Twilight Princess releases, Kirby's Epic Yarn, Return to Dream Land and both Mario Kart games.</p><p>It started as an overlay that read Dolphin's memory from outside, but exclusive fullscreen hides overlays, so it became a set of patches to Dolphin instead. A double-click patcher with its own window reads the exact version of your Dolphin, downloads that source, applies the patches, builds it and swaps in the new Dolphin.exe, backing up every file it replaces. It handles both of Dolphin's build systems and offers to install any missing tools. A first run takes about 10 minutes and a re-run about 1.</p><p><strong>Download:</strong> <a href='https://github.com/MarkCockerill12/DolphinAchieveHelper/archive/refs/heads/main.zip'>the patcher (zip)</a>, then run Patch Dolphin.cmd. Windows only.</p>",
+      categories: ["C/C++/C#", "Game"]
+    },
+    {
+      id: 29,
+      title: "SpotiLIE",
+      description: "An Android app that runs Spotify's full desktop web player and reshapes it into a phone app, with ads muted, lock-screen controls and background playback.",
+      media: {
+        images: [
+          `${BASE_URL}/media/SpotiLIE/cover.webp`,
+        ],
+      },
+      github: "https://github.com/MarkCockerill12/SpotiLie",
+      technologies: ["Kotlin", "GeckoView", "AndroidX Media3", "WebExtensions", "TypeScript", "Bun", "Gradle"],
+      details: "<p>Spotify's desktop web player does more on a free account than its phone app: pick any song, skip as often as you like, see the lyrics and the full queue. SpotiLIE runs that desktop player on Android and reshapes it into a phone interface, with bottom navigation, a mini player that expands to full screen, and a Library tab with filters, search and sort. You sign in to your own account, and nothing is downloaded or redistributed.</p><p>On top of the player it adds what a music app needs: a media notification and lock-screen controls with artwork and seeking, playback that carries on in the background, and a pause when headphones or Bluetooth disconnect. Audio ads are spotted the moment they load and muted, so an ad break becomes about 2.7 seconds of silence, and uBlock Origin is installed and kept up to date automatically. If the engine crashes, a page fails to load or playback stalls, it recovers by itself.</p><p>It runs on Mozilla's GeckoView rather than Android's built-in WebView, because WebView drops the DRM session that playback depends on. Fixing a GeckoView bug where the user-agent override broke cross-origin requests took those failures from 142 to 0. Removing a 139.5 MB native library that never actually ran, then compressing the rest, took the arm64 download from 183 MB to 87 MB. It has played about 35 songs back-to-back without stopping.</p><p><strong>Download:</strong> <a href='https://github.com/MarkCockerill12/SpotiLie/releases/latest'>APKs on GitHub</a> (arm64 for most phones). Android 8.0 or newer.</p>",
+      categories: ["Mobile"]
+    },
+    {
+      id: 28,
+      title: "DisPinterest",
+      description: "An Android app that opens the real Pinterest with the ads taken out, adds swiping between pins and saving videos, and weighs 0.22 MB.",
+      media: {
+        images: [
+          `${BASE_URL}/media/DisPinterest/cover.webp`,
+        ],
+      },
+      github: "https://github.com/MarkCockerill12/DisPinterest",
+      technologies: ["Kotlin", "Android WebView", "AndroidX WebKit", "JavaScript", "Gradle", "R8"],
+      details: "<p>DisPinterest is Pinterest's own website inside a tiny Android app, with the parts I didn't want taken out. Sponsored pins disappear from every feed and the pins around them close up, so there are no gaps. It is always in dark mode, while photos and videos keep their real colours. Swipe left and right to move between pins, and save videos and full-size pictures (the original upload, when there is one) straight to your gallery. Ad and analytics trackers are blocked, and the constant \"open in the app\" prompts are stopped. Everything else, from search and boards to messages and creating pins, is Pinterest as normal, and Google sign-in works.</p><p>The engine was chosen by measuring it. Against GeckoView, Android's WebView loaded the page in about 1.1 seconds instead of 4.0, used about 420 MB of memory instead of 1,190 MB, and added 0.17 MB to the app instead of 87 MB. A native app talking to Pinterest's API was built first and dropped, because its traffic would not look like a normal browser's.</p><p>Sponsored pins are hidden by a style injected before the page even starts, so they are already gone when Pinterest's grid measures its tiles. Swipes are captured before the browser can treat them as scrolling. Saved videos come from Pinterest's public video servers as MP4, with the file's creation time rewritten so they show up as the newest item in your gallery. The release APK is 0.22 MB, against about 90 MB for the official app.</p><p><strong>Download:</strong> <a href='https://github.com/MarkCockerill12/DisPinterest/releases/latest'>DisPinterest APK on GitHub</a>. Android 10 or newer.</p>",
+      categories: ["Mobile"]
+    },
+    {
+      id: 27,
+      title: "HandCamera - Gesture Calculator",
+      description: "A calculator you work with your hands in front of a webcam: hold up fingers for numbers and make gestures for the operators, all recognised in the browser.",
+      media: {
+        images: [
+          `${BASE_URL}/media/HandCamera/two.webp`,
+          `${BASE_URL}/media/HandCamera/ten.webp`,
+          `${BASE_URL}/media/HandCamera/one.webp`,
+          `${BASE_URL}/media/HandCamera/thumbs-up.webp`,
+        ],
+      },
+      github: "https://github.com/MarkCockerill12/HandCamera",
+      technologies: ["Next.js", "React", "TypeScript", "MediaPipe", "Tailwind CSS", "shadcn/ui", "Framer Motion", "Bun"],
+      details: "<p>Hold up fingers to enter a number, from 0 to 5 on one hand and up to 10 with two. Touch or cross your index fingers for plus and times, hold a flat hand sideways or at an angle for minus and divide, give a thumbs up for equals and a thumbs down to delete. Press your palms together to clear. Your hands are tracked live on the camera feed, and nothing leaves your device.</p><p>Tracking comes from MediaPipe Hands (21 points per hand, two hands at once), but the gestures themselves are plain geometry rather than a trained model, so the same pose always gives the same answer. Whether a finger is up is decided from its joint angles in 3D, so it doesn't matter how the camera is angled, and the thresholds come from measured data: straight fingers read 126 to 157 degrees, folded ones 3 to 42. To stop stray input, a gesture has to win 3 of the last 5 frames and then be held for 450 ms before it counts.</p><p>It didn't start that way. An earlier trained classifier scored 99.88% in validation and didn't work at all in the browser: 6 of its 19 gestures had been prepared differently in training than in the app, and about 38,000 of its training samples were synthetic against only 4,450 real ones. It was deleted and replaced with the geometry. A test harness now feeds photos to Chrome as a fake webcam and runs the whole pipeline end to end, and a live diagnostics panel shows the frame rate, the joint angles and which rule fired. MediaPipe is hosted with the app, so it works offline and behind ad blockers.</p>",
+      categories: ["Web", "AI"]
+    },
+    {
+      id: 26,
+      title: "Webalyzer",
+      description: "Point it at any website and it reports what the site is built with, which APIs its scripts call, its DNS and email setup, its security health and its history.",
+      media: {
+        images: [
+          `${BASE_URL}/media/Webalyzer/overview.webp`,
+          `${BASE_URL}/media/Webalyzer/dns.webp`,
+          `${BASE_URL}/media/Webalyzer/graph.webp`,
+          `${BASE_URL}/media/Webalyzer/live-scan.webp`,
+          `${BASE_URL}/media/Webalyzer/endpoints.webp`,
+        ],
+      },
+      github: "https://github.com/MarkCockerill12/webalyzer",
+      technologies: ["Next.js", "React", "TypeScript", "Tailwind CSS", "Puppeteer", "Docker"],
+      details: "<p>Webalyzer is a reconnaissance tool for researching a website from public information. Enter a URL and a headless Chrome loads the page, recording its scripts, network requests, cookies and runtime globals. From that it identifies the site's technology, with exact versions where it can (around 120 signatures), pulls the API, GraphQL, storage and WebSocket addresses out of its scripts, and flags API keys or tokens left in the code, decoding the role inside any JWTs it finds.</p><p>Alongside the page itself it looks up the site's DNS and email setup, its hosting and location, its TLS certificate and security headers (rolled into a 0 to 100 score, with each finding marked by severity), subdomains from certificate logs, 23 well-known or sensitive paths, robots.txt, and its history on the Wayback Machine. Results land in a tabbed dashboard with a live scan log, a two-ring network graph and recent-scan history, and can be exported as JSON, Markdown or a printable report.</p><p>Results stream to the page as they are found, which is what drives the live console. Every redirect is checked so the scanner can't be pointed at private or internal addresses. An overhaul removed every made-up fallback (fake IPs, dates and subdomains), so everything on screen is something it actually found, and fixed the headless browser crashing mid-scan. It runs in Docker with its own Chromium.</p>",
+      categories: ["Web", "Cyber Security"]
+    },
+    {
+      id: 25,
+      title: "ChessBless - AI Chess Coach",
+      description: "A chess coach that runs entirely on your own computer: play Stockfish, then have a small local AI explain your moves in plain English and draw on the board.",
+      media: {
+        images: [
+          `${BASE_URL}/media/ChessBless/game.webp`,
+          `${BASE_URL}/media/ChessBless/settings.webp`,
+        ],
+      },
+      technologies: ["React", "TypeScript", "Vite", "Tailwind CSS", "Chessground", "chess.js", "Zustand", "FastAPI", "Python", "Stockfish", "Ollama"],
+      details: "<p>Play against the Stockfish engine at the strength you choose, with a live evaluation bar beside the board. When you want to know what just happened, press Explain Move, or ask for a Hint. The coach answers in plain English, streaming as it writes, and draws arrows and circles on the board to show what it means. There are three coaches to pick from (The Professor, The Grandmaster and The Mystic) and three local models, depending on whether you want speed or quality.</p><p>All of it runs on your own machine, with no cloud and no account, and it was built to run on a laptop with no graphics card. The coaching comes from a small language model (1.5 to 3.8 billion parameters) running through Ollama. The model never works out moves itself: the backend keeps the one true copy of the game, Stockfish does the analysis, and the model's only job is to explain it. It marks up the board by writing tags such as [ARROW:green:e2:e4], which are turned into drawings, and if it gives none, arrows are drawn from Stockfish's own analysis instead. A single script downloads Stockfish and starts the backend and frontend.</p>",
+      categories: ["AI", "Python", "Web"]
+    },
+    {
+      id: 24,
+      title: "Crypto Trading Bot",
+      description: "A self-hosted crypto trading bot built on freqtrade, running around the clock on an old laptop, with a strategy chosen by testing it on years of data it had never seen.",
+      media: {
+        images: [
+          `${BASE_URL}/media/Crypto/frequi-trades.webp`,
+          `${BASE_URL}/media/Crypto/frequi-chart.webp`,
+          `${BASE_URL}/media/Crypto/frequi-backtesting.webp`,
+        ],
+      },
+      technologies: ["Python", "freqtrade", "pandas", "NumPy", "numba", "LightGBM", "Docker", "SQLite", "Debian"],
+      details: "<p>A trading bot for cryptocurrency, built on the open-source freqtrade framework and running 24/7 in Docker on a repurposed laptop running headless Linux. It started life on a rooted Android phone running Debian before moving to the laptop. Trades, positions and performance are watched through FreqUI, freqtrade's web dashboard. For now it trades on paper only, with no real money in it.</p><p>The first version used machine learning: a LightGBM model predicting how prices would move. Testing it over longer periods showed its edge had only been noise from too short a test, so it was dropped. The strategy now is a simple trend breakout on 4-hour candles: buy when a coin closes above its 20-day high, sell when it falls below its 3-day low. It only buys when the whole market is healthy, meaning at least half the coins it tracks are in an uptrend and Bitcoin is above its 200-day average. If any of that data is missing, it doesn't buy.</p><p>Picking that strategy was the real work. I built my own backtesting simulator, sped up with numba, and checked it against freqtrade's own results to within a few trades. Ideas were only explored on data up to the end of 2023, with everything after that kept back as a final test. Each one was scored across 24 random sets of coins so a lucky pick couldn't flatter it, and checked against coins that later faded or were delisted. Settings were taken from the middle of a stable range rather than from the single best result. Plenty of ideas looked great on the first period and fell apart on the held-back one, including a dip-buying strategy that had won 76% of its trades.</p><p>The laptop needed work too before it could run unattended. A freeze was traced to the disk's power saving and fixed, the system now reboots itself if it ever hangs, and a watchdog restarts the wifi, then the whole machine, if the network drops.</p><p><em>The pictures show FreqUI from freqtrade's own documentation, not my bot.</em></p>",
+      categories: ["Python", "AI"]
+    },
+    {
+      id: 23,
+      title: "RickRoll Trap",
+      description: "An Android prank app: set a timer, hand the phone back, and when time runs out it forces itself to the front and plays Rick Astley full screen.",
+      media: {
+        images: [
+          `${BASE_URL}/media/RickRoll/cover.webp`,
+          `${BASE_URL}/media/RickRoll/setup.webp`,
+        ],
+      },
+      technologies: ["Tauri", "Rust", "React", "TypeScript", "Vite", "Kotlin", "Android"],
+      details: "<p>Set a countdown, tap Set Trap, then close the app or lock the phone and hand it back to its owner. When the timer runs out the app pulls itself back to the front and plays Never Gonna Give You Up full screen, on loop. A hidden tap in the top-right corner resets it.</p><p>It is a Tauri app with a React interface and a custom Kotlin plugin for the Android side. The plugin asks for the \"Display over other apps\" permission (and checks again when you come back from Settings), holds a wake lock so the phone can't sleep through the countdown, and relaunches the app over whatever is on screen when time is up. The native side reports back to the interface over Tauri channels, and the video is preloaded, muted and hidden, so it starts the instant the trap springs.</p>",
+      categories: ["Mobile", "Rust"]
+    },
+    {
       id: 22,
       title: "Free(up)Mail",
       description: "Clears the junk out of Outlook, Gmail and any other inbox from one private desktop app. It runs entirely on your own computer, and every email is backed up before it goes.",

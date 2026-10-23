@@ -139,7 +139,7 @@ export default function ExperienceModal({
                     value={item.text}
                     onChange={(e) => handleItemTextChange(index, e.target.value)}
                     rows={3}
-                    className="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-blue-500 resize-none font-sans"
+                    className="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-blue-500 resize-y font-sans"
                     required
                   />
                   <button
