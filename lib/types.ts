@@ -80,36 +80,6 @@ export interface Recommendation {
   source: "linkedin" | "quote"
 }
 
-export interface ImpactStat {
-  value: string // "£12,693", "73.9 min", "90%"
-  label: string
-  detail?: string
-}
-
-export interface ImpactScenario {
-  scale: string
-  hours: string
-  value: string
-  revenue: string
-}
-
-export interface ImpactQuote {
-  text: string
-  author: string
-}
-
-export interface ImpactCaseStudy {
-  id: string
-  title: string
-  organisation: string
-  period?: string
-  summary: string
-  stats: ImpactStat[]
-  scenarios?: ImpactScenario[]
-  quotes?: ImpactQuote[]
-  footnote?: string
-}
-
 export interface PortfolioData {
   projects: Project[]
   jobExperiences: Experience[]
@@ -121,5 +91,4 @@ export interface PortfolioData {
   // pages fall back to the defaults in `lib/default-content.ts`.
   content?: Record<string, string>
   recommendations?: Recommendation[]
-  impact?: ImpactCaseStudy[]
 }

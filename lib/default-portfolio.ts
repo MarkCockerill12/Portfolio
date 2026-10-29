@@ -236,6 +236,26 @@ export const defaultPortfolioData: PortfolioData = {
       details: "This website displays different types of algorithims and how they work. It includes Sorting, Searching, Linear, Trees, Graphs, Strings, Geometric and Maths algorithims.",
       categories: ["Web"]
     },
+    {
+      id: 33,
+      title: "Privacy Sentinel - Honours Project",
+      description: "My honours project: a privacy and security suite for desktop, mobile and the browser, with its own WireGuard VPN across 5 AWS regions, ad blocking, AI page summaries and content filters.",
+      media: {
+        images: [
+          `${BASE_URL}/media/PrivacySentinel/desktop.webp`,
+          `${BASE_URL}/media/PrivacySentinel/map.webp`,
+          `${BASE_URL}/media/PrivacySentinel/ai-summary.webp`,
+          `${BASE_URL}/media/PrivacySentinel/filters.webp`,
+          `${BASE_URL}/media/PrivacySentinel/page-block.webp`,
+          `${BASE_URL}/media/PrivacySentinel/scanner.webp`,
+          `${BASE_URL}/media/PrivacySentinel/mobile.webp`,
+        ],
+      },
+      github: "https://github.com/MarkCockerill12/Honours",
+      technologies: ["TypeScript", "Electron", "Next.js", "React", "React Native", "Expo", "WireGuard", "AWS EC2 (Graviton)", "Terraform", "Groq", "pnpm", "Bun"],
+      details: "<p>Privacy Sentinel is the project I built for my honours year. It is one suite that runs as three apps: an Electron desktop app and an Android app (React Native) that tunnel the whole device, and a browser extension for Chrome, Edge and Firefox that protects the browser itself. All three share one TypeScript core in a pnpm monorepo, and I designed them around three user personas: a student who wants to avoid upsetting content, a professional who wants fewer distractions, and a grandmother who is at risk from phishing and scam pop-ups.</p><p>The VPN is my own. Rather than routing everything through a central hub, each device connects straight to a WireGuard server in one of 5 AWS regions (US, UK, Germany, Japan and Sydney), all running on ARM-based Graviton instances built with Terraform. To keep it cheap, servers are not left running: the app wakes the region you pick on demand, finds its address through the AWS SDK, and each server shuts itself down after 30 minutes without a connection. Ad blocking works across the whole system through AdGuard DNS, and toggling it does a 1.5 second restart of the tunnel so Windows picks up the new DNS. Average latency was 26 ms to the UK server and 38 ms to Germany.</p><p>The extension adds tools a VPN cannot. Smart filters find the words you choose on any page and blur them, black them out, swap them for rows of cat emojis (Kitten Mode) or block the page entirely. A scanner checks every link on a page for signs of phishing, an AI report (on Groq) summarises long articles and warns you about triggering content, YouTube ads are skipped by playing them at 16x speed while muted, and PDFs are held behind a warning screen before they open. On a heavily ad-funded news site, the page had 65% fewer elements once it was running. In a user study, every participant found the tutorial clear, and the look and feel scored 4.5 out of 5.</p>",
+      categories: ["Cyber Security", "Mobile", "Web", "AI"]
+    },
     { 
       id: 18,
       title: "Handwronging - Neural Handwriting OCR",
@@ -761,6 +781,12 @@ export const defaultPortfolioData: PortfolioData = {
     }
   ],
   certificates: [
+    {
+      id: 'cert5',
+      title: 'Foundational C# with Microsoft',
+      description: 'Through freeCodeCamp and Microsoft, I completed a series of lessons on the foundations of C#, covering variables, logic, loops, methods, arrays and debugging, before passing the final exam to earn this developer certification.',
+      image: `${BASE_URL}/media/Certificates/csharp.webp`
+    },
     {
       id: 'cert1',
       title: 'Cyber Security Vulnerability Certificate',

@@ -1,4 +1,4 @@
-import { ImpactCaseStudy, Recommendation } from "./types"
+import { Recommendation } from "./types"
 
 /**
  * Fallback copy for every admin-editable text block, keyed by the id passed to
@@ -31,43 +31,9 @@ export const DEFAULT_CONTENT: Record<string, string> = {
   "hobby.religious-study":
     "Reading the bible and other sources regarding Christianity helps me to navigate aspects of my life and improve my ability to communicate with others about it",
 
-  "value.intro":
-    "The things I build are meant to save people time. This page puts numbers on that: hours handed back, what those hours are worth, and what the people using my work said about it. Every figure says where it comes from, so you can judge it for yourself.",
-
   "recommendations.intro":
     "What people I have worked and studied with have said about me. Most of these come from LinkedIn, where you can read them in full.",
 }
-
-export const DEFAULT_IMPACT: ImpactCaseStudy[] = [
-  {
-    id: "insights-sales-agent",
-    title: "AI Sales Support Agent",
-    organisation: "Insights",
-    period: "2026 pilot",
-    summary:
-      "An AI agent that gathers what a salesperson needs to know about an account from many different sites and writes it up as a call sheet and a full account plan. Work that usually took hours of searching now arrives as one document, ready before the call.",
-    stats: [
-      { value: "90%", label: "of pilot users found it valuable", detail: "9 of 10 survey respondents" },
-      { value: "73.9 min", label: "saved on every account prepared", detail: "30.6 min per call sheet + 43.3 min per account plan" },
-      { value: "605.9 hrs", label: "handed back per salesperson, per year", detail: "123 accounts a quarter, each prepared once a quarter" },
-      { value: "£12,693", label: "value of that time, per salesperson, per year", detail: "at an assumed £36,870 salary (£20.95 an hour)" },
-      { value: "£172,128", label: "sales capacity freed, per salesperson, per year", detail: "if the hours go back into selling at a £500,000 target; £43,032 at 25%" },
-    ],
-    scenarios: [
-      { scale: "One salesperson", hours: "605.9", value: "£12,693", revenue: "£172,128" },
-      { scale: "UK team (10 people)", hours: "6,058.9", value: "£126,927", revenue: "£1,721,275" },
-      { scale: "Global (100 people)", hours: "60,588.9", value: "£1,269,268", revenue: "£17,212,753" },
-    ],
-    quotes: [
-      { text: "I just want my whole team to have it :) thank you", author: "Sales Leader" },
-      { text: "Having detailed account information at your fingertips saves time and adds value to client conversations.", author: "Pilot user" },
-      { text: "The tool pulls together information from various sites into one, useful document.", author: "Pilot user" },
-      { text: "The account plan was a great base and gave all of the information that would usually take hours to find.", author: "Pilot user" },
-    ],
-    footnote:
-      "Time savings are self-reported by 10 pilot users. The money figures are models, not cash saved: time value uses an assumed salary over 220 eight-hour days, and sales capacity assumes the freed hours go back into selling at a starting-level £500,000 target. The two are separate measures and should not be added together. Build, licence and support costs are not included.",
-  },
-]
 
 export const DEFAULT_RECOMMENDATIONS: Recommendation[] = []
 

@@ -310,9 +310,8 @@ const LittleGuy: React.FC<LittleGuyProps> = ({ visible, onClose }) => {
   // --- Page descriptions for 'Tell me about this page' ---
   const pageDescriptions: Record<string, string> = {
     '/': "This is the home page of the portfolio. Here you'll find a quick intro and a link to explore my projects.",
-    '/about': "This page is all about Mark, his personality, hobbies and background. Sheesh he seems super smart and cool.",
+    '/about': "This page is all about Mark, his personality, hobbies, skills and background. Sheesh he seems super smart and cool.",
     '/projects': "Here you can browse through the projects, from university assignments to personal experiments and hackathon entries.",
-    '/skills': "This page lists technical, creative, and soft skills, along with the tools and languages used.",
     '/experience': "On this page you'll find work experience, internships, and other relevant roles. Every aspect helps build some skills, whether its social or computing related.",
     '/qualifications': "This page showcases academic qualifications, certificates, and achievements. As well as some information about the university modules taken.",
   };
@@ -321,7 +320,6 @@ const LittleGuy: React.FC<LittleGuyProps> = ({ visible, onClose }) => {
     if (pageDescriptions[path]) return pageDescriptions[path];
     if (path.startsWith('/projects')) return pageDescriptions['/projects'];
     if (path.startsWith('/about')) return pageDescriptions['/about'];
-    if (path.startsWith('/skills')) return pageDescriptions['/skills'];
     if (path.startsWith('/experience')) return pageDescriptions['/experience'];
     if (path.startsWith('/qualifications')) return pageDescriptions['/qualifications'];
     return "This is a page on my portfolio site. I'm going to be honest, I don't have a description for this yet.";

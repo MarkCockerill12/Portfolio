@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
-import { Moon, Sun, Menu, X, Sparkles, Square, TrendingUp } from 'lucide-react'
+import { Moon, Sun, Menu, X, Sparkles, Square } from 'lucide-react'
 import { useTheme } from 'next-themes'
 import HoverText from './HoverText'
 import { motion } from 'motion/react'
@@ -101,7 +101,7 @@ const Header = () => {
             </div>
           </div>
           <ul className={`${menuOpen ? 'block' : 'hidden'} lg:flex lg:items-center lg:space-x-4 mt-4 lg:mt-0`}>
-            {['Home', 'About', 'Projects', 'Skills', 'Experience', 'Qualifications', 'Recommendations'].map((item) => (
+            {['Home', 'About', 'Projects', 'Experience', 'Qualifications', 'Recommendations'].map((item) => (
               <li key={item}>
                 <ClickAnimation>
                   <Link href={item === 'Home' ? '/' : `/${item.toLowerCase()}`} className="block py-2 hover:text-blue-500 relative">
@@ -117,18 +117,6 @@ const Header = () => {
                 </ClickAnimation>
               </li>
             ))}
-            {/* Set apart from the rest: centred in the space the other links leave. */}
-            <li className="mt-2 pt-2 border-t border-gray-200 dark:border-gray-700 lg:mt-0 lg:pt-0 lg:border-0 lg:flex-1 lg:flex lg:justify-center lg:pr-[15%]">
-              <ClickAnimation>
-                <Link
-                  href="/value"
-                  className="inline-flex items-center gap-2 my-1 px-4 py-1.5 rounded-full font-semibold text-blue-600 dark:text-blue-300 bg-blue-50 dark:bg-blue-900/40 ring-1 ring-blue-200 dark:ring-blue-700 hover:bg-blue-500 hover:text-white dark:hover:bg-blue-500 dark:hover:text-white transition-colors"
-                >
-                  <TrendingUp className="w-4 h-4" />
-                  Value I Bring
-                </Link>
-              </ClickAnimation>
-            </li>
           </ul>
         </nav>
       </header>
