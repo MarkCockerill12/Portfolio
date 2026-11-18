@@ -1,6 +1,8 @@
 import { cookies } from "next/headers"
 import { NextResponse } from "next/server"
+import { revalidateTag } from "next/cache"
 import { getPortfolioFromR2, savePortfolioToR2 } from "@/lib/r2"
+import { PORTFOLIO_TAG } from "@/lib/portfolio-server"
 import { defaultPortfolioData } from "@/lib/default-portfolio"
 import { PortfolioData } from "@/lib/types"
 
@@ -61,6 +63,9 @@ export async function PUT(request: Request) {
     if (!success) {
       return NextResponse.json({ error: "Failed to save portfolio data to Cloudflare R2" }, { status: 500 })
     }
+    // Server-rendered pages embed the catalog; drop the cached copy so the
+    // next visitor gets this edit instead of waiting out the revalidate window.
+    revalidateTag(PORTFOLIO_TAG)
 
     return NextResponse.json({ success: true, data: updatedData })
   } catch (error: any) {

@@ -5,43 +5,6 @@ const BASE_URL = "https://pub-699441ce0cfb40449cc458823a3f1ed2.r2.dev/portfolio"
 export const defaultPortfolioData: PortfolioData = {
   projects: [
     {
-      id: 35,
-      title: "MillionProfile",
-      description: "One million synthetic residents of Amsterdam in PostgreSQL, each with a home, a family and a working day, explored on a GPU-simulated live map, an analytics dashboard and a read-only SQL console.",
-      media: {
-        images: [
-          `${BASE_URL}/media/MillionProfile/map.webp`,
-          `${BASE_URL}/media/MillionProfile/person.webp`,
-          `${BASE_URL}/media/MillionProfile/analytics.webp`,
-        ],
-      },
-      github: "https://github.com/MarkCockerill12/MillionPersonSimulation",
-      technologies: ["PostgreSQL", "PostGIS", "pgRouting", "Python", "NumPy / SciPy", "GeoPandas", "FastAPI", "React", "TypeScript", "deck.gl", "WebGL2", "MapLibre", "Recharts", "Docker", "OpenStreetMap"],
-      details: "<p>MillionProfile is a synthetic city built as a data analytics project. The city is real: about 138k building footprints, 25k shops, schools, offices and other places, and the drivable road network, all taken from OpenStreetMap. The people are not. A Python pipeline generates 1,000,000 residents in about 410k households, each with a unique citizen ID, name, age, appearance, education, job, income and commute mode, plus about 2 million family relationships (including adult children living at other addresses) and a full weekday schedule of about 3 million activities. Homes are allocated by floor area, jobs come from a gravity model, and income and education depend on age and a district affluence effect. The whole city is generated deterministically from a seed in about 2 minutes, and a new city is one config entry (Birmingham is included as a second example).</p><p>There are three ways to explore it. The <strong>map</strong> shows all one million people simulated on the GPU: press play to watch a weekday unfold as people leave home, cycle, take the tram or metro or drive to work, run errands and come back, then select any dot to open that person's record with their household, relatives, daily schedule and road route. The <strong>analytics dashboard</strong> renders twelve documented SQL queries as charts, each with a tab showing the exact query, covering window functions, percentile_cont, FILTER pivots, recursive CTEs, range joins against generate_series, geography distance and origin-destination matrices. Results are precomputed, and Run live re-executes a query over every record and reports its timing. The <strong>SQL console</strong> runs any read-only query against the full dataset as a restricted analyst role (SELECT only, read-only transactions, 15 second timeout), with pgRouting and EXPLAIN ANALYZE examples.</p><p>The rule throughout was that nothing a visitor does should touch more data than it shows. The map runs as two WebGL2 passes: a transform-feedback simulation pass works out everyone's position and colour only when the clock changes, and a trivial draw pass renders them, with deck.gl drawing inside MapLibre's own WebGL context. Dragging one million people stays locked at 60 fps on a laptop's integrated GPU, up from about 31 fps. The city loads as 8 quantised, pre-gzipped chunks (32 bytes per person, 19.4 MB) in 0.3 to 0.8 seconds. Road routes come from the road graph held in memory as SciPy sparse matrices, so Dijkstra takes 7 to 17 ms instead of 260 ms with pgr_dijkstra; a record opens in 15 to 40 ms and each dashboard chart in under 10 ms. Every bottleneck was found with the headless Chrome benchmarks in the repo's bench/ folder.</p><p>It all runs from Docker Compose in three commands: PostgreSQL 17 with PostGIS and pgRouting, the generator, then the FastAPI backend and React frontend. Everyone in it is fictional: phone numbers use an unallocated Dutch mobile block and emails use the reserved .example domain.</p>",
-      categories: ["SQL", "Python", "Web"]
-    },
-    {
-      id: 34,
-      title: "3D Model Poser",
-      description: "A fast, native pose-reference app for artists. Pose a realistic body or your own imported characters with IK, anatomical joint limits and body collision, then export images or rigged models.",
-      media: {
-        images: [
-          `${BASE_URL}/media/3DPoser/posing.webp`,
-          `${BASE_URL}/media/3DPoser/pose-library.webp`,
-          `${BASE_URL}/media/3DPoser/body.webp`,
-          `${BASE_URL}/media/3DPoser/turntable.webp`,
-          `${BASE_URL}/media/3DPoser/hands-panel.webp`,
-          `${BASE_URL}/media/3DPoser/line-art.webp`,
-          `${BASE_URL}/media/3DPoser/hand-presets.webp`,
-          `${BASE_URL}/media/3DPoser/render.webp`,
-        ],
-      },
-      github: "https://github.com/MarkCockerill12/3dModelPoser",
-      technologies: ["Rust", "wgpu", "egui", "glam", "glTF / VRM", "FBX (ufbx)", "faer", "ONNX (tract)", "RTMPose", "MakeHuman"],
-      details: "<p>3D Model Poser is a posing tool for drawing reference. It combines the hands-on feel of an art mannequin app (click a body part, turn its rotation rings, drag a hand and the arm follows) with Blender's navigation and rigging tools. The default figure is one continuous anatomical body built from MakeHuman's CC0 assets, with sliders for gender, age, muscle, weight, height and stylised proportions, 21 body presets from bodybuilder to chibi, and clothes, shoes and hair that follow every pose. A library of 78 full-body poses and 23 hand poses works on any humanoid, and a Strength slider blends a library pose into the current one.</p><p>In Guided mode the figure moves like a body. Joints have anatomical limits (a swing cone plus a twist range), elbows and knees hinge, the arm and leg IK picks a natural elbow or knee direction, the shoulder girdle follows the arm, and hands and feet slide over the body instead of passing through it. Turning a joint past its range carries on into the next one, so rolling the hand turns the forearm. Free mode drops the limits for Blender-style grab, rotate and scale. Models import from GLB/glTF, VRM, FBX, OBJ, PMX and PMD, and rigs from Mixamo, VRoid, Unreal, Rigify, Source, MMD and others are mapped onto one standard skeleton, so every preset and animation can be retargeted onto any character. A static mesh can be auto-rigged from 8 markers, with bone-heat skin weights solved in well under a second, or rigged by hand in an armature editor. Load a photo and the pose, hands included, is estimated offline by an embedded RTMPose model and applied to the figure. Nothing is uploaded.</p><p>It is written in Rust with its own wgpu renderer instead of a game engine. It only redraws when something changes, so it idles at 0% CPU and GPU and runs smoothly on a laptop's integrated graphics. For artists there are clay, toon, line-art, silhouette and x-ray shading, outlines, shadows and lighting presets, dynamic perspective with separate near and far FOV, a dolly-zoom FOV slider, vanishing-point and rule-of-thirds guides, a picture-in-picture view and reference images. It exports transparent PNGs at any size, turntable sheets, and rigged GLB or FBX models (checked in Blender), and scenes save to .poser files.</p><p><strong>Download:</strong> <a href='https://github.com/MarkCockerill12/3dModelPoser/releases'>Windows build on GitHub Releases</a> (preview releases).</p>",
-      categories: ["Rust", "3D Animation"]
-    },
-    {
       id: 32,
       title: "ScrapBook",
       description: "A website made of 27 single-screen channels, each rebuilding a different corner of internet nostalgia, from Frutiger Aero and the early web to the Wii menu and a 1996 3D chat world.",

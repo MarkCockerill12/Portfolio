@@ -1,7 +1,18 @@
 'use client'
 
-import { useCallback, useEffect, useState } from 'react'
+import { createContext, createElement, useCallback, useContext, useEffect, useState, type ReactNode } from 'react'
 import { PortfolioData } from './types'
+
+/**
+ * The catalog the server read from R2 while rendering the page. Passed down
+ * through context rather than written into the module cache, because on the
+ * server that cache would be shared by every request.
+ */
+const InitialCatalog = createContext<PortfolioData | null>(null)
+
+export function CatalogProvider({ initial, children }: { initial: PortfolioData | null; children: ReactNode }) {
+  return createElement(InitialCatalog.Provider, { value: initial }, children)
+}
 
 /**
  * Client-side cache for the single `portfolio.json` catalog.
@@ -62,14 +73,21 @@ export async function saveCatalog(mutate: (draft: PortfolioData) => void) {
   }
 }
 
-/** The live catalog, or `null` until the first fetch lands. */
+/**
+ * The live catalog. Starts from the copy the server rendered with, so the first
+ * paint already shows R2 data; `null` only if the server could not read R2,
+ * until the client fetch lands.
+ */
 export function useCatalog() {
-  const [data, setData] = useState<PortfolioData | null>(cache)
+  const initial = useContext(InitialCatalog)
+  const [data, setData] = useState<PortfolioData | null>(cache ?? initial)
 
   useEffect(() => {
     subscribers.add(setData)
     if (cache) {
       setData(cache)
+    } else if (initial) {
+      publish(initial)
     } else {
       load()
         .then(publish)
@@ -78,7 +96,7 @@ export function useCatalog() {
     return () => {
       subscribers.delete(setData)
     }
-  }, [])
+  }, [initial])
 
   const save = useCallback(saveCatalog, [])
   return { data, save }
